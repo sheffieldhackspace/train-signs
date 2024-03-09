@@ -4,6 +4,10 @@ The clocks in the space. See also Nottingham Hackspace's wiki:
 
 <https://wiki.nottinghack.org.uk/wiki/BigClocks>
 
+This repository is a work-in-progress.
+
+![Picture of train clock sign](images/train-sign.png)
+
 ## Libraries
 
 To be places in [./libraries/](./libraries/).
