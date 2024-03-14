@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include <Adafruit_I2CDevice.h>
 #include <Adafruit_GFX.h>
 #include <BigClock.h>
 
