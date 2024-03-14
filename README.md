@@ -8,11 +8,11 @@ This repository is a work-in-progress.
 
 ![Picture of train clock sign](images/train-sign.png)
 
+The microcontroller within is DCcEle DCcduino UNO (basically an Arduino Uno)
+
+![Picture of Arduino Uno clone](images/arduino.png)
+
 ## Libraries
-
-To be places in [./libraries/](./libraries/).
-
-The `BigClockSnake` library needs to be patched with [`./BigClockSnake.patch`](./BigClockSnake.patch).
 
 | Library | Version used |
 | --- | --- |
@@ -29,3 +29,11 @@ The `BigClockSnake` library needs to be patched with [`./BigClockSnake.patch`](.
 [BigClockSnake#at]: https://github.com/daniel1111/BigClockSnake/tree/997af0f0490c7a7ea11e199de90a76a7f8f5caab
 [`TimerOne`]: https://github.com/PaulStoffregen/TimerOne
 [TimerOne#at]: https://github.com/PaulStoffregen/TimerOne/tree/ce0fa0b7965f189925d8b7dbba49d562f7c0a4b3
+
+The BigClock library has been patched [here](https://github.com/sheffieldhackspace/train-signs/blob/9e5d6421624eaed5d2c0fd0f8e506589eaefdfb0/lib/BigClock/BigClock.cpp#L138-L143).
+
+## Use
+
+Using Arduino or Platform IO, compile the files in `./src/`.
+
+See `BigClock.h` and `Adafruit_GFX.h` libraries for specific functions that can be used.
