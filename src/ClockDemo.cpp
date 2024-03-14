@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include <Adafruit_GFX.h>
 #include <BigClock.h>
 
@@ -22,7 +24,7 @@ void displayGFX()
   canvas->setCursor(1, 1);
   canvas->print("Sheffield");
   canvas->setCursor(37, 9);
-  canvas->print("Hackspace");
+  canvas->print("Bonkspace");
 
   uint8_t *buffer = canvas->getBuffer();
 
