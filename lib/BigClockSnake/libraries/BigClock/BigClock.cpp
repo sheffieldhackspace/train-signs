@@ -123,6 +123,7 @@ void BigClock::flush_sbit()
   }
 }
 
+#define FB_SEQUENTIAL
 
 bool BigClock::get_bit(byte *fb, int x, int y)
 /* x = 0-95
@@ -134,8 +135,12 @@ bool BigClock::get_bit(byte *fb, int x, int y)
     x = 95 - x;  
     y = 12 - y;
   }
-  
+#ifdef FB_SEQUENTIAL
+  y = 25 - y;
+  return *(fb+(y*MAX_X)+(x/8)) >> (7-(x%8)) & 1;
+#else
   return fb[((x/8)*MAX_Y) + y]  & (1 << (x%8));
+#endif
 }
 
 void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int segment, int row_start, bool tst) // output 6x13 segment (0-7)
