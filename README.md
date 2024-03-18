@@ -37,3 +37,7 @@ The BigClock library has been patched [here](https://github.com/sheffieldhackspa
 Using Arduino or Platform IO, compile the files in `./src/`.
 
 See `BigClock.h` and `Adafruit_GFX.h` libraries for specific functions that can be used.
+
+### Examples
+
+Example scripts are in `./src_unused/`. Drag these to `./src/` and recompile to test. Some require a button to be wired up to the Arduino.

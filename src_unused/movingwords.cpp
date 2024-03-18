@@ -1,3 +1,7 @@
+/* movingwords
+Scroll two lines of text around on the display
+*/
+
 #include <Arduino.h>
 
 #include <Adafruit_I2CDevice.h>
@@ -54,5 +58,4 @@ void loop()
   uint8_t *buffer = canvas->getBuffer();
 
   bc->output(buffer);
-  bc->output(buffer); // Output twice otherwise it doesn't update the whole screen.
 }
