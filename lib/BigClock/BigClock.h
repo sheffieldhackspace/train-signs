@@ -6,7 +6,10 @@
 
 #include "Arduino.h"
 #include "SPI.h"
+#if defined(__AVR__)
 #include "TimerOne.h"
+#elif defined(ESP8266)
+#endif
 #include <avr/pgmspace.h>
 
 #define MAX_X 12

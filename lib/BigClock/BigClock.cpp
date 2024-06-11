@@ -32,7 +32,12 @@
 #include "Arduino.h"
 #include "BigClock.h"
 #include "SPI.h"
+#if defined(__AVR__)
 #include "TimerOne.h"
+#elif defined(ESP8266)
+#include <ESP8266TimerInterrupt.h>
+ESP8266TimerInterrupt ITimer;
+#endif
 
 static BigClock *bc;
     
@@ -56,11 +61,17 @@ void BigClock::init()
   SPI.setDataMode(SPI_MODE1);
   SPI.setClockDivider(SPI_CLOCK_DIV4); // 8 is closest to output from original clock controller
   SPI.setBitOrder(LSBFIRST);
+#if defined(__AVR__)
   Timer1.initialize(4004); // 4ms   
+#endif
   
   bc = this;
   
+#if defined(__AVR__)
   Timer1.attachInterrupt(BigClock::sCallback);
+#elif defined(ESP8266)
+  ITimer.attachInterruptInterval(4004 * 1000, BigClock::sCallback);
+#endif
   delay(100);
 
   // Init vaiables
