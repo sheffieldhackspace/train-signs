@@ -8,6 +8,17 @@ The corners are inverted
 #include <Adafruit_GFX.h>
 #include <BigClock.h>
 
+#ifdef __AVR__
+#define BOARDSEL_PIN 2
+#define LATCH_PIN 4
+#define WOUT_PIN 6
+#endif
+#ifdef ESP8266
+#define BOARDSEL_PIN 12 // D6
+#define LATCH_PIN 13    // D7
+#define WOUT_PIN 14     // D5
+#endif
+
 #define MIN_X 0
 #define MAX_X 96
 #define MIN_Y 0

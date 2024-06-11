@@ -17,7 +17,9 @@
 
 #define BOARD_TOP 0
 #define BOARD_BOTTOM 1
-#define PIN_BOARDSEL 2 
+#define BOARDSEL_PIN 2 
+#define LATCH_PIN 4
+#define WOUT_PIN 6
 
 class BigClock
 {
@@ -27,10 +29,6 @@ class BigClock
     void output(byte *framebuffer);
     static void sCallback();
     void callback();
-    int latchPin;
-    int woutPin;
-
-
     
   private:
 

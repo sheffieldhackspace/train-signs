@@ -43,19 +43,17 @@ static BigClock *bc;
     
 BigClock::BigClock()
 {
-  latchPin = 4;
-  woutPin = 6;
 }
 
 void BigClock::init()
 {
   b1 = 0;
   bflg = 0;
-  pinMode(BigClock::latchPin, OUTPUT);
-  pinMode(woutPin, OUTPUT);  
-  pinMode(PIN_BOARDSEL, OUTPUT);  
+  pinMode(LATCH_PIN, OUTPUT);
+  pinMode(WOUT_PIN, OUTPUT);  
+  pinMode(BOARDSEL_PIN, OUTPUT);  
 
-  digitalWrite(PIN_BOARDSEL, LOW);
+  digitalWrite(BOARDSEL_PIN, LOW);
   
   SPI.begin();
   SPI.setDataMode(SPI_MODE1);
@@ -91,21 +89,21 @@ void BigClock::callback()
  
   byte c;
   
-  c = digitalRead(woutPin);
+  c = digitalRead(WOUT_PIN);
   
   if (c)
   {
     if (bflg>=3)
     {
-      digitalWrite(latchPin, LOW);
+      digitalWrite(LATCH_PIN, LOW);
       delayMicroseconds(16); 
-      digitalWrite(latchPin, HIGH);
+      digitalWrite(LATCH_PIN, HIGH);
       bflg = 0; 
     }
        
-    digitalWrite(woutPin, LOW);
+    digitalWrite(WOUT_PIN, LOW);
   } else
-    digitalWrite(woutPin, HIGH);
+    digitalWrite(WOUT_PIN, HIGH);
     
   if (bflg)
     bflg++;  
@@ -247,9 +245,9 @@ void BigClock::output(byte *framebuffer)
 void BigClock::output_board(int board, byte *framebuffer)
 {
   if (board)
-    digitalWrite(PIN_BOARDSEL, LOW);
+    digitalWrite(BOARDSEL_PIN, LOW);
   else
-    digitalWrite(PIN_BOARDSEL, HIGH);
+    digitalWrite(BOARDSEL_PIN, HIGH);
     
   // Output odd lines for right side of display (numbering lines 0-12)
   for (int n=0; n <8; n++)
@@ -264,9 +262,9 @@ void BigClock::output_board(int board, byte *framebuffer)
   }
  
   delayMicroseconds(20); 
-  digitalWrite(latchPin, LOW);
+  digitalWrite(LATCH_PIN, LOW);
   delayMicroseconds(400); 
-  digitalWrite(latchPin, HIGH);
+  digitalWrite(LATCH_PIN, HIGH);
   delayMicroseconds(120);   
   
   for (int n=0; n <8; n++)
