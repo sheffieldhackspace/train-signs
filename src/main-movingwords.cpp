@@ -4,8 +4,8 @@ Scroll two lines of text around on the display
 
 #include <Arduino.h>
 
-#include <Adafruit_I2CDevice.h>
 #include <Adafruit_GFX.h>
+#include <Adafruit_I2CDevice.h>
 #include <BigClock.h>
 
 #define MAX_X_DEVIATION 36
@@ -20,15 +20,13 @@ int reverse = 0;
 uint8_t scrolly = 0;
 int reversey = 0;
 
-void setup()
-{
+void setup() {
   canvas = new GFXcanvas1(96, 26);
   bc = new BigClock();
   bc->init();
 }
 
-void loop()
-{
+void loop() {
   if (scroll > MAX_X_DEVIATION)
     reverse = 1;
   else if (scroll < 1)
@@ -58,4 +56,6 @@ void loop()
   uint8_t *buffer = canvas->getBuffer();
 
   bc->output(buffer);
+
+  delay(1000);
 }
