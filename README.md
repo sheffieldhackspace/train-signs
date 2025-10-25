@@ -8,9 +8,48 @@ The clocks in the space. See also Nottingham Hackspace's wiki:
 
 ![Picture of train clock sign](images/train-sign.png)
 
+## Screen size
+
+96 × 26
+
+## Arduino pins used
+
+| pin | for |
+| --- | --- |
+| 5V | power |
+| 3V3 | power |
+| GND | GND |
+| 13 | SPI CLOCK |
+| 11 | SPI DATA |
+| 6 | mysterious square wave |
+| 4 | latch/strobe between panels |
+| 2 | board select |
+
+## Programming the Arduino
+
+Using Arduino or Platform IO, compile the files in `./src/`.
+
+```bash
+# upload Arduino code
+pio run -e checkerboard -t upload
+pio run -e movingwords -t upload
+```
+
+## Components for control
+
+same as <https://github.com/alifeee/bus-signs>, see that.
+
 The microcontroller within is DCcEle DCcduino UNO (basically an Arduino Uno)
 
 ![Picture of Arduino Uno clone](images/arduino.png)
+
+### Proto shield
+
+See [`layout.ods`](./layout.ods).
+
+![screenshot of spreadsheet showing pin layout](images/pinlayout_ods.png)
+
+See `BigClock.h` and `Adafruit_GFX.h` libraries for specific functions that can be used.
 
 ## Libraries
 
@@ -31,13 +70,3 @@ The microcontroller within is DCcEle DCcduino UNO (basically an Arduino Uno)
 [TimerOne#at]: https://github.com/PaulStoffregen/TimerOne/tree/ce0fa0b7965f189925d8b7dbba49d562f7c0a4b3
 
 The BigClock library has been patched [here](https://github.com/sheffieldhackspace/train-signs/blob/9e5d6421624eaed5d2c0fd0f8e506589eaefdfb0/lib/BigClock/BigClock.cpp#L138-L143).
-
-## Use
-
-Using Arduino or Platform IO, compile the files in `./src/`.
-
-See `BigClock.h` and `Adafruit_GFX.h` libraries for specific functions that can be used.
-
-### Examples
-
-Example scripts are in `./src_unused/`. Drag these to `./src/` and recompile to test. Some require a button to be wired up to the Arduino.
