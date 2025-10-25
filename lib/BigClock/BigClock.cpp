@@ -56,9 +56,9 @@ void BigClock::init()
   digitalWrite(BOARDSEL_PIN, LOW);
   
   SPI.begin();
-  SPI.setDataMode(SPI_MODE1);
-  SPI.setClockDivider(SPI_CLOCK_DIV4); // 8 is closest to output from original clock controller
-  SPI.setBitOrder(LSBFIRST);
+  // SPI.setDataMode(SPI_MODE1);
+  // SPI.setClockDivider(SPI_CLOCK_DIV4); // 8 is closest to output from original clock controller
+  // SPI.setBitOrder(LSBFIRST);
 #if defined(__AVR__)
   Timer1.initialize(4004); // 4ms   
 #endif
@@ -238,8 +238,10 @@ void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int seg
 
 void BigClock::output(byte *framebuffer)
 {
+  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, LSBFIRST, SPI_MODE1));
   output_board(BOARD_TOP, framebuffer);
   output_board(BOARD_BOTTOM, framebuffer);
+  SPI.endTransaction();
 }
 
 void BigClock::output_board(int board, byte *framebuffer)
