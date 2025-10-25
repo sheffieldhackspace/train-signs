@@ -18,7 +18,7 @@
 #define BOARD_TOP 0
 #define BOARD_BOTTOM 1
 #define BOARDSEL_PIN 2 
-#define LATCH_PIN 4
+#define LATCH_PIN 5
 #define WOUT_PIN 6
 
 class BigClock
