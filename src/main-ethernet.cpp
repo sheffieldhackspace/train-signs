@@ -59,10 +59,12 @@ void setup() {
   bc->init();
   canvas->fillScreen(0);
   canvas->setCursor(1, 1);
-  canvas->print("connecting to ethernet...");
-  canvas->setCursor(1, 12);
-  canvas->print("please wait... try reset if fail... ");
+  canvas->println("await ethernet");
+  canvas->println("check connection");
+  canvas->println("reset if fail");
   buffer = canvas->getBuffer();
+  bc->output(buffer);
+  delay(500);
   bc->output(buffer);
   afterSign();
   delay(1000);
@@ -99,9 +101,9 @@ void setup() {
   beforeSign();
   canvas->fillScreen(0);
   canvas->setCursor(1, 1);
-  canvas->print("waiting for telnet...");
-  canvas->setCursor(1, 12);
-  canvas->print(ipAddress_arr);
+  canvas->println("await telnet to");
+  canvas->println(ipAddress_arr);
+  canvas->println("see help for how");
   buffer = canvas->getBuffer();
   bc->output(buffer);
   afterSign();
