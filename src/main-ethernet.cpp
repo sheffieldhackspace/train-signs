@@ -3,11 +3,9 @@
  *
  * listen to telnet and send text to sign
  * send things with e.g.,
- *   echo -e 'I am on a serial port!\0' | netcat 192.168.0.31 80
- *   printf 'AI IS FOR LOSERS\nTHINK FOR YOURSELF\0' | netcat 192.168.0.31 80
- *
- * currently, wiznet ethernet fails if an spi transaction is made to the sign
- *  don't know why or how to fix it :[
+ *   curl http://10.3.50.200:80 \
+ *     -H "Content-Type: text/plain" --data \
+ *     "  AI IS FOR       LOSERS. THINK    FOR YOURSELF"
  */
 
 // Arduino
@@ -100,7 +98,7 @@ void setup() {
   beforeSign();
   canvas->fillScreen(0);
   canvas->setCursor(1, 1);
-  canvas->println("await telnet to");
+  canvas->println("await HTTP to");
   canvas->println(ipAddress_arr);
   canvas->println("see help for how");
   buffer = canvas->getBuffer();
@@ -118,6 +116,8 @@ void loop() {
 
     // compute each character (byte) sent to self
     int totalChars = 0;
+    int http_section = 0;
+    bool currentLineIsBlank = true;
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
@@ -127,10 +127,35 @@ void loop() {
           break;
         }
         // ignore really long message, in case spammers ;]
-        if (totalChars > 64) {
+        if (totalChars > 512) {
           break;
         }
-        message.concat(c);
+        if (c == '\n' && currentLineIsBlank) {
+          http_section++;
+        }
+        // you're starting a new line
+        if (c == '\n') {
+          currentLineIsBlank = true;
+          // you've gotten a character on the current line
+        } else if (c != '\r') {
+          currentLineIsBlank = false;
+        }
+
+        // Serial.print("got char (");
+        // Serial.print(c);
+        // Serial.print(") total (");
+        // Serial.print(totalChars);
+        // Serial.print(") httpsection (");
+        // Serial.print(http_section);
+        // Serial.print(") currentBlank (");
+        // Serial.print(currentLineIsBlank);
+        // Serial.println(")");
+
+        if (http_section == 1 && !currentLineIsBlank) {
+          message.concat(c);
+        } else if (http_section == 2) {
+          break;
+        }
       }
 
       // timeout
@@ -145,6 +170,9 @@ void loop() {
     Serial.println(message);
 
     // feedback messages to client
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: text/plain; charset=UTF-8");
+    client.println();
     client.println("---got write request for lines---");
     client.println(message);
     client.println("---no further content---");
