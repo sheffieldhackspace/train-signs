@@ -19,8 +19,7 @@
 #include <SPI.h>
 byte mac[] = {0x60, 0xF2, 0xEC, 0x18, 0x05, 0xFE};
 EthernetServer server(80);
-String message1;
-String message2;
+String message;
 uint32_t messageStartTime = 0;
 
 // Bus sign
@@ -118,28 +117,20 @@ void loop() {
     messageStartTime = millis();
 
     // compute each character (byte) sent to self
-    int height = 0;
+    int totalChars = 0;
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
+        totalChars++;
         // end of message, quit
         if (c == '\0') {
           break;
         }
-        // end of line, increase line counter and go to next line
-        if (c == '\n') {
-          height++;
-          continue;
+        // ignore really long message, in case spammers ;]
+        if (totalChars > 64) {
+          break;
         }
-
-        if (height == 0) { // line 1
-          message1.concat(c);
-        } else if (height == 1) { // line 2
-          message2.concat(c);
-        } else {
-          ; // do nothing - we only have 2 line heights
-          // but we must read the remainder of the request
-        }
+        message.concat(c);
       }
 
       // timeout
@@ -150,34 +141,27 @@ void loop() {
 
     beforeSign();
     // debug: print message
-    Serial.println("got messages:");
-    Serial.println(message1);
-    Serial.println(message2);
+    Serial.println("got message:");
+    Serial.println(message);
 
     // feedback messages to client
     client.println("---got write request for lines---");
-    client.println(message1);
-    client.println(message2);
+    client.println(message);
     client.println("---no further content---");
 
     // show message on sign
-    char message1_arr[message1.length() + 1];
-    char message2_arr[message2.length() + 1];
-    message1.toCharArray(message1_arr, message1.length() + 1);
-    message2.toCharArray(message2_arr, message2.length() + 1);
+    char message_arr[message.length() + 1];
+    message.toCharArray(message_arr, message.length() + 1);
     canvas->fillScreen(0);
     canvas->setCursor(1, 1);
-    canvas->print(message1_arr);
-    canvas->setCursor(1, 12);
-    canvas->print(message2_arr);
+    canvas->print(message_arr);
     buffer = canvas->getBuffer();
     bc->output(buffer);
     afterSign();
     delay(1000);
 
     // reset and disconnect client
-    message1 = "";
-    message2 = "";
+    message = "";
     Serial.println("---finished, disconnecting client---");
     delay(1);
     client.stop();
