@@ -181,13 +181,13 @@ void loop() {
 
     // show message on sign (pixels)
     canvas->fillScreen(0);
-    int x = 16;
+    int x = 32;
     int y = 3;
     for (char &c : message) {
       int mask = 0x01;
       for (int i = 0; i < 8; i++) {
         int bit = (c & mask) >> i;
-        canvas->drawPixel(x + i, y, bit);
+        canvas->drawPixel(x + 7 - i, y, bit);
         Serial.print("drawing ");
         Serial.print(bit);
         Serial.print(" at x ");
@@ -200,8 +200,8 @@ void loop() {
       }
 
       x = x + 8;
-      if (x >= 80) {
-        x = 16;
+      if (x >= 64) {
+        x = 32;
         y = y + 1;
       }
     }
