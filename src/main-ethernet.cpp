@@ -35,6 +35,8 @@ uint8_t *buffer;
 
 // functions
 String IPtoString(IPAddress &ip);
+void beforeSign();
+void afterSign();
 
 void setup() {
   // can't use INBUILT LED as it's pin 13, which is used by SPI for Ethernet
@@ -50,16 +52,19 @@ void setup() {
   Serial.println("starting...!");
 
   // set up sign
+  afterSign();
+  beforeSign();
   canvas = new GFXcanvas1(96, 26);
-  // bc = new BigClock();
-  // bc->init();
+  bc = new BigClock();
+  bc->init();
   canvas->fillScreen(0);
   canvas->setCursor(1, 1);
   canvas->print("connecting to ethernet...");
   canvas->setCursor(1, 12);
   canvas->print("please wait... try reset if fail... ");
   buffer = canvas->getBuffer();
-  // bc->output(buffer);
+  bc->output(buffer);
+  afterSign();
   delay(1000);
 
   // set up ethernet
@@ -91,13 +96,15 @@ void setup() {
   ipAddress_str.toCharArray(ipAddress_arr, ipAddress_str.length() + 1);
 
   // show IP on sign
+  beforeSign();
   canvas->fillScreen(0);
   canvas->setCursor(1, 1);
   canvas->print("waiting for telnet...");
   canvas->setCursor(1, 12);
   canvas->print(ipAddress_arr);
   buffer = canvas->getBuffer();
-  // bc->output(buffer);
+  bc->output(buffer);
+  afterSign();
   delay(1000);
 }
 
@@ -139,6 +146,7 @@ void loop() {
       }
     }
 
+    beforeSign();
     // debug: print message
     Serial.println("got messages:");
     Serial.println(message1);
@@ -161,7 +169,8 @@ void loop() {
     canvas->setCursor(1, 12);
     canvas->print(message2_arr);
     buffer = canvas->getBuffer();
-    // bc->output(buffer);
+    bc->output(buffer);
+    afterSign();
     delay(1000);
 
     // reset and disconnect client
@@ -171,6 +180,16 @@ void loop() {
     delay(1);
     client.stop();
   }
+}
+
+void afterSign() {
+  // reset SPI for Wiznet to use
+  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
+}
+
+void beforeSign() {
+  // stop SPI transaction which Ethernet is using
+  SPI.endTransaction();
 }
 
 String IPtoString(IPAddress &ip) { // IP v4 only
