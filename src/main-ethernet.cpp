@@ -127,11 +127,13 @@ void loop() {
           break;
         }
         // ignore really long message, in case spammers ;]
-        if (totalChars > 512) {
-          break;
-        }
+        // if (totalChars >= 8192) {
+        //   break;
+        // }
         if (c == '\n' && currentLineIsBlank) {
           http_section++;
+          Serial.print("http_section set to ");
+          Serial.println(http_section);
         }
         // you're starting a new line
         if (c == '\n') {
@@ -177,16 +179,47 @@ void loop() {
     client.println(message);
     client.println("---no further content---");
 
-    // show message on sign
-    char message_arr[message.length() + 1];
-    message.toCharArray(message_arr, message.length() + 1);
+    // show message on sign (pixels)
     canvas->fillScreen(0);
-    canvas->setCursor(1, 1);
-    canvas->print(message_arr);
+    int x = 16;
+    int y = 3;
+    for (char &c : message) {
+      int mask = 0x01;
+      for (int i = 0; i < 8; i++) {
+        int bit = (c & mask) >> i;
+        canvas->drawPixel(x + i, y, bit);
+        Serial.print("drawing ");
+        Serial.print(bit);
+        Serial.print(" at x ");
+        Serial.print(x + i);
+        Serial.print(" y ");
+        Serial.print(y);
+        Serial.print(" with mask ");
+        Serial.println(mask);
+        mask = mask << 1;
+      }
+
+      x = x + 8;
+      if (x >= 80) {
+        x = 16;
+        y = y + 1;
+      }
+    }
     buffer = canvas->getBuffer();
     bc->output(buffer);
     afterSign();
     delay(1000);
+
+    // show message on sign (text)
+    // char message_arr[message.length() + 1];
+    // message.toCharArray(message_arr, message.length() + 1);
+    // canvas->fillScreen(0);
+    // canvas->setCursor(1, 1);
+    // canvas->print(message_arr);
+    // buffer = canvas->getBuffer();
+    // bc->output(buffer);
+    // afterSign();
+    // delay(1000);
 
     // reset and disconnect client
     message = "";
