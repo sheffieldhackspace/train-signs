@@ -2,7 +2,7 @@
 #  each byte represents 8 bits of the image
 #  columns are wrapped
 # example
-#   py python/image2bytes.py ~/Downloads/smile2.bmp | curl -X POST http://10.3.50.200:80 --data-binary '@-'
+#   py python/image2bytes.py python/example_image_1.bmp | curl -X POST http://10.3.50.200:80 --data-binary '@-'
 
 import sys
 from PIL import Image
