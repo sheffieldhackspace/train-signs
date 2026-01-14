@@ -39,16 +39,12 @@ void loop()
     // read the microswitch
     // int val = digitalRead(SWITCH_PIN);
 
-    canvas->fillScreen(0);
     // checkerboard pattern (every x/y odd/even pixel is on/off)
     for (int i = 0; i < MAX_X; i++)
     {
         for (int j = 0; j < MAX_Y; j++)
         {
-            if ((i + j) % 2 == 0)
-            {
-                canvas->drawPixel(i, j, 1);
-            }
+            canvas->drawPixel(i, j, (i + j) % 2);
         }
     }
 
