@@ -15,8 +15,9 @@
 #define MAX_X 12
 #define MAX_Y 26
 
-#define BOARD_TOP 0
-#define BOARD_BOTTOM 1
+#define BOARD_TOP 1
+#define BOARD_BOTTOM 0
+
 #define BOARDSEL_PIN 2 
 #define LATCH_PIN 5
 #define WOUT_PIN 6
@@ -35,7 +36,7 @@ class BigClock
     void write_sbit(bool b);
     void flush_sbit();
     bool get_bit(byte *fb, int x, int y);
-    void output_segment(int board, byte *framebuf, bool odd_lines, int segment, int row_start, bool tst); // output 6x13 segment (0-7)
+    void output_segment(int board, byte *framebuf, bool odd_lines, int segment); // output 6x13 segment (0-7)
     void output_board(int board, byte *framebuffer);
     
 
