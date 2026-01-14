@@ -236,14 +236,6 @@ void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int seg
   }     
 }
 
-void BigClock::output(byte *framebuffer)
-{
-  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, LSBFIRST, SPI_MODE1));
-  output_board(BOARD_TOP, framebuffer);
-  output_board(BOARD_BOTTOM, framebuffer);
-  SPI.endTransaction();
-}
-
 void BigClock::output_board(int board, byte *framebuffer)
 {
   digitalWrite(BOARDSEL_PIN, board ? LOW : HIGH);
@@ -266,5 +258,13 @@ void BigClock::output_board(int board, byte *framebuffer)
  
   bflg = 1; 
   delay(25);  
+}
+
+void BigClock::output(byte *framebuffer)
+{
+  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, LSBFIRST, SPI_MODE1));
+  output_board(BOARD_TOP, framebuffer);
+  output_board(BOARD_BOTTOM, framebuffer);
+  SPI.endTransaction();
 }
 
