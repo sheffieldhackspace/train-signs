@@ -246,39 +246,24 @@ void BigClock::output(byte *framebuffer)
 
 void BigClock::output_board(int board, byte *framebuffer)
 {
-  if (board)
-    digitalWrite(BOARDSEL_PIN, LOW);
-  else
-    digitalWrite(BOARDSEL_PIN, HIGH);
+  digitalWrite(BOARDSEL_PIN, board ? LOW : HIGH);
     
-  // Output odd lines for right side of display (numbering lines 0-12)
-  for (int n=0; n <8; n++)
+  for (int n = 0; n < 16; n++)
   {
-      output_segment(board, framebuffer, false, n, board ? 1 : 14, false);
-  }      
-
- // Output odd lines for left side of display    
-  for (int n=8; n <16; n++)
-  {
-      output_segment(board, framebuffer, true, n, board ? 0 : 13, false);
+    output_segment(board, framebuffer, false, n, board ? 1 : 14, true);
   }
- 
+
   delayMicroseconds(20); 
   digitalWrite(LATCH_PIN, LOW);
   delayMicroseconds(400); 
   digitalWrite(LATCH_PIN, HIGH);
   delayMicroseconds(120);   
   
-  for (int n=0; n <8; n++)
+  for (int n = 0; n < 16; n++)
   {
     output_segment(board, framebuffer, true, n, board ? 0 : 13, false);    
   }
  
-  for (int n=8; n <16; n++)
-  {
-    output_segment(board, framebuffer, false, n, board ? 1 : 14, true);    
-  }  
-
   bflg = 1; 
   delay(25);  
 }
