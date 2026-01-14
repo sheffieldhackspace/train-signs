@@ -202,27 +202,14 @@ void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int seg
       row+=2;
   }
  
-  if (odd_lines)
-  {
-    write_sbit(true);    
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false); // all white
-    write_sbit(false);
-    write_sbit(false);
-  } else
-  {
-    write_sbit(false);      
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);// <<<<<< true=flash on change ?
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);  
-  }     
+  write_sbit(odd_lines);
+  write_sbit(false);
+  write_sbit(false);
+  write_sbit(false);
+  write_sbit(false);
+  write_sbit(false); // all white
+  write_sbit(false);
+  write_sbit(false);
 }
 
 void BigClock::output_board(int board, byte *framebuffer)
