@@ -132,78 +132,67 @@ void BigClock::flush_sbit()
   }
 }
 
-#define FB_SEQUENTIAL
 
-bool BigClock::get_bit(byte *fb, int x, int y)
-/* x = 0-95
- * y = 0-25
- */
-{
-  if (y < 13) 
-  {
-    x = 95 - x;  
-    y = 12 - y;
-  }
-#ifdef FB_SEQUENTIAL
-  y = 25 - y;
+bool BigClock::get_bit(byte *fb, int x, int y) {
   return *(fb+(y*MAX_X)+(x/8)) >> (7-(x%8)) & 1;
-#else
-  return fb[((x/8)*MAX_Y) + y]  & (1 << (x%8));
-#endif
 }
 
-void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int segment)
-{  
-  int row_start, row, col, j;
-  row_start = (odd_lines ? 0 : 1) + ((board == BOARD_TOP) ? 13 : 0);
-  row = row_start;
-  col = 95-(segment*6);
-  row += 2;
-
-  for (j=((segment%2) ? 0 : 1); j < (8*5) + ((segment%2) ? 0 : 1); j++)
-  {
-    if (odd_lines)
-    {   
-      if (j)
-        write_sbit(get_bit(framebuf, col, row));
-      else
-        write_sbit(get_bit(framebuf, col+1, (board == BOARD_TOP) ? 25 : 12));
-    } else
-    {
-      if (j)
-      {
-        if (  (j%13)  && (row==1) && board == BOARD_BOTTOM)
-        { 
-          write_sbit(get_bit(framebuf, col+1, (row-2 == -1) ? row - 1 : row - 2));
-        }
-        else if (  (j%13)  && (row==14) && board == BOARD_TOP)
-        {
-          write_sbit(get_bit(framebuf, col+1, (row-2 == 12) ? row - 1 : row - 2));
-        } else
-        {
-          write_sbit(get_bit(framebuf, col, (row-2 == 12) ? row - 1 : row - 2)); 
-        }
-      }
-      else 
-        write_sbit(get_bit(framebuf, col+1, (board == BOARD_TOP) ? 24 : 11));
-    }
+void BigClock::output_segment(int board, byte *framebuf, bool even_row, int segment) {
+  // Odd segments start in the first column and second row of the current segment
+  // Even segments start in the last column and last row of the previous segment
+  bool even_segment = segment % 2;
+  int x = even_segment ? -1 : 0;
+  int y = even_segment ? 6 : 1;
   
-    if ( (j==6) || (j==13) || (j==19) || (j==26) || (j==32) )
-    {
-      col--;
-    }    
+  // Even segments have 40 pixels
+  // Odd segments have 38 pixels, but still requires 40 bits (5 bytes) of data
+  for (int i = 0; i < 40; i++) {
+    // Display origin point is in the upper left corner
+    // Coordinates are growing bottom right
+    int offset_x = (segment * 6) + x;
+    int offset_y = 12 + (2 * y) + (even_row ? 1 : 0);
 
-    if (!((j-6)%13))
-    {
-      row = row_start;   
-    } else if (!(j%13))
-    {
-      row = row_start + 2;
-    } else
-      row+=2;
+    // To whoever designed this part:
+    // You know what you did, I hope your partner steals your duvet every night.
+
+    // Long story short:
+    // Even rows start with a column of 6 pixels: 0,1,2,3,4,5
+    // Odd rows start with a column of 7 pixels: 1,2,3,4,5,6,0
+    //
+    // It is significantly easier to count the odd rows as still having 6 pixels
+    // and then take the first pixel of the next column that is "out of bounds"
+    // and manually move it to the "pixel 0" of the previous column.
+    if (offset_y == 12) {
+      offset_x -= 1;
+      offset_y = 13;
+    }
+
+    // First segment of the bottom board starts in the middle left of the display
+    // Segments travel to the bottom right of the display
+    // First segment of the top board starts in the middle right of the display
+    // Segments travel to the top left of the display
+    if (board == BOARD_TOP) {
+      offset_x = 95 - offset_x;
+      offset_y = 25 - offset_y;
+    }
+
+    write_sbit(get_bit(framebuf, offset_x, offset_y));
+
+    // Odd segments contain 38 pixels
+    // Even rows have columns of 6,7,6,7,6,6 pixels
+    // Odd rows have columns of 7,6,7,6,7,5 pixels
+    // Even segments contain 40 pixels
+    // Even rows have colums of 1,6,7,6,7,6,7 pixels
+    // Odd rows have colums of 1,7,6,7,6,7,6 pixels
+    if (y < 6) {
+      y++;
+    } else {
+      x++;
+      y = (x % 2) ? 0 : 1;
+    }
   }
  
-  write_sbit(odd_lines);
+  write_sbit(even_row);
   write_sbit(false);
   write_sbit(false);
   write_sbit(false);
