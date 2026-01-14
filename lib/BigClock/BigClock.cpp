@@ -152,7 +152,7 @@ bool BigClock::get_bit(byte *fb, int x, int y)
 #endif
 }
 
-void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int segment, int row_start, bool tst) // output 6x13 segment (0-7)
+void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int segment, int row_start)
 {  
   int row, col, j;
   row = row_start;
@@ -202,17 +202,6 @@ void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int seg
       row+=2;
   }
  
-  if (tst)
-  {
-    write_sbit(false);    
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);
-    write_sbit(false);    
-  } else  
   if (odd_lines)
   {
     write_sbit(true);    
@@ -242,7 +231,7 @@ void BigClock::output_board(int board, byte *framebuffer)
     
   for (int n = 0; n < 16; n++)
   {
-    output_segment(board, framebuffer, false, n, board ? 1 : 14, true);
+    output_segment(board, framebuffer, false, n, board ? 1 : 14);
   }
 
   delayMicroseconds(20); 
@@ -253,7 +242,7 @@ void BigClock::output_board(int board, byte *framebuffer)
   
   for (int n = 0; n < 16; n++)
   {
-    output_segment(board, framebuffer, true, n, board ? 0 : 13, false);    
+    output_segment(board, framebuffer, true, n, board ? 0 : 13);
   }
  
   bflg = 1; 

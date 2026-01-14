@@ -35,7 +35,7 @@ class BigClock
     void write_sbit(bool b);
     void flush_sbit();
     bool get_bit(byte *fb, int x, int y);
-    void output_segment(int board, byte *framebuf, bool odd_lines, int segment, int row_start, bool tst); // output 6x13 segment (0-7)
+    void output_segment(int board, byte *framebuf, bool odd_lines, int segment, int row_start); // output 6x13 segment (0-7)
     void output_board(int board, byte *framebuffer);
     
 
