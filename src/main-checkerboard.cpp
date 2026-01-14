@@ -52,12 +52,6 @@ void loop()
         }
     }
 
-    // un-draw corners
-    canvas->drawPixel(MIN_X, MIN_Y, 0);
-    canvas->drawPixel(MAX_X - 1, MIN_Y, 1);
-    canvas->drawPixel(MIN_X, MAX_Y - 1, 1);
-    canvas->drawPixel(MAX_X - 1, MAX_Y - 1, 0);
-
     uint8_t *buffer = canvas->getBuffer();
 
     bc->output(buffer);
