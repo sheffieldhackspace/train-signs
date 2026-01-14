@@ -15,8 +15,9 @@
 #define MAX_X 12
 #define MAX_Y 26
 
-#define BOARD_TOP 0
-#define BOARD_BOTTOM 1
+#define BOARD_TOP 1
+#define BOARD_BOTTOM 0
+
 #define BOARDSEL_PIN 2 
 #define LATCH_PIN 5
 #define WOUT_PIN 6

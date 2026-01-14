@@ -166,16 +166,16 @@ void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int seg
       if (j)
         write_sbit(get_bit(framebuf, col, row));
       else
-        write_sbit(get_bit(framebuf, col+1, board ? 12 : 25));
+        write_sbit(get_bit(framebuf, col+1, board ? 25 : 12));
     } else
     {
       if (j)
       {
-        if (  (j%13)  && (row==1) && board)
+        if (  (j%13)  && (row==1) && !board)
         { 
           write_sbit(get_bit(framebuf, col+1, (row-2 == -1) ? row - 1 : row - 2));
         }
-        else if (  (j%13)  && (row==14) && !board)
+        else if (  (j%13)  && (row==14) && board)
         {
           write_sbit(get_bit(framebuf, col+1, (row-2 == 12) ? row - 1 : row - 2));
         } else
@@ -184,7 +184,7 @@ void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int seg
         }
       }
       else 
-        write_sbit(get_bit(framebuf, col+1, board ? 11 : 24));       
+        write_sbit(get_bit(framebuf, col+1, board ? 24 : 11));
     }
   
     if ( (j==6) || (j==13) || (j==19) || (j==26) || (j==32) )
@@ -214,11 +214,11 @@ void BigClock::output_segment(int board, byte *framebuf, bool odd_lines, int seg
 
 void BigClock::output_board(int board, byte *framebuffer)
 {
-  digitalWrite(BOARDSEL_PIN, board ? LOW : HIGH);
+  digitalWrite(BOARDSEL_PIN, board);
     
   for (int n = 0; n < 16; n++)
   {
-    output_segment(board, framebuffer, false, n, board ? 1 : 14);
+    output_segment(board, framebuffer, false, n, board ? 14 : 1);
   }
 
   delayMicroseconds(20); 
@@ -229,7 +229,7 @@ void BigClock::output_board(int board, byte *framebuffer)
   
   for (int n = 0; n < 16; n++)
   {
-    output_segment(board, framebuffer, true, n, board ? 0 : 13);
+    output_segment(board, framebuffer, true, n, board ? 13 : 0);
   }
  
   bflg = 1; 
