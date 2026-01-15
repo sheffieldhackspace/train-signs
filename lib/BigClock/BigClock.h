@@ -37,12 +37,8 @@ class BigClock
     void output_segment(byte *fb, int board, bool odd_lines, int segment);
     void output_board(byte *fb, int board);
 
-    byte t;
-    volatile byte bflg;
-    byte b1;
     short bcount;
     byte by;
-    short int c;
 };
 
 #endif

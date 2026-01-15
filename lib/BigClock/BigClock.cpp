@@ -47,36 +47,21 @@ BigClock::BigClock()
 
 void BigClock::init()
 {
-  b1 = 0;
-  bflg = 0;
   pinMode(LATCH_PIN, OUTPUT);
   pinMode(WOUT_PIN, OUTPUT);  
   pinMode(BOARDSEL_PIN, OUTPUT);  
 
   digitalWrite(BOARDSEL_PIN, LOW);
-  
   SPI.begin();
-  // SPI.setDataMode(SPI_MODE1);
-  // SPI.setClockDivider(SPI_CLOCK_DIV4); // 8 is closest to output from original clock controller
-  // SPI.setBitOrder(LSBFIRST);
-#if defined(__AVR__)
-  Timer1.initialize(4004); // 4ms   
-#endif
-  
+
+  Timer1.initialize(4000); // 4ms
   bc = this;
   
-#if defined(__AVR__)
   Timer1.attachInterrupt(BigClock::sCallback);
-#elif defined(ESP8266)
-  ITimer.attachInterruptInterval(4004 * 1000, BigClock::sCallback);
-#endif
-  delay(100);
 
   // Init vaiables
-  t=0;
   bcount = 0;
   by = 0;  
-  c=0;   
 }
 
 void BigClock::sCallback()
@@ -86,28 +71,8 @@ void BigClock::sCallback()
 
 void BigClock::callback()
 {
- 
-  byte c;
-  
-  c = digitalRead(WOUT_PIN);
-  
-  if (c)
-  {
-    if (bflg>=3)
-    {
-      digitalWrite(LATCH_PIN, LOW);
-      delayMicroseconds(16); 
-      digitalWrite(LATCH_PIN, HIGH);
-      bflg = 0; 
-    }
-       
-    digitalWrite(WOUT_PIN, LOW);
-  } else
-    digitalWrite(WOUT_PIN, HIGH);
-    
-  if (bflg)
-    bflg++;  
- 
+  byte c = digitalRead(WOUT_PIN);
+  digitalWrite(WOUT_PIN, !c);
 }
 
 void BigClock::write_sbit(bool b) {
@@ -191,23 +156,20 @@ void BigClock::output_segment(byte *fb, int board, bool even_row, int segment) {
 
 void BigClock::output_board(byte *fb, int board) {
   digitalWrite(BOARDSEL_PIN, board);
+  digitalWrite(LATCH_PIN, HIGH);
     
   for (int n = 0; n < 16; n++) {
     output_segment(fb, board, false, n);
   }
 
-  delayMicroseconds(20); 
   digitalWrite(LATCH_PIN, LOW);
-  delayMicroseconds(400); 
   digitalWrite(LATCH_PIN, HIGH);
-  delayMicroseconds(120);   
   
   for (int n = 0; n < 16; n++) {
     output_segment(fb, board, true, n);
   }
  
-  bflg = 1; 
-  delay(25);  
+  digitalWrite(LATCH_PIN, LOW);
 }
 
 void BigClock::output(byte *fb) {
