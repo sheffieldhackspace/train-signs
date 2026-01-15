@@ -36,11 +36,17 @@ void setup()
 
 void loop()
 {
+    bool bit;
     for (int i = 0; i < MAX_X; i++)
     {
         for (int j = 0; j < MAX_Y; j++)
         {
-            canvas->drawPixel(i, j, (i + j) % 2);
+            bit = false;
+            bit |= i >= 0 && i < 12 && j % 2 == 1;
+            bit |= i >= 12 && i < 24 && i % 2 == 0;
+            bit |= i >= 24 && i < 36 && (i + j) % 2;
+
+            canvas->drawPixel(i, j, bit);
         }
     }
 
