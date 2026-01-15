@@ -71,8 +71,8 @@ void BigClock::sCallback()
 
 void BigClock::callback()
 {
-  byte c = digitalRead(WOUT_PIN);
-  digitalWrite(WOUT_PIN, !c);
+  digitalWrite(WOUT_PIN, HIGH);
+  digitalWrite(WOUT_PIN, LOW);
 }
 
 void BigClock::write_sbit(bool b) {
