@@ -27,18 +27,15 @@ class BigClock
   public:
     BigClock();
     void init();
-    void output(byte *framebuffer);
+    void output(byte *fb);
     static void sCallback();
     void callback();
     
   private:
-
     void write_sbit(bool b);
-    void flush_sbit();
     bool get_bit(byte *fb, int x, int y);
-    void output_segment(int board, byte *framebuf, bool odd_lines, int segment); // output 6x13 segment (0-7)
-    void output_board(int board, byte *framebuffer);
-    
+    void output_segment(byte *fb, int board, bool odd_lines, int segment);
+    void output_board(byte *fb, int board);
 
     byte t;
     volatile byte bflg;
