@@ -110,34 +110,21 @@ void BigClock::callback()
  
 }
 
-void BigClock::write_sbit(bool b)
-{
-  by |= (b  << bcount++);
+void BigClock::write_sbit(bool b) {
+  by |= (b << bcount++);
   
-  if (bcount >= 8)
-  {
+  if (bcount >= 8) {
     SPI.transfer(by);
     by = 0;
     bcount = 0;
   }
 }
 
-void BigClock::flush_sbit()
-{
-  if (bcount)
-  {
-    SPI.transfer(by);
-    by = 0;
-    bcount = 0;  
-  }
-}
-
-
 bool BigClock::get_bit(byte *fb, int x, int y) {
-  return *(fb+(y*MAX_X)+(x/8)) >> (7-(x%8)) & 1;
+  return *(fb + (y * MAX_X) + (x / 8)) >> (7 - (x % 8)) & 1;
 }
 
-void BigClock::output_segment(int board, byte *framebuf, bool even_row, int segment) {
+void BigClock::output_segment(byte *fb, int board, bool even_row, int segment) {
   // Odd segments start in the first column and second row of the current segment
   // Even segments start in the last column and last row of the previous segment
   bool even_segment = segment % 2;
@@ -176,7 +163,7 @@ void BigClock::output_segment(int board, byte *framebuf, bool even_row, int segm
       offset_y = 25 - offset_y;
     }
 
-    write_sbit(get_bit(framebuf, offset_x, offset_y));
+    write_sbit(get_bit(fb, offset_x, offset_y));
 
     // Odd segments contain 38 pixels
     // Even rows have columns of 6,7,6,7,6,6 pixels
@@ -202,13 +189,11 @@ void BigClock::output_segment(int board, byte *framebuf, bool even_row, int segm
   write_sbit(false);
 }
 
-void BigClock::output_board(int board, byte *framebuffer)
-{
+void BigClock::output_board(byte *fb, int board) {
   digitalWrite(BOARDSEL_PIN, board);
     
-  for (int n = 0; n < 16; n++)
-  {
-    output_segment(board, framebuffer, false, n);
+  for (int n = 0; n < 16; n++) {
+    output_segment(fb, board, false, n);
   }
 
   delayMicroseconds(20); 
@@ -217,20 +202,18 @@ void BigClock::output_board(int board, byte *framebuffer)
   digitalWrite(LATCH_PIN, HIGH);
   delayMicroseconds(120);   
   
-  for (int n = 0; n < 16; n++)
-  {
-    output_segment(board, framebuffer, true, n);
+  for (int n = 0; n < 16; n++) {
+    output_segment(fb, board, true, n);
   }
  
   bflg = 1; 
   delay(25);  
 }
 
-void BigClock::output(byte *framebuffer)
-{
+void BigClock::output(byte *fb) {
   SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, LSBFIRST, SPI_MODE1));
-  output_board(BOARD_TOP, framebuffer);
-  output_board(BOARD_BOTTOM, framebuffer);
+  output_board(fb, BOARD_TOP);
+  output_board(fb, BOARD_BOTTOM);
   SPI.endTransaction();
 }
 
