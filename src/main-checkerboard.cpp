@@ -19,27 +19,19 @@ The corners are inverted
 #define WOUT_PIN 14     // D5
 #endif
 
-#define MIN_X 0
 #define MAX_X 96
-#define MIN_Y 0
 #define MAX_Y 26
 
 GFXcanvas1 *canvas = NULL;
 BigClock *bc = NULL;
 
-void setup()
-{
+void setup() {
     canvas = new GFXcanvas1(MAX_X, MAX_Y);
     bc = new BigClock();
     bc->init();
-}
 
-void loop()
-{
-    for (int i = 0; i < MAX_X; i++)
-    {
-        for (int j = 0; j < MAX_Y; j++)
-        {
+    for (int i = 0; i < MAX_X; i++) {
+        for (int j = 0; j < MAX_Y; j++) {
             canvas->drawPixel(i, j, (i + j) % 2);
         }
     }
@@ -47,4 +39,7 @@ void loop()
     uint8_t *buffer = canvas->getBuffer();
 
     bc->output(buffer);
+}
+
+void loop() {
 }
