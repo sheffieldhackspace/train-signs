@@ -5,7 +5,7 @@
 #define BigClock_h
 
 #include "Arduino.h"
-#include "SPI.h"
+#include "SoftSPI.h"
 #if defined(__AVR__)
 #include "TimerOne.h"
 #elif defined(ESP8266)
@@ -37,6 +37,7 @@ class BigClock
     void output_segment(byte *fb, int board, bool odd_lines, int segment);
     void output_board(byte *fb, int board);
 
+    SoftSPI *spi;
     short bcount;
     byte by;
 };

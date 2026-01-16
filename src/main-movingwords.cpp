@@ -57,5 +57,5 @@ void loop() {
 
   bc->output(buffer);
 
-  delay(250);
+  delay(25);
 }

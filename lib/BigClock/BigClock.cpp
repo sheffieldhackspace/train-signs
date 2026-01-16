@@ -31,7 +31,7 @@
 
 #include "Arduino.h"
 #include "BigClock.h"
-#include "SPI.h"
+#include "SoftSPI.h"
 #if defined(__AVR__)
 #include "TimerOne.h"
 #elif defined(ESP8266)
@@ -52,7 +52,10 @@ void BigClock::init()
   pinMode(BOARDSEL_PIN, OUTPUT);  
 
   digitalWrite(BOARDSEL_PIN, LOW);
-  SPI.begin();
+  spi = new SoftSPI(11, 12, 13);
+  spi->setBitOrder(LSBFIRST);
+  spi->setClockDivider(SPI_CLOCK_DIV2);
+  spi->setDataMode(SPI_MODE1);
 
   Timer1.initialize(4000); // 4ms
   bc = this;
@@ -79,7 +82,7 @@ void BigClock::write_sbit(bool b) {
   by |= (b << bcount++);
   
   if (bcount >= 8) {
-    SPI.transfer(by);
+    spi->transfer(by);
     by = 0;
     bcount = 0;
   }
@@ -173,9 +176,9 @@ void BigClock::output_board(byte *fb, int board) {
 }
 
 void BigClock::output(byte *fb) {
-  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, LSBFIRST, SPI_MODE1));
+  spi->begin();
   output_board(fb, BOARD_TOP);
   output_board(fb, BOARD_BOTTOM);
-  SPI.endTransaction();
+  spi->end();
 }
 
