@@ -30,142 +30,37 @@
  */
 
 #include "Arduino.h"
-#include "BigClock.h"
-#include "SoftSPI.h"
 #include "FreeRTOS.h"
 
-BigClock::BigClock()
-{
+#include "BigBoard.h"
+#include "BigClock.h"
+
+BigClock::BigClock() {
 }
 
-void BigClock::init()
-{
-  pinMode(LATCH_PIN, OUTPUT);
-  pinMode(WOUT_PIN, OUTPUT);  
-  pinMode(BOARDSEL_PIN, OUTPUT);  
-
-  spi = new SoftSPI(D5, D6, D7);
-  spi->setBitOrder(LSBFIRST);
-  spi->setClockDivider(SPI_CLOCK_DIV8);
-  spi->setDataMode(SPI_MODE1);
+void BigClock::init() {
+  board[BOARD_TOP] = new BigBoard(BOARD_TOP, D10, D6, D4, D2);
+  board[BOARD_BOTTOM] = new BigBoard(BOARD_BOTTOM, D11, D7, D5, D3);
 
   xTaskCreate(BigClock::sCallback, "clock_task", 4096, NULL, 2, NULL);
-
-  // Init vaiables
-  bcount = 0;
-  by = 0;  
 }
 
 void BigClock::sCallback(void *arg) {
+  pinMode(D10, OUTPUT);
+  pinMode(D11, OUTPUT);
+
   while (true) {
-    digitalWrite(WOUT_PIN, HIGH);
+    digitalWrite(D10, HIGH);
+    digitalWrite(D11, HIGH);
     delay(2);
-    digitalWrite(WOUT_PIN, LOW);
+    digitalWrite(D10, LOW);
+    digitalWrite(D11, LOW);
     delay(2);
   }
-}
-
-void BigClock::write_sbit(bool b) {
-  by |= (b << bcount++);
-  
-  if (bcount >= 8) {
-    spi->transfer(by);
-    by = 0;
-    bcount = 0;
-  }
-}
-
-bool BigClock::get_bit(byte *fb, int x, int y) {
-  return *(fb + (y * MAX_X) + (x / 8)) >> (7 - (x % 8)) & 1;
-}
-
-void BigClock::output_segment(byte *fb, int board, bool even_row, int segment) {
-  // Odd segments start in the first column and second row of the current segment
-  // Even segments start in the last column and last row of the previous segment
-  bool even_segment = segment % 2;
-  int x = even_segment ? -1 : 0;
-  int y = even_segment ? 6 : 1;
-  
-  // Even segments have 40 pixels
-  // Odd segments have 38 pixels, but still requires 40 bits (5 bytes) of data
-  for (int i = 0; i < 40; i++) {
-    // Display origin point is in the upper left corner
-    // Coordinates are growing bottom right
-    int offset_x = (segment * 6) + x;
-    int offset_y = 12 + (2 * y) + (even_row ? 1 : 0);
-
-    // To whoever designed this part:
-    // You know what you did, I hope your partner steals your duvet every night.
-
-    // Long story short:
-    // Even rows start with a column of 6 pixels: 0,1,2,3,4,5
-    // Odd rows start with a column of 7 pixels: 1,2,3,4,5,6,0
-    //
-    // It is significantly easier to count the odd rows as still having 6 pixels
-    // and then take the first pixel of the next column that is "out of bounds"
-    // and manually move it to the "pixel 0" of the previous column.
-    if (offset_y == 12) {
-      offset_x -= 1;
-      offset_y = 13;
-    }
-
-    // First segment of the bottom board starts in the middle left of the display
-    // Segments travel to the bottom right of the display
-    // First segment of the top board starts in the middle right of the display
-    // Segments travel to the top left of the display
-    if (board == BOARD_TOP) {
-      offset_x = 95 - offset_x;
-      offset_y = 25 - offset_y;
-    }
-
-    write_sbit(get_bit(fb, offset_x, offset_y));
-
-    // Odd segments contain 38 pixels
-    // Even rows have columns of 6,7,6,7,6,6 pixels
-    // Odd rows have columns of 7,6,7,6,7,5 pixels
-    // Even segments contain 40 pixels
-    // Even rows have colums of 1,6,7,6,7,6,7 pixels
-    // Odd rows have colums of 1,7,6,7,6,7,6 pixels
-    if (y < 6) {
-      y++;
-    } else {
-      x++;
-      y = (x % 2) ? 0 : 1;
-    }
-  }
- 
-  write_sbit(even_row);
-  write_sbit(false);
-  write_sbit(false);
-  write_sbit(false);
-  write_sbit(false);
-  write_sbit(false); // all white
-  write_sbit(false);
-  write_sbit(false);
-}
-
-void BigClock::output_board(byte *fb, int board) {
-  digitalWrite(BOARDSEL_PIN, board);
-  digitalWrite(LATCH_PIN, HIGH);
-    
-  for (int n = 0; n < 16; n++) {
-    output_segment(fb, board, false, n);
-  }
-
-  digitalWrite(LATCH_PIN, LOW);
-  digitalWrite(LATCH_PIN, HIGH);
-  
-  for (int n = 0; n < 16; n++) {
-    output_segment(fb, board, true, n);
-  }
- 
-  digitalWrite(LATCH_PIN, LOW);
 }
 
 void BigClock::output(byte *fb) {
-  spi->begin();
-  output_board(fb, BOARD_TOP);
-  output_board(fb, BOARD_BOTTOM);
-  spi->end();
+  board[BOARD_TOP]->output(fb);
+  board[BOARD_BOTTOM]->output(fb);
 }
 
