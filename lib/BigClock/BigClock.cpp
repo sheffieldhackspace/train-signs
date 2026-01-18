@@ -31,16 +31,9 @@
 
 #include "Arduino.h"
 #include "BigClock.h"
-#include "SPI.h"
-#if defined(__AVR__)
-#include "TimerOne.h"
-#elif defined(ESP8266)
-#include <ESP8266TimerInterrupt.h>
-ESP8266TimerInterrupt ITimer;
-#endif
+#include "SoftSPI.h"
+#include "FreeRTOS.h"
 
-static BigClock *bc;
-    
 BigClock::BigClock()
 {
 }
@@ -51,35 +44,32 @@ void BigClock::init()
   pinMode(WOUT_PIN, OUTPUT);  
   pinMode(BOARDSEL_PIN, OUTPUT);  
 
-  digitalWrite(BOARDSEL_PIN, LOW);
-  SPI.begin();
+  spi = new SoftSPI(D5, D6, D7);
+  spi->setBitOrder(LSBFIRST);
+  spi->setClockDivider(SPI_CLOCK_DIV8);
+  spi->setDataMode(SPI_MODE1);
 
-  Timer1.initialize(4000); // 4ms
-  bc = this;
-  
-  Timer1.attachInterrupt(BigClock::sCallback);
+  xTaskCreate(BigClock::sCallback, "clock_task", 4096, NULL, 2, NULL);
 
   // Init vaiables
   bcount = 0;
   by = 0;  
 }
 
-void BigClock::sCallback()
-{
-  bc->callback();  
-}
-
-void BigClock::callback()
-{
-  digitalWrite(WOUT_PIN, HIGH);
-  digitalWrite(WOUT_PIN, LOW);
+void BigClock::sCallback(void *arg) {
+  while (true) {
+    digitalWrite(WOUT_PIN, HIGH);
+    delay(2);
+    digitalWrite(WOUT_PIN, LOW);
+    delay(2);
+  }
 }
 
 void BigClock::write_sbit(bool b) {
   by |= (b << bcount++);
   
   if (bcount >= 8) {
-    SPI.transfer(by);
+    spi->transfer(by);
     by = 0;
     bcount = 0;
   }
@@ -173,9 +163,9 @@ void BigClock::output_board(byte *fb, int board) {
 }
 
 void BigClock::output(byte *fb) {
-  SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV4, LSBFIRST, SPI_MODE1));
+  spi->begin();
   output_board(fb, BOARD_TOP);
   output_board(fb, BOARD_BOTTOM);
-  SPI.endTransaction();
+  spi->end();
 }
 
