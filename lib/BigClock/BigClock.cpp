@@ -32,15 +32,8 @@
 #include "Arduino.h"
 #include "BigClock.h"
 #include "SoftSPI.h"
-#if defined(__AVR__)
-#include "TimerOne.h"
-#elif defined(ESP8266)
-#include <ESP8266TimerInterrupt.h>
-ESP8266TimerInterrupt ITimer;
-#endif
+#include "FreeRTOS.h"
 
-static BigClock *bc;
-    
 BigClock::BigClock()
 {
 }
@@ -51,31 +44,25 @@ void BigClock::init()
   pinMode(WOUT_PIN, OUTPUT);  
   pinMode(BOARDSEL_PIN, OUTPUT);  
 
-  digitalWrite(BOARDSEL_PIN, LOW);
-  spi = new SoftSPI(11, 12, 13);
+  spi = new SoftSPI(D5, D6, D7);
   spi->setBitOrder(LSBFIRST);
-  spi->setClockDivider(SPI_CLOCK_DIV2);
+  spi->setClockDivider(SPI_CLOCK_DIV8);
   spi->setDataMode(SPI_MODE1);
 
-  Timer1.initialize(4000); // 4ms
-  bc = this;
-  
-  Timer1.attachInterrupt(BigClock::sCallback);
+  xTaskCreate(BigClock::sCallback, "clock_task", 4096, NULL, 2, NULL);
 
   // Init vaiables
   bcount = 0;
   by = 0;  
 }
 
-void BigClock::sCallback()
-{
-  bc->callback();  
-}
-
-void BigClock::callback()
-{
-  digitalWrite(WOUT_PIN, HIGH);
-  digitalWrite(WOUT_PIN, LOW);
+void BigClock::sCallback(void *arg) {
+  while (true) {
+    digitalWrite(WOUT_PIN, HIGH);
+    delay(2);
+    digitalWrite(WOUT_PIN, LOW);
+    delay(2);
+  }
 }
 
 void BigClock::write_sbit(bool b) {
