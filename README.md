@@ -12,17 +12,13 @@ The clocks in the space. See also Nottingham Hackspace's wiki:
 
 96 × 26
 
-## Programming the Arduino
-
-Using Arduino or Platform IO, compile the files in `./src/`.
+## Building the project
 
 ```bash
-# upload Arduino code
-pio run -e checkerboard -t upload
 pio run -e movingwords -t upload
 ```
 
-## Components for control
+## Hardware driver
 
 The microcontroller is an Arduino Nano ESP32.
 
@@ -31,6 +27,10 @@ The microcontroller is an Arduino Nano ESP32.
 ![Screenshot of a schematic presenting the pinout](images/schema.png)
 
 See [`kicad project`](./kicad) for the latest version.
+
+### Prototype
+
+![Photo of the prototyped circuit board](images/proto.jpeg)
 
 ## Libraries
 
