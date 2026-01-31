@@ -2,8 +2,8 @@
 #include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <BigClock.h>
-#include <muMatrix8ptRegular.h>
 #include <MessageQueue.h>
+#include <Org01Condensed.h>
 #include <WiFi.h>
 
 #include "Credentials.h"
@@ -18,14 +18,14 @@ void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   canvas = new GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT);
-  canvas->setFont(&muMatrix8ptRegular);
+  canvas->setFont(&Org01Condensed);
   canvas->setTextSize(1);
   canvas->setTextColor(1);
 
   display = new BigClock(canvas->getBuffer());
 
   canvas->fillScreen(0);
-  canvas->setCursor(0, 7);
+  canvas->setCursor(0, 5);
   canvas->print("SSID: ");
   canvas->println(WIFI_SSID);
   canvas->println("Connecting...");
@@ -73,7 +73,7 @@ void loop() {
   }
 
   canvas->fillScreen(0);
-  canvas->setCursor(0, 7);
+  canvas->setCursor(0, 5);
   canvas->println(*queue->getCurrent()->message);
   display->output();
   delay(50);
