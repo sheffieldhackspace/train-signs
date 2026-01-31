@@ -41,7 +41,14 @@ void setup() {
 
   server.begin();
 
-  Record record = { new String(WiFi.localIP().toString() + ":80") };
+  String *message = new String();
+  message->concat("SSID: ");
+  message->concat(WIFI_SSID);
+  message->concat("\n");
+  message->concat(WiFi.localIP().toString());
+  message->concat(":80");
+
+  Record record = { message };
   queue.push(&record);
 }
 
