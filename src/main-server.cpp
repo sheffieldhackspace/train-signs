@@ -2,23 +2,17 @@
 #include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <BigClock.h>
-#include <cppQueue.h>
 #include <GFX_fonts/Font5x7Fixed.h>
+#include <MessageQueue.h>
 #include <WiFi.h>
 
 #include "Credentials.h"
 
-typedef struct msgRec {
-  String *message;
-} Record;
-
-cppQueue queue(sizeof(Record), 10, FIFO, true);
+MessageQueue *queue = new MessageQueue();
 WiFiServer server(80);
 
 GFXcanvas1 *canvas = NULL;
 BigClock *display = NULL;
-
-uint32_t last;
 
 void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -50,8 +44,7 @@ void setup() {
   message->concat(WiFi.localIP().toString());
   message->concat(":80");
 
-  last = millis();
-  queue.push(new Record(message));
+  queue->push(new Record(message));
 }
 
 void loop() {
@@ -75,19 +68,12 @@ void loop() {
       message->concat(c);
     }
 
-    queue.push(new Record(message));
-    last = millis();
+    queue->push(new Record(message));
   }
-
-  int index = (queue.getCount() - 1) - ((millis() - last) / 5000) % queue.getCount();
-
-  Record record;
-  queue.peekIdx(&record, index);
-  message = record.message;
 
   canvas->fillScreen(0);
   canvas->setCursor(0, 7);
-  canvas->println(*message);
+  canvas->println(*queue->getCurrent()->message);
   display->output();
   delay(50);
 }
