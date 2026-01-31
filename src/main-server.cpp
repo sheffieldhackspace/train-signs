@@ -2,7 +2,7 @@
 #include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <BigClock.h>
-#include <GFX_fonts/Font5x7Fixed.h>
+#include <muMatrix8ptRegular.h>
 #include <MessageQueue.h>
 #include <WiFi.h>
 
@@ -18,7 +18,7 @@ void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   canvas = new GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT);
-  canvas->setFont(&Font5x7Fixed);
+  canvas->setFont(&muMatrix8ptRegular);
   canvas->setTextSize(1);
   canvas->setTextColor(1);
 
