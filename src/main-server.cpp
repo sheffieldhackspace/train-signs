@@ -21,7 +21,7 @@ BigClock *display = NULL;
 void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-  canvas = new GFXcanvas1(96, 26);
+  canvas = new GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT);
   canvas->setFont(&Font5x7Fixed);
   canvas->setTextSize(1);
   canvas->setTextColor(1);

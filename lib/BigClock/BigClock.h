@@ -4,6 +4,9 @@
 #ifndef BigClock_h
 #define BigClock_h
 
+#define BIG_CLOCK_WIDTH 96
+#define BIG_CLOCK_HEIGHT 26
+
 #include "Arduino.h"
 
 #include "BigBoard.h"
