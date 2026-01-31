@@ -4,6 +4,7 @@
 #include <BigClock.h>
 #include <WiFi.h>
 
+#include "GFX_fonts/Font5x7Fixed.h"
 #include "Credentials.h"
 
 WiFiServer server(80);
@@ -16,7 +17,8 @@ void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   canvas = new GFXcanvas1(96, 26);
-  canvas->setTextSize(0);
+  canvas->setFont(&Font5x7Fixed);
+  canvas->setTextSize(1);
   canvas->setTextColor(1);
   buffer = canvas->getBuffer();
 
@@ -25,7 +27,7 @@ void setup() {
 
   while (WiFi.status() != WL_CONNECTED) {
     canvas->fillScreen(0);
-    canvas->setCursor(0, 0);
+    canvas->setCursor(0, 7);
     canvas->println("WiFi...");
     display->output(buffer);
 
@@ -37,7 +39,7 @@ void setup() {
 
 void loop() {
   canvas->fillScreen(0);
-  canvas->setCursor(0, 0);
+  canvas->setCursor(0, 7);
   canvas->print(WiFi.localIP());
   canvas->println(":80");
 
