@@ -48,12 +48,13 @@ void setup() {
 }
 
 void loop() {
-  String *message = new String();
   if (WiFiClient client = server.accept()) {
+    String *message = new String();
     int b = 0;
+    char c;
 
     while (client.available()) {
-      char c = client.read();
+      c = client.read();
 
       if (b < 4) {
         if (c == 10 || c == 13) {
