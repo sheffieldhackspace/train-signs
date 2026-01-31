@@ -16,13 +16,15 @@
 class BigBoard
 {
   public:
-    BigBoard(int board, int clock_pin, int latch_pin, int data_input_pin, int data_clock_pin);
-    void output(byte *fb);
+    BigBoard(byte *fb, int board, int clock_pin, int latch_pin, int data_input_pin, int data_clock_pin);
+    void output();
 
   private:
     void write(bool b);
-    bool get_bit(byte *fb, int x, int y);
-    void output_segment(byte *fb, bool odd_lines, int segment);
+    bool get_bit(int x, int y);
+    void output_segment(bool odd_lines, int segment);
+
+    byte *fb;
 
     SoftSPI *spi;
     short buffer_size;

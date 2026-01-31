@@ -35,7 +35,9 @@
 
 #include "BigBoard.h"
 
-BigBoard::BigBoard(int board, int clock_pin, int latch_pin, int data_input_pin, int data_clock_pin) {
+BigBoard::BigBoard(byte *fb, int board, int clock_pin, int latch_pin, int data_input_pin, int data_clock_pin) {
+  this->fb = fb;
+
   this->board = board;
   this->clock_pin = clock_pin;
   this->latch_pin = latch_pin;
@@ -63,11 +65,11 @@ void BigBoard::write(bool bit) {
   }
 }
 
-bool BigBoard::get_bit(byte *fb, int x, int y) {
+bool BigBoard::get_bit(int x, int y) {
   return *(fb + (y * MAX_X) + (x / 8)) >> (7 - (x % 8)) & 1;
 }
 
-void BigBoard::output_segment(byte *fb, bool even_row, int segment) {
+void BigBoard::output_segment(bool even_row, int segment) {
   // Odd segments start in the first column and second row of the current segment
   // Even segments start in the last column and last row of the previous segment
   bool even_segment = segment % 2;
@@ -106,7 +108,7 @@ void BigBoard::output_segment(byte *fb, bool even_row, int segment) {
       offset_y = 25 - offset_y;
     }
 
-    write(get_bit(fb, offset_x, offset_y));
+    write(get_bit(offset_x, offset_y));
 
     // Odd segments contain 38 pixels
     // Even rows have columns of 6,7,6,7,6,6 pixels
@@ -132,19 +134,19 @@ void BigBoard::output_segment(byte *fb, bool even_row, int segment) {
   write(false);
 }
 
-void BigBoard::output(byte *fb) {
+void BigBoard::output() {
   spi->begin();
   digitalWrite(latch_pin, HIGH);
 
   for (int n = 0; n < 16; n++) {
-    output_segment(fb, false, n);
+    output_segment(false, n);
   }
 
   digitalWrite(latch_pin, LOW);
   digitalWrite(latch_pin, HIGH);
 
   for (int n = 0; n < 16; n++) {
-    output_segment(fb, true, n);
+    output_segment(true, n);
   }
 
   digitalWrite(latch_pin, LOW);

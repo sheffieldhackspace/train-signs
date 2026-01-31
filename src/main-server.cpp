@@ -9,14 +9,13 @@
 #include "Credentials.h"
 
 typedef struct msgRec {
-String *message;
+  String *message;
 } Record;
 
 cppQueue queue(sizeof(Record), 10, FIFO, true);
 WiFiServer server(80);
 
 GFXcanvas1 *canvas = NULL;
-uint8_t *buffer = NULL;
 BigClock *display = NULL;
 
 void setup() {
@@ -26,19 +25,17 @@ void setup() {
   canvas->setFont(&Font5x7Fixed);
   canvas->setTextSize(1);
   canvas->setTextColor(1);
-  buffer = canvas->getBuffer();
 
-  display = new BigClock();
-  display->init();
+  display = new BigClock(canvas->getBuffer());
+
+  canvas->fillScreen(0);
+  canvas->setCursor(0, 7);
+  canvas->print("SSID: ");
+  canvas->println(WIFI_SSID);
+  canvas->println("Connecting...");
+  display->output();
 
   while (WiFi.status() != WL_CONNECTED) {
-    canvas->fillScreen(0);
-    canvas->setCursor(0, 7);
-    canvas->print("SSID: ");
-    canvas->println(WIFI_SSID);
-    canvas->println("Connecting...");
-    display->output(buffer);
-
     delay(50);
   }
 
@@ -83,6 +80,6 @@ void loop() {
   canvas->fillScreen(0);
   canvas->setCursor(0, 7);
   canvas->println(*message);
-  display->output(buffer);
+  display->output();
   delay(50);
 }

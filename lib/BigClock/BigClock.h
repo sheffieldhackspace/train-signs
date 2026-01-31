@@ -11,9 +11,8 @@
 class BigClock
 {
   public:
-    BigClock();
-    void init();
-    void output(byte *fb);
+    BigClock(byte *fb);
+    void output();
     static void sCallback(void *arg);
     
   private:

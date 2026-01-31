@@ -35,12 +35,9 @@
 #include "BigBoard.h"
 #include "BigClock.h"
 
-BigClock::BigClock() {
-}
-
-void BigClock::init() {
-  board[BOARD_TOP] = new BigBoard(BOARD_TOP, D10, D6, D4, D2);
-  board[BOARD_BOTTOM] = new BigBoard(BOARD_BOTTOM, D11, D7, D5, D3);
+BigClock::BigClock(byte *fb) {
+  board[BOARD_TOP] = new BigBoard(fb, BOARD_TOP, D10, D6, D4, D2);
+  board[BOARD_BOTTOM] = new BigBoard(fb, BOARD_BOTTOM, D11, D7, D5, D3);
 
   xTaskCreate(BigClock::sCallback, "clock_task", 4096, NULL, 2, NULL);
 }
@@ -59,8 +56,8 @@ void BigClock::sCallback(void *arg) {
   }
 }
 
-void BigClock::output(byte *fb) {
-  board[BOARD_TOP]->output(fb);
-  board[BOARD_BOTTOM]->output(fb);
+void BigClock::output() {
+  board[BOARD_TOP]->output();
+  board[BOARD_BOTTOM]->output();
 }
 
