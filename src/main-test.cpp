@@ -30,8 +30,7 @@ BigClock *bc = NULL;
 void setup()
 {
     canvas = new GFXcanvas1(MAX_X, MAX_Y);
-    bc = new BigClock();
-    bc->init();
+    bc = new BigClock(canvas->getBuffer());
 }
 
 void loop()
@@ -50,7 +49,5 @@ void loop()
         }
     }
 
-    uint8_t *buffer = canvas->getBuffer();
-
-    bc->output(buffer);
+    bc->output();
 }

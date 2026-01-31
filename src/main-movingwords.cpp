@@ -22,8 +22,7 @@ int reversey = 0;
 
 void setup() {
   canvas = new GFXcanvas1(96, 26);
-  bc = new BigClock();
-  bc->init();
+  bc = new BigClock(canvas->getBuffer());
 }
 
 void loop() {
@@ -53,9 +52,7 @@ void loop() {
   canvas->setCursor(37 - scroll, 9 + scrolly);
   canvas->print("Hackspace");
 
-  uint8_t *buffer = canvas->getBuffer();
-
-  bc->output(buffer);
+  bc->output();
 
   delay(50);
 }
