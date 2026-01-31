@@ -2,9 +2,9 @@
 #include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <BigClock.h>
+#include <GFX_fonts/Font5x7Fixed.h>
 #include <WiFi.h>
 
-#include "GFX_fonts/Font5x7Fixed.h"
 #include "Credentials.h"
 
 WiFiServer server(80);
@@ -12,6 +12,8 @@ WiFiServer server(80);
 GFXcanvas1 *canvas = NULL;
 uint8_t *buffer = NULL;
 BigClock *display = NULL;
+
+String message;
 
 void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -28,23 +30,24 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     canvas->fillScreen(0);
     canvas->setCursor(0, 7);
-    canvas->println("WiFi...");
+    canvas->print("SSID: ");
+    canvas->println(WIFI_SSID);
+    canvas->println("Connecting...");
     display->output(buffer);
 
-    delay(100);
+    delay(50);
   }
 
   server.begin();
+
+  message = WiFi.localIP().toString();
+  message.concat(":80");
 }
 
 void loop() {
-  canvas->fillScreen(0);
-  canvas->setCursor(0, 7);
-  canvas->print(WiFi.localIP());
-  canvas->println(":80");
-
   if (WiFiClient client = server.accept()) {
     int b = 0;
+    message = String();
 
     while (client.available()) {
       char c = client.read();
@@ -59,10 +62,13 @@ void loop() {
         continue;
       }
 
-      canvas->print(c);
+      message.concat(c);
     }
   }
 
+  canvas->fillScreen(0);
+  canvas->setCursor(0, 7);
+  canvas->println(message);
   display->output(buffer);
-  delay(1000);
+  delay(50);
 }
