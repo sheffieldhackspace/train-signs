@@ -48,8 +48,7 @@ void setup() {
   message->concat(WiFi.localIP().toString());
   message->concat(":80");
 
-  Record record = { message };
-  queue.push(&record);
+  queue.push(new Record(message));
 }
 
 void loop() {
@@ -73,8 +72,7 @@ void loop() {
       message->concat(c);
     }
 
-    Record record = { message };
-    queue.push(&record);
+    queue.push(new Record(message));
   }
 
   uint32_t time = millis() / 5000;
