@@ -2,18 +2,22 @@
 #include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <BigClock.h>
+#include <cppQueue.h>
 #include <GFX_fonts/Font5x7Fixed.h>
 #include <WiFi.h>
 
 #include "Credentials.h"
 
+typedef struct msgRec {
+String *message;
+} Record;
+
+cppQueue queue(sizeof(Record), 10, FIFO, true);
 WiFiServer server(80);
 
 GFXcanvas1 *canvas = NULL;
 uint8_t *buffer = NULL;
 BigClock *display = NULL;
-
-String message;
 
 void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -40,14 +44,14 @@ void setup() {
 
   server.begin();
 
-  message = WiFi.localIP().toString();
-  message.concat(":80");
+  Record record = { new String(WiFi.localIP().toString() + ":80") };
+  queue.push(&record);
 }
 
 void loop() {
+  String *message = new String();
   if (WiFiClient client = server.accept()) {
     int b = 0;
-    message = String();
 
     while (client.available()) {
       char c = client.read();
@@ -62,13 +66,23 @@ void loop() {
         continue;
       }
 
-      message.concat(c);
+      message->concat(c);
     }
+
+    Record record = { message };
+    queue.push(&record);
   }
+
+  uint32_t time = millis() / 5000;
+  int index = time % queue.getCount();
+
+  Record record;
+  queue.peekIdx(&record, index);
+  message = record.message;
 
   canvas->fillScreen(0);
   canvas->setCursor(0, 7);
-  canvas->println(message);
+  canvas->println(*message);
   display->output(buffer);
   delay(50);
 }
