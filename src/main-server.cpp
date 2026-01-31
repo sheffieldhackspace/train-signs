@@ -18,6 +18,8 @@ WiFiServer server(80);
 GFXcanvas1 *canvas = NULL;
 BigClock *display = NULL;
 
+uint32_t last;
+
 void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
@@ -48,6 +50,7 @@ void setup() {
   message->concat(WiFi.localIP().toString());
   message->concat(":80");
 
+  last = millis();
   queue.push(new Record(message));
 }
 
@@ -73,10 +76,10 @@ void loop() {
     }
 
     queue.push(new Record(message));
+    last = millis();
   }
 
-  uint32_t time = millis() / 5000;
-  int index = time % queue.getCount();
+  int index = (queue.getCount() - 1) - ((millis() - last) / 5000) % queue.getCount();
 
   Record record;
   queue.peekIdx(&record, index);
