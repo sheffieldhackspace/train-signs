@@ -15,6 +15,7 @@
 WiFiServer server(80);
 
 uint8_t speed = 5;
+bool background = 0;
 String *message = NULL;
 
 GFXcanvas1 *canvas = NULL;
@@ -59,6 +60,8 @@ void loop() {
       JsonDocument document;
       deserializeJson(document, client);
       message = new String(document["text"]);
+      speed = document["speed"] | 1;
+      background = document["background"] | 0;
     }
   }
 
@@ -83,8 +86,8 @@ void loop() {
     }
   }
 
-  canvas->setTextColor(1);
-  canvas->fillScreen(0);
+  canvas->setTextColor(!background);
+  canvas->fillScreen(background);
   canvas->setCursor(0, start - offset);
   canvas->println(*message);
   display->output();
