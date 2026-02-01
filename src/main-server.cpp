@@ -71,15 +71,16 @@ void loop() {
 
   int16_t start = 4;
   int16_t stop;
-  int16_t frames = 40 + stop;
+  int16_t frames;
 
   if (h > BIG_CLOCK_HEIGHT) {
     stop = 1 + h - BIG_CLOCK_HEIGHT;
+    frames = 40 + stop;
     frame = (millis() / (1000 / speed)) % frames;
 
     if (frame < 20) {
       offset = 0;
-    } else if (frame < 20 + stop) {
+    } else if (frame - 20 < stop) {
       offset = frame - 20;
     } else {
       offset = stop;
