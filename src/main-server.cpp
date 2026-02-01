@@ -2,15 +2,15 @@
 #include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <BigClock.h>
-#include <MessageQueue.h>
 #include <Org01Condensed.h>
 #include <WiFi.h>
 
 #include "Credentials.h"
 
-MessageQueue *queue = new MessageQueue();
 WiFiServer server(80);
 
+uint8_t speed = 5;
+String *message = NULL;
 GFXcanvas1 *canvas = NULL;
 BigClock *display = NULL;
 
@@ -20,11 +20,11 @@ void setup() {
   canvas = new GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT);
   canvas->setFont(&Org01Condensed);
   canvas->setTextSize(1);
-  canvas->setTextColor(1);
 
   display = new BigClock(canvas->getBuffer());
 
-  canvas->fillScreen(0);
+  canvas->fillScreen(1);
+  canvas->setTextColor(0);
   canvas->setCursor(0, 4);
   canvas->print("SSID: ");
   canvas->println(WIFI_SSID);
@@ -37,19 +37,17 @@ void setup() {
 
   server.begin();
 
-  String *message = new String();
+  message = new String();
   message->concat("SSID: ");
   message->concat(WIFI_SSID);
   message->concat("\n");
   message->concat(WiFi.localIP().toString());
   message->concat(":80");
-
-  queue->push(new Record(message));
 }
 
 void loop() {
   if (WiFiClient client = server.accept()) {
-    String *message = new String();
+    message = new String();
     int b = 0;
     char c;
 
@@ -68,22 +66,33 @@ void loop() {
 
       message->concat(c);
     }
-
-    queue->push(new Record(message));
   }
 
   int16_t x, y;
-  uint16_t w, h, offset = 0;
+  uint16_t w, h, offset = 0, frame = 0;
 
-  canvas->getTextBounds(*queue->getCurrent()->message, 0, 0, &x, &y, &w, &h);
+  canvas->getTextBounds(*message, 0, 0, &x, &y, &w, &h);
+
+  int16_t start = 4;
+  int16_t stop = 1 + h - BIG_CLOCK_HEIGHT;
+  int16_t frames = 40 + stop;
 
   if (h > BIG_CLOCK_HEIGHT) {
-    offset = (h - BIG_CLOCK_HEIGHT) * queue->getProgress();
+    frame = (millis() / (1000 / speed)) % frames;
+
+    if (frame < 20) {
+      offset = 0;
+    } else if (frame < 20 + stop) {
+      offset = frame - 20;
+    } else {
+      offset = stop;
+    }
   }
 
+  canvas->setTextColor(1);
   canvas->fillScreen(0);
-  canvas->setCursor(0, 4 - offset);
-  canvas->println(*queue->getCurrent()->message);
+  canvas->setCursor(0, start - offset);
+  canvas->println(*message);
   display->output();
-  delay(50);
+  delay(1000 / speed);
 }
