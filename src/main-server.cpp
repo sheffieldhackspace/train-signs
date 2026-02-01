@@ -14,9 +14,10 @@
 
 WiFiServer server(80);
 
-uint8_t speed = 5;
+int8_t alignv = -1;
 bool background = 0;
 String *message = NULL;
+uint8_t speed = 5;
 
 GFXcanvas1 *canvas = NULL;
 BigClock *display = NULL;
@@ -59,9 +60,11 @@ void loop() {
 
       JsonDocument document;
       deserializeJson(document, client);
+
+      alignv = document["alignv"] | -1;
+      background = document["background"] | 0;
       message = new String(document["text"]);
       speed = document["speed"] | 1;
-      background = document["background"] | 0;
     }
   }
 
@@ -71,10 +74,11 @@ void loop() {
   canvas->getTextBounds(*message, 0, 0, &x, &y, &w, &h);
 
   int16_t start = 4;
-  int16_t stop = 1 + h - BIG_CLOCK_HEIGHT;
+  int16_t stop;
   int16_t frames = 40 + stop;
 
   if (h > BIG_CLOCK_HEIGHT) {
+    stop = 1 + h - BIG_CLOCK_HEIGHT;
     frame = (millis() / (1000 / speed)) % frames;
 
     if (frame < 20) {
@@ -83,6 +87,19 @@ void loop() {
       offset = frame - 20;
     } else {
       offset = stop;
+    }
+  } else {
+    stop = BIG_CLOCK_HEIGHT - h;
+    switch (alignv) {
+      case -1:
+        offset = 0;
+        break;
+      case 0:
+        offset = -(stop / 2);
+        break;
+      case 1:
+        offset = -(stop);
+        break;
     }
   }
 
