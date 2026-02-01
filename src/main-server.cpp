@@ -25,7 +25,7 @@ void setup() {
   display = new BigClock(canvas->getBuffer());
 
   canvas->fillScreen(0);
-  canvas->setCursor(0, 5);
+  canvas->setCursor(0, 4);
   canvas->print("SSID: ");
   canvas->println(WIFI_SSID);
   canvas->println("Connecting...");
@@ -72,8 +72,17 @@ void loop() {
     queue->push(new Record(message));
   }
 
+  int16_t x, y;
+  uint16_t w, h, offset = 0;
+
+  canvas->getTextBounds(*queue->getCurrent()->message, 0, 0, &x, &y, &w, &h);
+
+  if (h > BIG_CLOCK_HEIGHT) {
+    offset = (h - BIG_CLOCK_HEIGHT) * queue->getProgress();
+  }
+
   canvas->fillScreen(0);
-  canvas->setCursor(0, 5);
+  canvas->setCursor(0, 4 - offset);
   canvas->println(*queue->getCurrent()->message);
   display->output();
   delay(50);

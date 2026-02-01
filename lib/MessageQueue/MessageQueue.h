@@ -13,6 +13,7 @@ class MessageQueue {
     MessageQueue();
     bool push(Record *record);
     Record *getCurrent();
+    float getProgress();
 
   private:
     cppQueue *queue;

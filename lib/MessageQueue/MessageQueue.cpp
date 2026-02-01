@@ -21,3 +21,14 @@ Record *MessageQueue::getCurrent() {
   return record;
 }
 
+float MessageQueue::getProgress() {
+  uint32_t time = (millis() - updatedAt) % 5000;
+
+  if (time < 1000) {
+    return 0;
+  } else if (time > 4000) {
+    return 1;
+  } else {
+    return (time - 1000) / 3000.0;
+  }
+}
