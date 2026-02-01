@@ -18,17 +18,14 @@ bool background = 0;
 String *message = NULL;
 uint8_t speed = 5;
 
-GFXcanvas1 *canvas = NULL;
-BigClock *display = NULL;
+GFXcanvas1 *canvas = new GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT);
+BigClock *display = new BigClock(canvas->getBuffer());
 
 void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-  canvas = new GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT);
   canvas->setFont(&Org01Condensed);
   canvas->setTextSize(1);
-
-  display = new BigClock(canvas->getBuffer());
 
   canvas->fillScreen(1);
   canvas->setTextColor(0);
