@@ -1,16 +1,22 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <BigClock.h>
 #include <Org01Condensed.h>
 #include <WiFi.h>
 
 #include "Credentials.h"
 
+#ifndef HTTP_SEPARATOR
+#define HTTP_SEPARATOR "\r\n\r\n"
+#endif
+
 WiFiServer server(80);
 
 uint8_t speed = 5;
 String *message = NULL;
+
 GFXcanvas1 *canvas = NULL;
 BigClock *display = NULL;
 
@@ -47,24 +53,12 @@ void setup() {
 
 void loop() {
   if (WiFiClient client = server.accept()) {
-    message = new String();
-    int b = 0;
-    char c;
-
     while (client.available()) {
-      c = client.read();
+      client.find(HTTP_SEPARATOR);
 
-      if (b < 4) {
-        if (c == 10 || c == 13) {
-          b++;
-        } else {
-          b = 0;
-        }
-
-        continue;
-      }
-
-      message->concat(c);
+      JsonDocument document;
+      deserializeJson(document, client);
+      message = new String(document["text"]);
     }
   }
 
