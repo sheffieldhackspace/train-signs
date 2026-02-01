@@ -8,6 +8,7 @@
 #define BIG_CLOCK_HEIGHT 26
 
 #include "Arduino.h"
+#include "FreeRTOS.h"
 
 #include "BigBoard.h"
 

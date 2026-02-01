@@ -16,7 +16,7 @@
 class BigBoard
 {
   public:
-    BigBoard(byte *fb, int board, int clock_pin, int latch_pin, int data_input_pin, int data_clock_pin);
+    BigBoard(byte *fb, int board, int latch_pin, int data_input_pin, int data_clock_pin);
     void output();
 
   private:

@@ -29,17 +29,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Arduino.h"
-#include "FreeRTOS.h"
-
-#include "BigBoard.h"
 #include "BigClock.h"
 
 BigClock::BigClock(byte *fb) {
-  board[BOARD_TOP] = new BigBoard(fb, BOARD_TOP, D10, D6, D4, D2);
-  board[BOARD_BOTTOM] = new BigBoard(fb, BOARD_BOTTOM, D11, D7, D5, D3);
+  board[BOARD_TOP] = new BigBoard(fb, BOARD_TOP, D6, D4, D2);
+  board[BOARD_BOTTOM] = new BigBoard(fb, BOARD_BOTTOM, D7, D5, D3);
 
-  xTaskCreate(BigClock::sCallback, "clock_task", 4096, NULL, 2, NULL);
+  xTaskCreate(BigClock::sCallback, "keepalive", 4096, NULL, 2, NULL);
 }
 
 void BigClock::sCallback(void *arg) {

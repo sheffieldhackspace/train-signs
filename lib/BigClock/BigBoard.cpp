@@ -35,11 +35,10 @@
 
 #include "BigBoard.h"
 
-BigBoard::BigBoard(byte *fb, int board, int clock_pin, int latch_pin, int data_input_pin, int data_clock_pin) {
+BigBoard::BigBoard(byte *fb, int board, int latch_pin, int data_input_pin, int data_clock_pin) {
   this->fb = fb;
 
   this->board = board;
-  this->clock_pin = clock_pin;
   this->latch_pin = latch_pin;
   this->data_input_pin = data_input_pin;
   this->data_clock_pin = data_clock_pin;
