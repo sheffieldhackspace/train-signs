@@ -1,5 +1,4 @@
 #include <Adafruit_GFX.h>
-#include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <BigClock.h>
