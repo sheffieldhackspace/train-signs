@@ -30,9 +30,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Arduino.h"
-#include "SoftSPI.h"
-
 #include "BigBoard.h"
 
 BigBoard::BigBoard(byte *fb, int board, int dc, int mosi, int sck)
@@ -43,13 +40,12 @@ BigBoard::BigBoard(byte *fb, int board, int dc, int mosi, int sck)
   pinMode(this->_dc, OUTPUT);
 
   spi = new SoftSPI(this->_mosi, 0, this->_sck);
-  spi->setBitOrder(LSBFIRST);
-  spi->setClockDivider(SPI_CLOCK_DIV8);
-  spi->setDataMode(SPI_MODE1);
 }
 
 void BigBoard::write(bool bit) {
-  buffer |= (bit << buffer_size++);
+  buffer <<= 1;
+  buffer |= bit;
+  buffer_size++;
 
   if (buffer_size >= 8) {
     spi->transfer(buffer);
