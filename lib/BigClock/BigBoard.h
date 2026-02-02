@@ -16,7 +16,7 @@
 class BigBoard
 {
   public:
-    BigBoard(byte *fb, int board, int latch_pin, int data_input_pin, int data_clock_pin);
+    BigBoard(byte *fb, int board, int dc, int mosi, int sck);
     void output();
 
   private:
@@ -24,17 +24,15 @@ class BigBoard
     bool get_bit(int x, int y);
     void output_segment(bool odd_lines, int segment);
 
-    byte *fb;
-
     SoftSPI *spi;
     short buffer_size;
     byte buffer;
 
-    int board;
-    int clock_pin;
-    int latch_pin;
-    int data_input_pin;
-    int data_clock_pin;
+    byte *_fb;
+    int _board;
+    int _dc;
+    int _mosi;
+    int _sck;
 };
 
 #endif

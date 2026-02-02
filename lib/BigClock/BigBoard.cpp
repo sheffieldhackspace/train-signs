@@ -35,20 +35,14 @@
 
 #include "BigBoard.h"
 
-BigBoard::BigBoard(byte *fb, int board, int latch_pin, int data_input_pin, int data_clock_pin) {
-  this->fb = fb;
-
-  this->board = board;
-  this->latch_pin = latch_pin;
-  this->data_input_pin = data_input_pin;
-  this->data_clock_pin = data_clock_pin;
-
+BigBoard::BigBoard(byte *fb, int board, int dc, int mosi, int sck)
+  : _fb(fb), _board(board), _dc(dc), _mosi(mosi), _sck(sck) {
   this->buffer = 0;
   this->buffer_size = 0;
 
-  pinMode(this->latch_pin, OUTPUT);
+  pinMode(this->_dc, OUTPUT);
 
-  spi = new SoftSPI(this->data_input_pin, 0, this->data_clock_pin);
+  spi = new SoftSPI(this->_mosi, 0, this->_sck);
   spi->setBitOrder(LSBFIRST);
   spi->setClockDivider(SPI_CLOCK_DIV8);
   spi->setDataMode(SPI_MODE1);
@@ -65,7 +59,7 @@ void BigBoard::write(bool bit) {
 }
 
 bool BigBoard::get_bit(int x, int y) {
-  return *(fb + (y * MAX_X) + (x / 8)) >> (7 - (x % 8)) & 1;
+  return *(_fb + (y * MAX_X) + (x / 8)) >> (7 - (x % 8)) & 1;
 }
 
 void BigBoard::output_segment(bool even_row, int segment) {
@@ -102,7 +96,7 @@ void BigBoard::output_segment(bool even_row, int segment) {
     // Segments travel to the bottom right of the display
     // First segment of the top board starts in the middle right of the display
     // Segments travel to the top left of the display
-    if (board == BOARD_TOP) {
+    if (_board == BOARD_TOP) {
       offset_x = 95 - offset_x;
       offset_y = 25 - offset_y;
     }
@@ -135,20 +129,20 @@ void BigBoard::output_segment(bool even_row, int segment) {
 
 void BigBoard::output() {
   spi->begin();
-  digitalWrite(latch_pin, HIGH);
+  digitalWrite(_dc, HIGH);
 
   for (int n = 0; n < 16; n++) {
     output_segment(false, n);
   }
 
-  digitalWrite(latch_pin, LOW);
-  digitalWrite(latch_pin, HIGH);
+  digitalWrite(_dc, LOW);
+  digitalWrite(_dc, HIGH);
 
   for (int n = 0; n < 16; n++) {
     output_segment(true, n);
   }
 
-  digitalWrite(latch_pin, LOW);
+  digitalWrite(_dc, LOW);
   spi->end();
 }
 
