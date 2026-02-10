@@ -25,31 +25,32 @@
 #include "Adafruit_BigClock.h"
 
 Adafruit_BigClock::Adafruit_BigClock(BigBoard *board0, BigBoard *board1, uint8_t keepalive0, uint8_t keepalive1)
-  : GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT), _keepalive0(keepalive0), _keepalive1(keepalive1) {
-  board[BOARD_BOTTOM] = board0;
-  board[BOARD_TOP] = board1;
-
+  : GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT), _board{board0, board1} {
   board0->setBuffer(buffer);
   board1->setBuffer(buffer);
 
-  xTaskCreate(keepaliveCallback, "keepalive", 4096, NULL, 2, NULL);
+  auto *keepalive = new uint8_t[]{keepalive0, keepalive1};
+  xTaskCreate(keepaliveCallback, "keepalive", 4096, (void *) keepalive, 2, NULL);
 }
 
-void Adafruit_BigClock::display(void) {
-  board[BOARD_TOP]->display();
-  board[BOARD_BOTTOM]->display();
+void Adafruit_BigClock::display() const {
+  _board[BOARD_TOP]->display();
+  _board[BOARD_BOTTOM]->display();
 }
 
-void Adafruit_BigClock::keepaliveCallback(void *arg) {
+[[noreturn]] void Adafruit_BigClock::keepaliveCallback(void *arg) {
+  const auto *keepalive = static_cast<uint8_t *>(arg);
+
   while (true) {
-    pinMode(D7, OUTPUT);
-    pinMode(D8, OUTPUT);
+    pinMode(keepalive[0], OUTPUT);
+    pinMode(keepalive[1], OUTPUT);
 
-    digitalWrite(D7, HIGH);
-    digitalWrite(D8, HIGH);
+    digitalWrite(keepalive[0], HIGH);
+    digitalWrite(keepalive[1], HIGH);
     delay(2);
-    digitalWrite(D7, LOW);
-    digitalWrite(D8, LOW);
+
+    digitalWrite(keepalive[0], LOW);
+    digitalWrite(keepalive[1], LOW);
     delay(2);
   }
 }
