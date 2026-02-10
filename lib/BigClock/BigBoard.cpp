@@ -141,4 +141,3 @@ void BigBoard::output() {
   digitalWrite(_dc, LOW);
   spi->end();
 }
-

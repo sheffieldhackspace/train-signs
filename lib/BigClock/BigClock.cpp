@@ -56,4 +56,3 @@ void BigClock::output() {
   board[BOARD_TOP]->output();
   board[BOARD_BOTTOM]->output();
 }
-

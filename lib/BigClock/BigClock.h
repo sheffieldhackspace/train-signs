@@ -11,15 +11,14 @@
 
 #include "BigBoard.h"
 
-class BigClock
-{
-  public:
-    BigClock(byte *fb);
-    void output();
-    static void sCallback(void *arg);
-    
-  private:
-    BigBoard *board[2];
+class BigClock {
+public:
+  BigClock(byte *fb);
+  void output();
+  static void sCallback(void *arg);
+
+private:
+  BigBoard *board[2];
 };
 
 #endif
