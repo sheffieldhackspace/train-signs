@@ -40,9 +40,7 @@ void setup() {
   canvas->fillScreen(1);
   canvas->setTextColor(0);
   canvas->setCursor(0, 4);
-  canvas->print("SSID: ");
-  canvas->println(WIFI_SSID);
-  canvas->println("Connecting...");
+  canvas->print("SSID: " + (String) WIFI_SSID + "\nConnecting...");
   canvas->display();
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -51,12 +49,7 @@ void setup() {
 
   server.begin();
 
-  message = new String();
-  message->concat("SSID: ");
-  message->concat(WIFI_SSID);
-  message->concat("\n");
-  message->concat(WiFi.localIP().toString());
-  message->concat(":80");
+  message = new String("SSID: " + (String) WIFI_SSID + "\n" + WiFi.localIP().toString() + ":80");
 }
 
 void loop() {
