@@ -13,7 +13,13 @@
 
 WiFiServer server(80);
 
-int8_t alignv = -1;
+enum VERTICAL_ALIGNMENT {
+  TOP = -1,
+  CENTER = 0,
+  BOTTOM = 1,
+};
+
+VERTICAL_ALIGNMENT alignv = TOP;
 bool background = 0;
 String *message = NULL;
 uint8_t speed = 5;
@@ -57,23 +63,22 @@ void loop() {
       JsonDocument document;
       deserializeJson(document, client);
 
-      alignv = document["alignv"] | -1;
+      alignv = document["alignv"] | TOP;
       background = document["background"] | 0;
       message = new String(document["text"]);
       speed = document["speed"] | 1;
     }
   }
 
-  int16_t x, y, offset = 0;
+  int16_t x, y;
   uint16_t w, h;
 
   canvas->getTextBounds(*message, 0, 0, &x, &y, &w, &h);
 
-  int16_t start = -y;
-  int16_t stop;
+  int16_t start = -y, offset = 0;
 
   if (h > BIG_CLOCK_HEIGHT) {
-    stop = h - BIG_CLOCK_HEIGHT;
+    int16_t stop = h - BIG_CLOCK_HEIGHT;
     int16_t frames = 40 + stop;
     uint16_t frame = (millis() / (1000 / speed)) % frames;
 
@@ -85,16 +90,15 @@ void loop() {
       offset = -stop;
     }
   } else {
-    stop = BIG_CLOCK_HEIGHT - h;
     switch (alignv) {
-      case -1:
+      case TOP:
         offset = 0;
         break;
-      case 0:
-        offset = stop / 2;
+      case CENTER:
+        offset = (BIG_CLOCK_HEIGHT - h) / 2;
         break;
-      case 1:
-        offset = stop;
+      case BOTTOM:
+        offset = BIG_CLOCK_HEIGHT - h;
         break;
     }
   }
