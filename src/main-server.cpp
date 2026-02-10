@@ -1,7 +1,6 @@
-#include <Adafruit_GFX.h>
+#include <Adafruit_BigClock.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <BigClock.h>
 #include <Org01Condensed.h>
 #include <WiFi.h>
 
@@ -23,9 +22,14 @@ VERTICAL_ALIGNMENT alignv = TOP;
 bool background = 0;
 String *message = NULL;
 uint8_t speed = 5;
+uint16_t frame = 0;
 
-GFXcanvas1 *canvas = new GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT);
-BigClock *display = new BigClock(canvas->getBuffer());
+Adafruit_BigClock *canvas = new Adafruit_BigClock(
+  new BigBoard(BOARD_TOP, D5, D3, D1),
+  new BigBoard(BOARD_BOTTOM, D6, D4, D2),
+  D7,
+  D8
+);
 
 void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -39,7 +43,7 @@ void setup() {
   canvas->print("SSID: ");
   canvas->println(WIFI_SSID);
   canvas->println("Connecting...");
-  display->output();
+  canvas->display();
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(50);
@@ -67,6 +71,7 @@ void loop() {
       background = document["background"] | 0;
       message = new String(document["text"]);
       speed = document["speed"] | 1;
+      frame = 0;
     }
   }
 
@@ -80,7 +85,7 @@ void loop() {
   if (h > BIG_CLOCK_HEIGHT) {
     int16_t stop = h - BIG_CLOCK_HEIGHT;
     int16_t frames = 40 + stop;
-    uint16_t frame = (millis() / (1000 / speed)) % frames;
+    frame = frame >= frames ? 0 : frame + 1;
 
     if (frame < 20) {
       offset = 0;
@@ -107,6 +112,7 @@ void loop() {
   canvas->fillScreen(background);
   canvas->setCursor(0, start + offset);
   canvas->println(*message);
-  display->output();
+  canvas->display();
+
   delay(1000 / speed);
 }

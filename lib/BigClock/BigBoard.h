@@ -8,14 +8,16 @@
 #include <Adafruit_SPIDevice.h>
 
 enum BOARD {
-  BOARD_BOTTOM,
-  BOARD_TOP,
+  BOARD_BOTTOM = 0,
+  BOARD_TOP = 1,
 };
 
 class BigBoard {
 public:
+  BigBoard(BOARD board, int dc, int mosi, int sck);
   BigBoard(byte *fb, BOARD board, int dc, int mosi, int sck);
-  void output();
+  void setBuffer(byte *fb);
+  void display();
 
 private:
   void write(bool b);

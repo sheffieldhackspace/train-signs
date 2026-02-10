@@ -32,10 +32,20 @@
 
 #include "BigBoard.h"
 
+BigBoard::BigBoard(BOARD board, int dc, int mosi, int sck)
+  : _fb(nullptr), _board(board), _dc(dc), _buffer(0), _buffer_size(0),
+    _spi(new Adafruit_SPIDevice(-1, sck, -1, mosi, SPI_CLOCK_DIV2, SPI_BITORDER_MSBFIRST, SPI_MODE1)) {
+  _spi->begin();
+}
+
 BigBoard::BigBoard(byte *fb, BOARD board, int dc, int mosi, int sck)
   : _fb(fb), _board(board), _dc(dc), _buffer(0), _buffer_size(0),
     _spi(new Adafruit_SPIDevice(-1, sck, -1, mosi, SPI_CLOCK_DIV2, SPI_BITORDER_MSBFIRST, SPI_MODE1)) {
   _spi->begin();
+}
+
+void BigBoard::setBuffer(byte *fb) {
+  this->_fb = fb;
 }
 
 void BigBoard::write(bool bit) {
@@ -119,7 +129,7 @@ void BigBoard::output_segment(bool even_row, int segment) {
   write(false);
 }
 
-void BigBoard::output() {
+void BigBoard::display() {
   pinMode(_dc, OUTPUT);
   digitalWrite(_dc, HIGH);
 
