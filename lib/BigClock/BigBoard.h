@@ -15,11 +15,7 @@ enum BOARD {
 class BigBoard {
 public:
   BigBoard(BOARD board, int dc, int mosi, int sck);
-  BigBoard(byte *fb, BOARD board, int dc, int mosi, int sck);
   void setBuffer(byte *fb);
-  void display();
-
-private:
   void write(bool b);
   bool get_bit(int x, int y);
   void output_segment(bool odd_lines, int segment);

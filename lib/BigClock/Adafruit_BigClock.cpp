@@ -33,9 +33,27 @@ Adafruit_BigClock::Adafruit_BigClock(BigBoard *board0, BigBoard *board1, uint8_t
   xTaskCreate(keepaliveCallback, "keepalive", 4096, (void *) keepalive, 2, NULL);
 }
 
-void Adafruit_BigClock::display() const {
-  _board[BOARD_TOP]->display();
-  _board[BOARD_BOTTOM]->display();
+void Adafruit_BigClock::display() {
+  displayBoard(BOARD_TOP);
+  displayBoard(BOARD_BOTTOM);
+}
+
+void Adafruit_BigClock::displayBoard(BOARD board) {
+  pinMode(_board[board]->_dc, OUTPUT);
+  digitalWrite(_board[board]->_dc, HIGH);
+
+  for (int n = 0; n < 16; n++) {
+    _board[board]->output_segment(false, n);
+  }
+
+  digitalWrite(_board[board]->_dc, LOW);
+  digitalWrite(_board[board]->_dc, HIGH);
+
+  for (int n = 0; n < 16; n++) {
+    _board[board]->output_segment(true, n);
+  }
+
+  digitalWrite(_board[board]->_dc, LOW);
 }
 
 [[noreturn]] void Adafruit_BigClock::keepaliveCallback(void *arg) {

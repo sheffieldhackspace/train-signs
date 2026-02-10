@@ -36,10 +36,12 @@
 class Adafruit_BigClock : public GFXcanvas1 {
 public:
   Adafruit_BigClock(BigBoard *board0, BigBoard *board1, uint8_t keepalive0, uint8_t keepalive1);
-  void display() const;
+  void display();
   [[noreturn]] static void keepaliveCallback(void *arg);
 
 private:
+  void displayBoard(BOARD board);
+
   BigBoard *_board[2];
 };
 
