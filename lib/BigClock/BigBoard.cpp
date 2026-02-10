@@ -32,29 +32,23 @@
 
 #include "BigBoard.h"
 
-BigBoard::BigBoard(byte *fb, int board, int dc, int mosi, int sck)
-  : _fb(fb), _board(board), _dc(dc), _mosi(mosi), _sck(sck) {
-  this->buffer = 0;
-  this->buffer_size = 0;
-
-
-  spi = new SoftSPI(this->_mosi, 0, this->_sck);
-}
+BigBoard::BigBoard(byte *fb, BOARD board, int dc, int mosi, int sck)
+  : _fb(fb), _board(board), _dc(dc), _buffer(0), _buffer_size(0), _spi(new SoftSPI(mosi, 0, sck)) {}
 
 void BigBoard::write(bool bit) {
-  buffer <<= 1;
-  buffer |= bit;
-  buffer_size++;
+  _buffer <<= 1;
+  _buffer |= bit;
+  _buffer_size++;
 
-  if (buffer_size >= 8) {
-    spi->transfer(buffer);
-    buffer = 0;
-    buffer_size = 0;
+  if (_buffer_size >= 8) {
+    _spi->transfer(_buffer);
+    _buffer = 0;
+    _buffer_size = 0;
   }
 }
 
 bool BigBoard::get_bit(int x, int y) {
-  return *(_fb + (y * MAX_X) + (x / 8)) >> (7 - (x % 8)) & 1;
+  return *(_fb + (y * 12) + (x / 8)) >> (7 - (x % 8)) & 1;
 }
 
 void BigBoard::output_segment(bool even_row, int segment) {
@@ -123,7 +117,7 @@ void BigBoard::output_segment(bool even_row, int segment) {
 }
 
 void BigBoard::output() {
-  spi->begin();
+  _spi->begin();
   pinMode(_dc, OUTPUT);
   digitalWrite(_dc, HIGH);
 
@@ -139,5 +133,5 @@ void BigBoard::output() {
   }
 
   digitalWrite(_dc, LOW);
-  spi->end();
+  _spi->end();
 }
