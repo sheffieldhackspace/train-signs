@@ -37,7 +37,6 @@ BigBoard::BigBoard(byte *fb, int board, int dc, int mosi, int sck)
   this->buffer = 0;
   this->buffer_size = 0;
 
-  pinMode(this->_dc, OUTPUT);
 
   spi = new SoftSPI(this->_mosi, 0, this->_sck);
 }
@@ -125,6 +124,7 @@ void BigBoard::output_segment(bool even_row, int segment) {
 
 void BigBoard::output() {
   spi->begin();
+  pinMode(_dc, OUTPUT);
   digitalWrite(_dc, HIGH);
 
   for (int n = 0; n < 16; n++) {

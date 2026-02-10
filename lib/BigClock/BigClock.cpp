@@ -32,22 +32,22 @@
 #include "BigClock.h"
 
 BigClock::BigClock(byte *fb) {
-  board[BOARD_TOP] = new BigBoard(fb, BOARD_TOP, D6, D4, D2);
-  board[BOARD_BOTTOM] = new BigBoard(fb, BOARD_BOTTOM, D7, D5, D3);
+  board[BOARD_TOP] = new BigBoard(fb, BOARD_TOP, D5, D3, D1);
+  board[BOARD_BOTTOM] = new BigBoard(fb, BOARD_BOTTOM, D6, D4, D2);
 
   xTaskCreate(BigClock::sCallback, "keepalive", 4096, NULL, 2, NULL);
 }
 
 void BigClock::sCallback(void *arg) {
-  pinMode(D10, OUTPUT);
-  pinMode(D11, OUTPUT);
-
   while (true) {
-    digitalWrite(D10, HIGH);
-    digitalWrite(D11, HIGH);
+    pinMode(D7, OUTPUT);
+    pinMode(D8, OUTPUT);
+
+    digitalWrite(D7, HIGH);
+    digitalWrite(D8, HIGH);
     delay(2);
-    digitalWrite(D10, LOW);
-    digitalWrite(D11, LOW);
+    digitalWrite(D7, LOW);
+    digitalWrite(D8, LOW);
     delay(2);
   }
 }
