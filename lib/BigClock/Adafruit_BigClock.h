@@ -33,6 +33,11 @@
 #define BIG_CLOCK_WIDTH 96
 #define BIG_CLOCK_HEIGHT 26
 
+enum BOARD {
+  BOARD_BOTTOM = 0,
+  BOARD_TOP = 1,
+};
+
 class Adafruit_BigClock : public GFXcanvas1 {
 public:
   Adafruit_BigClock(BigBoard *board0, BigBoard *board1, uint8_t keepalive0, uint8_t keepalive1);
@@ -41,6 +46,7 @@ public:
 
 private:
   void displayBoard(BOARD board);
+  void displaySegment(BOARD board, uint8_t segment, bool even_row);
 
   BigBoard *_board[2];
 };

@@ -32,14 +32,10 @@
 
 #include "BigBoard.h"
 
-BigBoard::BigBoard(BOARD board, int dc, int mosi, int sck)
-  : _fb(nullptr), _board(board), _dc(dc), _buffer(0), _buffer_size(0),
-    _spi(new Adafruit_SPIDevice(-1, sck, -1, mosi, SPI_CLOCK_DIV2, SPI_BITORDER_MSBFIRST, SPI_MODE1)) {
+BigBoard::BigBoard(int dc, int mosi, int sck)
+  : _spi(new Adafruit_SPIDevice(-1, sck, -1, mosi, SPI_CLOCK_DIV2, SPI_BITORDER_MSBFIRST, SPI_MODE1)),
+    _dc(dc), _buffer(0), _buffer_size(0) {
   _spi->begin();
-}
-
-void BigBoard::setBuffer(byte *fb) {
-  this->_fb = fb;
 }
 
 void BigBoard::write(bool bit) {
@@ -52,73 +48,4 @@ void BigBoard::write(bool bit) {
     _buffer = 0;
     _buffer_size = 0;
   }
-}
-
-bool BigBoard::get_bit(int x, int y) {
-  return *(_fb + (y * 12) + (x / 8)) >> (7 - (x % 8)) & 1;
-}
-
-void BigBoard::output_segment(bool even_row, int segment) {
-  // Odd segments start in the first column and second row of the current segment
-  // Even segments start in the last column and last row of the previous segment
-  bool even_segment = segment % 2;
-  int x = even_segment ? -1 : 0;
-  int y = even_segment ? 6 : 1;
-
-  // Even segments have 40 pixels
-  // Odd segments have 38 pixels, but still requires 40 bits (5 bytes) of data
-  for (int i = 0; i < 40; i++) {
-    // Display origin point is in the upper left corner
-    // Coordinates are growing bottom right
-    int offset_x = (segment * 6) + x;
-    int offset_y = 12 + (2 * y) + (even_row ? 1 : 0);
-
-    // To whoever designed this part:
-    // You know what you did, I hope your partner steals your duvet every night.
-
-    // Long story short:
-    // Even rows start with a column of 6 pixels: 0,1,2,3,4,5
-    // Odd rows start with a column of 7 pixels: 1,2,3,4,5,6,0
-    //
-    // It is significantly easier to count the odd rows as still having 6 pixels
-    // and then take the first pixel of the next column that is "out of bounds"
-    // and manually move it to the "pixel 0" of the previous column.
-    if (offset_y == 12) {
-      offset_x -= 1;
-      offset_y = 13;
-    }
-
-    // First segment of the bottom board starts in the middle left of the display
-    // Segments travel to the bottom right of the display
-    // First segment of the top board starts in the middle right of the display
-    // Segments travel to the top left of the display
-    if (_board == BOARD_TOP) {
-      offset_x = 95 - offset_x;
-      offset_y = 25 - offset_y;
-    }
-
-    write(get_bit(offset_x, offset_y));
-
-    // Odd segments contain 38 pixels
-    // Even rows have columns of 6,7,6,7,6,6 pixels
-    // Odd rows have columns of 7,6,7,6,7,5 pixels
-    // Even segments contain 40 pixels
-    // Even rows have colums of 1,6,7,6,7,6,7 pixels
-    // Odd rows have colums of 1,7,6,7,6,7,6 pixels
-    if (y < 6) {
-      y++;
-    } else {
-      x++;
-      y = (x % 2) ? 0 : 1;
-    }
-  }
-
-  write(even_row);
-  write(false);
-  write(false);
-  write(false);
-  write(false);
-  write(false); // all white
-  write(false);
-  write(false);
 }

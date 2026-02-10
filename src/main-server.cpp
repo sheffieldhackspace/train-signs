@@ -25,8 +25,8 @@ uint8_t speed = 5;
 uint16_t frame = 0;
 
 Adafruit_BigClock *canvas = new Adafruit_BigClock(
-  new BigBoard(BOARD_TOP, D5, D3, D1),
-  new BigBoard(BOARD_BOTTOM, D6, D4, D2),
+  new BigBoard(D6, D4, D2),
+  new BigBoard(D5, D3, D1),
   D7,
   D8
 );
