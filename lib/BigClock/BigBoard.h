@@ -5,7 +5,7 @@
 #define BigBoard_h
 
 #include <Arduino.h>
-#include <SoftSPI.h>
+#include <Adafruit_SPIDevice.h>
 
 enum BOARD {
   BOARD_BOTTOM,
@@ -22,7 +22,7 @@ private:
   bool get_bit(int x, int y);
   void output_segment(bool odd_lines, int segment);
 
-  SoftSPI *_spi;
+  Adafruit_SPIDevice *_spi;
   short _buffer_size;
   byte _buffer;
 
