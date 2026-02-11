@@ -1,53 +1,32 @@
-/* checkerboard
-Show a checkerboard pattern on the screen.
-The corners are inverted
-*/
+/**
+ * test
+ * Presents the display test.
+ */
+
+#include <Adafruit_BigClock.h>
 #include <Arduino.h>
 
-#include <Adafruit_I2CDevice.h>
-#include <Adafruit_GFX.h>
-#include <BigClock.h>
+Adafruit_BigClock *canvas = new Adafruit_BigClock(
+  new Adafruit_BigClockSPI(D2, D4, D6, D8),
+  new Adafruit_BigClockSPI(D1, D3, D5, D7)
+);
 
-#ifdef __AVR__
-#define BOARDSEL_PIN 2
-#define LATCH_PIN 4
-#define WOUT_PIN 6
-#endif
-#ifdef ESP8266
-#define BOARDSEL_PIN 12 // D6
-#define LATCH_PIN 13    // D7
-#define WOUT_PIN 14     // D5
-#endif
+void setup() {
+  canvas->begin();
 
-#define MIN_X 0
-#define MAX_X 96
-#define MIN_Y 0
-#define MAX_Y 26
+  for (int i = 0; i < BIG_CLOCK_WIDTH; i++) {
+    for (int j = 0; j < BIG_CLOCK_HEIGHT; j++) {
+      bool bit = false;
+      bit |= i >= 0 && i < 12 && j % 2 == 1;
+      bit |= i >= 12 && i < 24 && i % 2 == 0;
+      bit |= i >= 24 && i < 36 && (i + j) % 2;
 
-GFXcanvas1 *canvas = NULL;
-BigClock *bc = NULL;
+      canvas->drawPixel(i, j, bit);
+    }
+  }
 
-void setup()
-{
-    canvas = new GFXcanvas1(MAX_X, MAX_Y);
-    bc = new BigClock(canvas->getBuffer());
+  canvas->display();
 }
 
-void loop()
-{
-    bool bit;
-    for (int i = 0; i < MAX_X; i++)
-    {
-        for (int j = 0; j < MAX_Y; j++)
-        {
-            bit = false;
-            bit |= i >= 0 && i < 12 && j % 2 == 1;
-            bit |= i >= 12 && i < 24 && i % 2 == 0;
-            bit |= i >= 24 && i < 36 && (i + j) % 2;
-
-            canvas->drawPixel(i, j, bit);
-        }
-    }
-
-    bc->output();
+void loop() {
 }

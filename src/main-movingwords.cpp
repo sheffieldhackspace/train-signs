@@ -1,18 +1,13 @@
-/* movingwords
-Scroll two lines of text around on the display
+/**
+ * movingwords
+ * Scroll two lines of text around on the display.
 */
 
+#include <Adafruit_BigClock.h>
 #include <Arduino.h>
-
-#include <Adafruit_GFX.h>
-#include <Adafruit_I2CDevice.h>
-#include <BigClock.h>
 
 #define MAX_X_DEVIATION 36
 #define MAX_Y_DEVIATION 9
-
-GFXcanvas1 *canvas = NULL;
-BigClock *bc = NULL;
 
 uint8_t scroll = 0;
 int reverse = 0;
@@ -20,9 +15,13 @@ int reverse = 0;
 uint8_t scrolly = 0;
 int reversey = 0;
 
+Adafruit_BigClock *canvas = new Adafruit_BigClock(
+  new Adafruit_BigClockSPI(D2, D4, D6, D8),
+  new Adafruit_BigClockSPI(D1, D3, D5, D7)
+);
+
 void setup() {
-  canvas = new GFXcanvas1(96, 26);
-  bc = new BigClock(canvas->getBuffer());
+  canvas->begin();
 }
 
 void loop() {
@@ -52,7 +51,7 @@ void loop() {
   canvas->setCursor(37 - scroll, 9 + scrolly);
   canvas->print("Hackspace");
 
-  bc->output();
+  canvas->display();
 
   delay(50);
 }
