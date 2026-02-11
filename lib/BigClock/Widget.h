@@ -29,13 +29,26 @@
 
 #include "Adafruit_BigClock.h"
 
+enum VERTICAL_ALIGN {
+  TOP = -1,
+  MIDDLE = 0,
+  BOTTOM = 1,
+};
+
+enum TEXT_ALIGN {
+  LEFT = -1,
+  CENTER = 0,
+  RIGHT = 1,
+};
+
 class Widget {
 public:
   Widget(Adafruit_BigClock *canvas)
-    : _canvas(canvas), _frame(0), _frames(1), _message(nullptr), _speed(5) {}
+    : _canvas(canvas), _frame(0), _frames(1), _message(nullptr), _speed(5), _text_align(LEFT), _vertical_align(TOP) {}
 
   void begin();
   void display();
+  void getAlignmentOffset(int16_t w, int16_t h, int16_t *ax, int16_t *ay);
   void waitForNextFrame();
 
   void setInvert(bool invert) {
@@ -47,7 +60,17 @@ public:
     _message = message;
   }
 
-  void setSpeed(uint8_t speed) { _speed = speed; }
+  void setSpeed(uint8_t speed) {
+    _speed = speed;
+  }
+
+  void setTextAlign(TEXT_ALIGN align) {
+    _text_align = align;
+  }
+
+  void setVerticalAlign(VERTICAL_ALIGN align) {
+    _vertical_align = align;
+  }
 
 private:
   Adafruit_BigClock *_canvas;
@@ -56,6 +79,8 @@ private:
 
   String *_message;
   uint8_t _speed;
+  TEXT_ALIGN _text_align;
+  VERTICAL_ALIGN _vertical_align;
 };
 
 

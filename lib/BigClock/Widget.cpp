@@ -33,14 +33,38 @@ void Widget::begin() {
 }
 
 void Widget::display() {
-  int16_t x, y;
+  int16_t x, y, ax, ay;
   uint16_t w, h;
 
-  _canvas->fillScreen(0);
   _canvas->getTextBounds(*_message, 0, 0, &x, &y, &w, &h);
-  _canvas->setCursor(-x, -y);
+  getAlignmentOffset(w, h, &ax, &ay);
+
+  _canvas->fillScreen(0);
+  _canvas->setCursor(-x + ax, -y + ay);
   _canvas->println(*_message);
   _canvas->display();
+}
+
+void Widget::getAlignmentOffset(int16_t w, int16_t h, int16_t *ax, int16_t *ay) {
+  int16_t yd = BC_HEIGHT - h;
+  int16_t xd = BC_WIDTH - w;
+  *ax = *ay = 0;
+
+  if (yd > 0) {
+    if (_vertical_align == MIDDLE) {
+      *ay = yd / 2;
+    } else if (_vertical_align == BOTTOM) {
+      *ay = yd;
+    }
+  }
+
+  if (xd > 0) {
+    if (_text_align == CENTER) {
+      *ax = xd / 2;
+    } else if (_text_align == RIGHT) {
+      *ax = xd;
+    }
+  }
 }
 
 void Widget::waitForNextFrame() {

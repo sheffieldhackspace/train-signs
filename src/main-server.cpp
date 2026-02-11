@@ -12,13 +12,6 @@
 
 WiFiServer server(80);
 
-enum VERTICAL_ALIGNMENT {
-  TOP = -1,
-  CENTER = 0,
-  BOTTOM = 1,
-};
-
-VERTICAL_ALIGNMENT alignv = TOP;
 
 Widget *widget = new Widget(
   new Adafruit_BigClock(
@@ -58,10 +51,11 @@ void loop() {
       JsonDocument document;
       deserializeJson(document, client);
 
-      alignv = document["alignv"] | TOP;
       widget->setInvert(document["invert"] | false);
       widget->setMessage(new String(document["message"] | ""));
       widget->setSpeed(document["speed"] | 5);
+      widget->setTextAlign(document["text_align"] | LEFT);
+      widget->setVerticalAlign(document["vertical_align"] | TOP);
     }
   }
 
@@ -77,21 +71,7 @@ void loop() {
   //   } else {
   //     offset = -stop;
   //   }
-  // } else {
-  //   switch (alignv) {
-  //     case TOP:
-  //       offset = 0;
-  //       break;
-  //     case CENTER:
-  //       offset = (BC_HEIGHT - h) / 2;
-  //       break;
-  //     case BOTTOM:
-  //       offset = BC_HEIGHT - h;
-  //       break;
-  //   }
   // }
-  //
-  // canvas->setCursor(0, start + offset);
   widget->display();
   widget->waitForNextFrame();
 }
