@@ -27,42 +27,74 @@
 void Widget::begin() {
   _canvas->begin();
   _canvas->setTextSize(1);
+  _canvas->setTextWrap(false);
   _canvas->fillScreen(0);
   _canvas->setTextColor(1);
   _canvas->setFont(&Org01Condensed);
 }
 
 void Widget::display() {
-  int16_t x, y, ax, ay;
+  int16_t x, y, ax, ay, bx, by;
   uint16_t w, h;
 
   _canvas->getTextBounds(*_message, 0, 0, &x, &y, &w, &h);
   getAlignmentOffset(w, h, &ax, &ay);
+  getAnimationOffset(w, h, &bx, &by);
 
   _canvas->fillScreen(0);
-  _canvas->setCursor(-x + ax, -y + ay);
+  _canvas->setCursor(-x + ax + bx, -y + ay + by);
   _canvas->println(*_message);
   _canvas->display();
 }
 
-void Widget::getAlignmentOffset(int16_t w, int16_t h, int16_t *ax, int16_t *ay) {
+void Widget::getAlignmentOffset(int16_t w, int16_t h, int16_t *x1, int16_t *y1) {
   int16_t yd = BC_HEIGHT - h;
   int16_t xd = BC_WIDTH - w;
-  *ax = *ay = 0;
+  *x1 = *y1 = 0;
 
   if (yd > 0) {
     if (_vertical_align == MIDDLE) {
-      *ay = yd / 2;
+      *y1 = yd / 2;
     } else if (_vertical_align == BOTTOM) {
-      *ay = yd;
+      *y1 = yd;
     }
   }
 
   if (xd > 0) {
     if (_text_align == CENTER) {
-      *ax = xd / 2;
+      *x1 = xd / 2;
     } else if (_text_align == RIGHT) {
-      *ax = xd;
+      *x1 = xd;
+    }
+  }
+}
+
+void Widget::getAnimationOffset(int16_t w, int16_t h, int16_t *x1, int16_t *y1) {
+  int16_t yd = h - BC_HEIGHT;
+  int16_t xd = w - BC_WIDTH;
+  *x1 = *y1 = 0;
+
+  if (yd > 0) {
+    _frames = yd + 40;
+
+    if (_frame < 20) {
+      *y1 = 0;
+    } else if (_frame - 20 < yd) {
+      *y1 = -(_frame - 20);
+    } else {
+      *y1 = -yd;
+    }
+  }
+
+  if (xd > 0) {
+    _frames = xd + 40;
+
+    if (_frame < 20) {
+      *x1 = 0;
+    } else if (_frame - 20 < xd) {
+      *x1 = -(_frame - 20);
+    } else {
+      *x1 = -xd;
     }
   }
 }

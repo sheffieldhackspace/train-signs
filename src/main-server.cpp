@@ -12,7 +12,6 @@
 
 WiFiServer server(80);
 
-
 Widget *widget = new Widget(
   new Adafruit_BigClock(
     new Adafruit_BigClockSPI(D2, D4, D6, D8),
@@ -59,19 +58,6 @@ void loop() {
     }
   }
 
-  // if (h > BC_HEIGHT) {
-  //   int16_t stop = h - BC_HEIGHT;
-  //   int16_t frames = 40 + stop;
-  //   frame = frame >= frames ? 0 : frame + 1;
-  //
-  //   if (frame < 20) {
-  //     offset = 0;
-  //   } else if (frame - 20 < stop) {
-  //     offset = -(frame - 20);
-  //   } else {
-  //     offset = -stop;
-  //   }
-  // }
   widget->display();
   widget->waitForNextFrame();
 }

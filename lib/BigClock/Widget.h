@@ -48,7 +48,8 @@ public:
 
   void begin();
   void display();
-  void getAlignmentOffset(int16_t w, int16_t h, int16_t *ax, int16_t *ay);
+  void getAlignmentOffset(int16_t w, int16_t h, int16_t *x1, int16_t *y1);
+  void getAnimationOffset(int16_t w, int16_t h, int16_t *x1, int16_t *y1);
   void waitForNextFrame();
 
   void setInvert(bool invert) {
@@ -75,7 +76,7 @@ public:
 private:
   Adafruit_BigClock *_canvas;
   uint16_t _frame;
-  uint8_t _frames;
+  uint16_t _frames;
 
   String *_message;
   uint8_t _speed;
