@@ -69,6 +69,10 @@ public:
     _text_align = align;
   }
 
+  void setTextWrap(bool wrap) {
+    _canvas->setTextWrap(wrap);
+  }
+
   void setVerticalAlign(VERTICAL_ALIGN align) {
     _vertical_align = align;
   }

@@ -54,6 +54,7 @@ void loop() {
       widget->setMessage(new String(document["message"] | ""));
       widget->setSpeed(document["speed"] | 5);
       widget->setTextAlign(document["text_align"] | LEFT);
+      widget->setTextWrap(document["text_wrap"] | true);
       widget->setVerticalAlign(document["vertical_align"] | TOP);
     }
   }

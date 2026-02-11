@@ -27,7 +27,6 @@
 void Widget::begin() {
   _canvas->begin();
   _canvas->setTextSize(1);
-  _canvas->setTextWrap(false);
   _canvas->fillScreen(0);
   _canvas->setTextColor(1);
   _canvas->setFont(&Org01Condensed);
