@@ -23,13 +23,14 @@
  */
 
 #include "Widget.h"
+#include <Fonts/Org_01.h>
 
 void Widget::begin() {
   _canvas->begin();
   _canvas->setTextSize(1);
   _canvas->fillScreen(0);
   _canvas->setTextColor(1);
-  _canvas->setFont(&Org01Condensed);
+  _canvas->setFont(&Org_01);
 }
 
 void Widget::display() {

@@ -25,8 +25,6 @@
 #ifndef TRAIN_SIGNS_WIDGET_H
 #define TRAIN_SIGNS_WIDGET_H
 
-#include <Org01Condensed.h>
-
 #include "Adafruit_BigClock.h"
 
 enum VERTICAL_ALIGN {
