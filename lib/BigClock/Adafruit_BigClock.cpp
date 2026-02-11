@@ -25,7 +25,7 @@
 #include "Adafruit_BigClock.h"
 
 Adafruit_BigClock::Adafruit_BigClock(Adafruit_BigClockSPI *spi0, Adafruit_BigClockSPI *spi1)
-  : GFXcanvas1(BC_WIDTH, BC_HEIGHT), _spi{spi0, spi1} {}
+  : GFXcanvas1(BC_WIDTH, BC_HEIGHT), _invert(false), _spi{spi0, spi1} {}
 
 void Adafruit_BigClock::begin() {
   _spi[BOARD_TOP]->begin();
@@ -119,6 +119,14 @@ void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_r
   _spi[board]->transfer(false); // all white
   _spi[board]->transfer(false);
   _spi[board]->transfer(false);
+}
+
+uint8_t Adafruit_BigClock::getPixel(int16_t x, int16_t y) {
+  return GFXcanvas1::getPixel(x, y) ^ _invert;
+}
+
+void Adafruit_BigClock::invertDisplay(bool invert) {
+  _invert = invert;
 }
 
 [[noreturn]] void Adafruit_BigClock::keepaliveCallback(void *arg) {

@@ -19,7 +19,6 @@ enum VERTICAL_ALIGNMENT {
 };
 
 VERTICAL_ALIGNMENT alignv = TOP;
-bool background = 0;
 
 Widget *widget = new Widget(
   new Adafruit_BigClock(
@@ -32,15 +31,21 @@ void setup() {
   widget->begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
+  widget->setInvert(true);
   widget->setMessage(new String("SSID: " + WIFI_SSID + "\nConnecting..."));
   widget->display();
 
   while (!WiFi.isConnected()) {
-    delay(50);
+    if (WiFiClass::status() == WL_DISCONNECTED) {
+      WiFi.reconnect();
+    }
+
+    delay(1000);
   }
 
   server.begin();
 
+  widget->setInvert(false);
   widget->setMessage(new String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":80"));
   widget->display();
 }
@@ -54,8 +59,8 @@ void loop() {
       deserializeJson(document, client);
 
       alignv = document["alignv"] | TOP;
-      background = document["background"] | 0;
-      widget->setMessage(new String(document["text"]));
+      widget->setInvert(document["invert"] | false);
+      widget->setMessage(new String(document["message"] | ""));
       widget->setSpeed(document["speed"] | 5);
     }
   }

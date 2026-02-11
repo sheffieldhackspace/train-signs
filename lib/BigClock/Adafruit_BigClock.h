@@ -43,12 +43,15 @@ public:
   Adafruit_BigClock(Adafruit_BigClockSPI *spi0, Adafruit_BigClockSPI *spi1);
   void begin();
   void display();
+  uint8_t getPixel(int16_t x, int16_t y);
+  void invertDisplay(bool invert) override;
   [[noreturn]] static void keepaliveCallback(void *arg);
 
 private:
   void displayBoard(BOARD board);
   void displaySegment(BOARD board, uint8_t segment, bool even_row);
 
+  bool _invert;
   Adafruit_BigClockSPI *_spi[2];
 };
 

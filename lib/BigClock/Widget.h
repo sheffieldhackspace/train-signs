@@ -31,10 +31,16 @@
 
 class Widget {
 public:
-  Widget(Adafruit_BigClock *canvas) : _canvas(canvas), _frame(0), _frames(1), _message(nullptr), _speed(5) {}
+  Widget(Adafruit_BigClock *canvas)
+    : _canvas(canvas), _frame(0), _frames(1), _message(nullptr), _speed(5) {}
+
   void begin();
   void display();
   void waitForNextFrame();
+
+  void setInvert(bool invert) {
+    _canvas->invertDisplay(invert);
+  }
 
   void setMessage(String *message) {
     _frame = 0;
@@ -47,6 +53,7 @@ private:
   Adafruit_BigClock *_canvas;
   uint16_t _frame;
   uint8_t _frames;
+
   String *_message;
   uint8_t _speed;
 };
