@@ -25,7 +25,7 @@
 #include "Adafruit_BigClock.h"
 
 Adafruit_BigClock::Adafruit_BigClock(Adafruit_BigClockSPI *spi0, Adafruit_BigClockSPI *spi1)
-  : GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT), _spi{spi0, spi1} {}
+  : GFXcanvas1(BC_WIDTH, BC_HEIGHT), _spi{spi0, spi1} {}
 
 void Adafruit_BigClock::begin() {
   _spi[BOARD_TOP]->begin();

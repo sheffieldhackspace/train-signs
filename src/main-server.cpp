@@ -74,8 +74,8 @@ void loop() {
 
   int16_t start = -y, offset = 0;
 
-  if (h > BIG_CLOCK_HEIGHT) {
-    int16_t stop = h - BIG_CLOCK_HEIGHT;
+  if (h > BC_HEIGHT) {
+    int16_t stop = h - BC_HEIGHT;
     int16_t frames = 40 + stop;
     frame = frame >= frames ? 0 : frame + 1;
 
@@ -92,10 +92,10 @@ void loop() {
         offset = 0;
         break;
       case CENTER:
-        offset = (BIG_CLOCK_HEIGHT - h) / 2;
+        offset = (BC_HEIGHT - h) / 2;
         break;
       case BOTTOM:
-        offset = BIG_CLOCK_HEIGHT - h;
+        offset = BC_HEIGHT - h;
         break;
     }
   }

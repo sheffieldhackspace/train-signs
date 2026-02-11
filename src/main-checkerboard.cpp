@@ -13,8 +13,8 @@ Adafruit_BigClock *canvas = new Adafruit_BigClock(
 void setup() {
     canvas->begin();
 
-    for (int i = 0; i < BIG_CLOCK_WIDTH; i++) {
-        for (int j = 0; j < BIG_CLOCK_HEIGHT; j++) {
+    for (int i = 0; i < BC_WIDTH; i++) {
+        for (int j = 0; j < BC_HEIGHT; j++) {
             canvas->drawPixel(i, j, (i + j) % 2);
         }
     }
