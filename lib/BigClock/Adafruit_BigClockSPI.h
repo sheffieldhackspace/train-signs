@@ -1,5 +1,5 @@
 /**
- * MIT License
+* MIT License
  *
  * Copyright (c) 2026 Adam Kuczyński
  *
@@ -22,35 +22,24 @@
  * SOFTWARE.
  */
 
-#ifndef TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
-#define TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
+#ifndef TRAIN_SIGNS_ADAFRUIT_BIGCLOCKSPI_H
+#define TRAIN_SIGNS_ADAFRUIT_BIGCLOCKSPI_H
 
 
-#include <Adafruit_GFX.h>
+#include <Adafruit_SPIDevice.h>
 
-#include "Adafruit_BigClockSPI.h"
-
-#define BIG_CLOCK_WIDTH 96
-#define BIG_CLOCK_HEIGHT 26
-
-enum BOARD {
-  BOARD_BOTTOM = 0,
-  BOARD_TOP = 1,
-};
-
-class Adafruit_BigClock : public GFXcanvas1 {
+class Adafruit_BigClockSPI : public Adafruit_SPIDevice {
 public:
-  Adafruit_BigClock(Adafruit_BigClockSPI *board0, Adafruit_BigClockSPI *board1);
-  void begin();
-  void display();
-  [[noreturn]] static void keepaliveCallback(void *arg);
+  Adafruit_BigClockSPI(int8_t sck, int8_t mosi, int8_t latch, int8_t keepalive);
+  bool begin();
+  void transfer(bool b);
+  int8_t _latch;
+  int8_t _keepalive;
 
 private:
-  void displayBoard(BOARD board);
-  void displaySegment(BOARD board, uint8_t segment, bool even_row);
-
-  Adafruit_BigClockSPI *_board[2];
+  int8_t _buffer_size;
+  byte _buffer;
 };
 
 
-#endif //TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
+#endif //TRAIN_SIGNS_ADAFRUIT_BIGCLOCKSPI_H

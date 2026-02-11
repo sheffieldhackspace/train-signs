@@ -1,5 +1,5 @@
 /**
- * MIT License
+* MIT License
  *
  * Copyright (c) 2026 Adam Kuczyński
  *
@@ -22,35 +22,32 @@
  * SOFTWARE.
  */
 
-#ifndef TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
-#define TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
-
-
-#include <Adafruit_GFX.h>
-
 #include "Adafruit_BigClockSPI.h"
 
-#define BIG_CLOCK_WIDTH 96
-#define BIG_CLOCK_HEIGHT 26
+Adafruit_BigClockSPI::Adafruit_BigClockSPI(int8_t sck, int8_t mosi, int8_t latch, int8_t keepalive)
+  : Adafruit_SPIDevice(-1, sck, -1, mosi, SPI_CLOCK_DIV2, SPI_BITORDER_MSBFIRST, SPI_MODE1),
+    _latch(latch), _keepalive(keepalive), _buffer(0), _buffer_size(0) {}
 
-enum BOARD {
-  BOARD_BOTTOM = 0,
-  BOARD_TOP = 1,
-};
+bool Adafruit_BigClockSPI::begin() {
+  if (_latch != -1) {
+    pinMode(_latch, OUTPUT);
+  }
 
-class Adafruit_BigClock : public GFXcanvas1 {
-public:
-  Adafruit_BigClock(Adafruit_BigClockSPI *board0, Adafruit_BigClockSPI *board1);
-  void begin();
-  void display();
-  [[noreturn]] static void keepaliveCallback(void *arg);
+  if (_keepalive != -1) {
+    pinMode(_keepalive, OUTPUT);
+  }
 
-private:
-  void displayBoard(BOARD board);
-  void displaySegment(BOARD board, uint8_t segment, bool even_row);
+  return Adafruit_SPIDevice::begin();
+}
 
-  Adafruit_BigClockSPI *_board[2];
-};
+void Adafruit_BigClockSPI::transfer(bool bit) {
+  _buffer <<= 1;
+  _buffer |= bit;
+  _buffer_size++;
 
-
-#endif //TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
+  if (_buffer_size >= 8) {
+    Adafruit_SPIDevice::transfer(_buffer);
+    _buffer = 0;
+    _buffer_size = 0;
+  }
+}

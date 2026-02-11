@@ -25,15 +25,14 @@ uint8_t speed = 5;
 uint16_t frame = 0;
 
 Adafruit_BigClock *canvas = new Adafruit_BigClock(
-  new BigBoard(D6, D4, D2),
-  new BigBoard(D5, D3, D1),
-  D7,
-  D8
+  new Adafruit_BigClockSPI(D2, D4, D6, D8),
+  new Adafruit_BigClockSPI(D1, D3, D5, D7)
 );
 
 void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
+  canvas->begin();
   canvas->setFont(&Org01Condensed);
   canvas->setTextSize(1);
 

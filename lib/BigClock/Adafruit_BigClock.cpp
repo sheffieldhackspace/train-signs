@@ -1,5 +1,5 @@
 /**
-* MIT License
+ * MIT License
  *
  * Copyright (c) 2026 Adam Kuczyński
  *
@@ -24,10 +24,14 @@
 
 #include "Adafruit_BigClock.h"
 
-Adafruit_BigClock::Adafruit_BigClock(BigBoard *board0, BigBoard *board1, uint8_t keepalive0, uint8_t keepalive1)
-  : GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT), _board{board0, board1} {
-  auto *keepalive = new uint8_t[]{keepalive0, keepalive1};
-  xTaskCreate(keepaliveCallback, "keepalive", 4096, (void *) keepalive, 2, NULL);
+Adafruit_BigClock::Adafruit_BigClock(Adafruit_BigClockSPI *board0, Adafruit_BigClockSPI *board1)
+  : GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT), _board{board0, board1} {}
+
+void Adafruit_BigClock::begin() {
+  _board[BOARD_TOP]->begin();
+  _board[BOARD_BOTTOM]->begin();
+
+  xTaskCreate(keepaliveCallback, "keepalive", 4096, (void *) _board, 2, NULL);
 }
 
 void Adafruit_BigClock::display() {
@@ -36,21 +40,20 @@ void Adafruit_BigClock::display() {
 }
 
 void Adafruit_BigClock::displayBoard(BOARD board) {
-  pinMode(_board[board]->_dc, OUTPUT);
-  digitalWrite(_board[board]->_dc, HIGH);
+  digitalWrite(_board[board]->_latch, HIGH);
 
   for (uint8_t n = 0; n < 16; n++) {
     displaySegment(board, n, false);
   }
 
-  digitalWrite(_board[board]->_dc, LOW);
-  digitalWrite(_board[board]->_dc, HIGH);
+  digitalWrite(_board[board]->_latch, LOW);
+  digitalWrite(_board[board]->_latch, HIGH);
 
   for (uint8_t n = 0; n < 16; n++) {
     displaySegment(board, n, true);
   }
 
-  digitalWrite(_board[board]->_dc, LOW);
+  digitalWrite(_board[board]->_latch, LOW);
 }
 
 void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_row) {
@@ -92,7 +95,7 @@ void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_r
       offset_y = 25 - offset_y;
     }
 
-    _board[board]->write(getPixel(offset_x, offset_y));
+    _board[board]->transfer(getPixel(offset_x, offset_y));
 
     // Odd segments contain 38 pixels
     // Even rows have columns of 6,7,6,7,6,6 pixels
@@ -108,29 +111,26 @@ void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_r
     }
   }
 
-  _board[board]->write(even_row);
-  _board[board]->write(false);
-  _board[board]->write(false);
-  _board[board]->write(false);
-  _board[board]->write(false);
-  _board[board]->write(false); // all white
-  _board[board]->write(false);
-  _board[board]->write(false);
+  _board[board]->transfer(even_row);
+  _board[board]->transfer(false);
+  _board[board]->transfer(false);
+  _board[board]->transfer(false);
+  _board[board]->transfer(false);
+  _board[board]->transfer(false); // all white
+  _board[board]->transfer(false);
+  _board[board]->transfer(false);
 }
 
 [[noreturn]] void Adafruit_BigClock::keepaliveCallback(void *arg) {
-  const auto *keepalive = static_cast<uint8_t *>(arg);
+  Adafruit_BigClockSPI **keepalive = static_cast<Adafruit_BigClockSPI **>(arg);
 
   while (true) {
-    pinMode(keepalive[0], OUTPUT);
-    pinMode(keepalive[1], OUTPUT);
-
-    digitalWrite(keepalive[0], HIGH);
-    digitalWrite(keepalive[1], HIGH);
+    digitalWrite(keepalive[0]->_keepalive, HIGH);
+    digitalWrite(keepalive[1]->_keepalive, HIGH);
     delay(2);
 
-    digitalWrite(keepalive[0], LOW);
-    digitalWrite(keepalive[1], LOW);
+    digitalWrite(keepalive[0]->_keepalive, LOW);
+    digitalWrite(keepalive[1]->_keepalive, LOW);
     delay(2);
   }
 }
