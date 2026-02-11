@@ -24,14 +24,14 @@
 
 #include "Adafruit_BigClock.h"
 
-Adafruit_BigClock::Adafruit_BigClock(Adafruit_BigClockSPI *board0, Adafruit_BigClockSPI *board1)
-  : GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT), _board{board0, board1} {}
+Adafruit_BigClock::Adafruit_BigClock(Adafruit_BigClockSPI *spi0, Adafruit_BigClockSPI *spi1)
+  : GFXcanvas1(BIG_CLOCK_WIDTH, BIG_CLOCK_HEIGHT), _spi{spi0, spi1} {}
 
 void Adafruit_BigClock::begin() {
-  _board[BOARD_TOP]->begin();
-  _board[BOARD_BOTTOM]->begin();
+  _spi[BOARD_TOP]->begin();
+  _spi[BOARD_BOTTOM]->begin();
 
-  xTaskCreate(keepaliveCallback, "keepalive", 4096, (void *) _board, 2, NULL);
+  xTaskCreate(keepaliveCallback, "keepalive", 4096, (void *) _spi, 2, NULL);
 }
 
 void Adafruit_BigClock::display() {
@@ -40,20 +40,20 @@ void Adafruit_BigClock::display() {
 }
 
 void Adafruit_BigClock::displayBoard(BOARD board) {
-  _board[board]->setLatch(HIGH);
+  _spi[board]->setLatch(HIGH);
 
   for (uint8_t n = 0; n < 16; n++) {
     displaySegment(board, n, false);
   }
 
-  _board[board]->setLatch(LOW);
-  _board[board]->setLatch(HIGH);
+  _spi[board]->setLatch(LOW);
+  _spi[board]->setLatch(HIGH);
 
   for (uint8_t n = 0; n < 16; n++) {
     displaySegment(board, n, true);
   }
 
-  _board[board]->setLatch(LOW);
+  _spi[board]->setLatch(LOW);
 }
 
 void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_row) {
@@ -95,7 +95,7 @@ void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_r
       offset_y = 25 - offset_y;
     }
 
-    _board[board]->transfer(getPixel(offset_x, offset_y));
+    _spi[board]->transfer(getPixel(offset_x, offset_y));
 
     // Odd segments contain 38 pixels
     // Even rows have columns of 6,7,6,7,6,6 pixels
@@ -111,26 +111,26 @@ void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_r
     }
   }
 
-  _board[board]->transfer(even_row);
-  _board[board]->transfer(false);
-  _board[board]->transfer(false);
-  _board[board]->transfer(false);
-  _board[board]->transfer(false);
-  _board[board]->transfer(false); // all white
-  _board[board]->transfer(false);
-  _board[board]->transfer(false);
+  _spi[board]->transfer(even_row);
+  _spi[board]->transfer(false);
+  _spi[board]->transfer(false);
+  _spi[board]->transfer(false);
+  _spi[board]->transfer(false);
+  _spi[board]->transfer(false); // all white
+  _spi[board]->transfer(false);
+  _spi[board]->transfer(false);
 }
 
 [[noreturn]] void Adafruit_BigClock::keepaliveCallback(void *arg) {
-  auto **boards = static_cast<Adafruit_BigClockSPI **>(arg);
+  auto **spi = static_cast<Adafruit_BigClockSPI **>(arg);
 
   while (true) {
-    boards[BOARD_TOP]->setKeepalive(HIGH);
-    boards[BOARD_BOTTOM]->setKeepalive(HIGH);
+    spi[BOARD_TOP]->setKeepalive(HIGH);
+    spi[BOARD_BOTTOM]->setKeepalive(HIGH);
     delay(2);
 
-    boards[BOARD_TOP]->setKeepalive(LOW);
-    boards[BOARD_BOTTOM]->setKeepalive(LOW);
+    spi[BOARD_TOP]->setKeepalive(LOW);
+    spi[BOARD_BOTTOM]->setKeepalive(LOW);
     delay(2);
   }
 }

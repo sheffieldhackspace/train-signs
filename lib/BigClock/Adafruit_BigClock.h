@@ -40,7 +40,7 @@ enum BOARD {
 
 class Adafruit_BigClock : public GFXcanvas1 {
 public:
-  Adafruit_BigClock(Adafruit_BigClockSPI *board0, Adafruit_BigClockSPI *board1);
+  Adafruit_BigClock(Adafruit_BigClockSPI *spi0, Adafruit_BigClockSPI *spi1);
   void begin();
   void display();
   [[noreturn]] static void keepaliveCallback(void *arg);
@@ -49,7 +49,7 @@ private:
   void displayBoard(BOARD board);
   void displaySegment(BOARD board, uint8_t segment, bool even_row);
 
-  Adafruit_BigClockSPI *_board[2];
+  Adafruit_BigClockSPI *_spi[2];
 };
 
 
