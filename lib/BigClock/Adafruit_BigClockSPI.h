@@ -33,12 +33,15 @@ public:
   Adafruit_BigClockSPI(int8_t sck, int8_t mosi, int8_t latch, int8_t keepalive);
   bool begin();
   void transfer(bool b);
-  int8_t _latch;
-  int8_t _keepalive;
+  void setKeepalive(bool b);
+  void setLatch(bool b);
 
 private:
-  int8_t _buffer_size;
+  int8_t _keepalive;
+  int8_t _latch;
+
   byte _buffer;
+  int8_t _buffer_size;
 };
 
 

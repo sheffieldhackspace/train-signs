@@ -40,20 +40,20 @@ void Adafruit_BigClock::display() {
 }
 
 void Adafruit_BigClock::displayBoard(BOARD board) {
-  digitalWrite(_board[board]->_latch, HIGH);
+  _board[board]->setLatch(HIGH);
 
   for (uint8_t n = 0; n < 16; n++) {
     displaySegment(board, n, false);
   }
 
-  digitalWrite(_board[board]->_latch, LOW);
-  digitalWrite(_board[board]->_latch, HIGH);
+  _board[board]->setLatch(LOW);
+  _board[board]->setLatch(HIGH);
 
   for (uint8_t n = 0; n < 16; n++) {
     displaySegment(board, n, true);
   }
 
-  digitalWrite(_board[board]->_latch, LOW);
+  _board[board]->setLatch(LOW);
 }
 
 void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_row) {
@@ -122,15 +122,15 @@ void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_r
 }
 
 [[noreturn]] void Adafruit_BigClock::keepaliveCallback(void *arg) {
-  Adafruit_BigClockSPI **keepalive = static_cast<Adafruit_BigClockSPI **>(arg);
+  auto **boards = static_cast<Adafruit_BigClockSPI **>(arg);
 
   while (true) {
-    digitalWrite(keepalive[0]->_keepalive, HIGH);
-    digitalWrite(keepalive[1]->_keepalive, HIGH);
+    boards[BOARD_TOP]->setKeepalive(HIGH);
+    boards[BOARD_BOTTOM]->setKeepalive(HIGH);
     delay(2);
 
-    digitalWrite(keepalive[0]->_keepalive, LOW);
-    digitalWrite(keepalive[1]->_keepalive, LOW);
+    boards[BOARD_TOP]->setKeepalive(LOW);
+    boards[BOARD_BOTTOM]->setKeepalive(LOW);
     delay(2);
   }
 }
