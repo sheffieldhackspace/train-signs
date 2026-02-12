@@ -57,65 +57,66 @@ void Widget::applyVerticalAlign(int16_t h, int16_t *y) {
   }
 }
 
-// bd - boundary dimension
-// td - text dimension
-// tc - text coordinate
-void Widget::applyScroll(int16_t bd, int16_t td, int16_t *tc) {
-  int16_t distance = td - bd;
+// b - boundary dimension (ie. width of the display)
+// d - text dimension (ie. width of the text)
+// c - text coordinate (ie. x position of the text)
+void Widget::applyScroll(int16_t b, int16_t d, int16_t *c) {
+  int16_t distance = d - b;
 
   if (distance > 0) {
     _frames = distance + 40;
 
     if (_frame >= 20 && _frame - 20 < distance) {
-      *tc += -(_frame - 20);
+      *c += -(_frame - 20);
     } else if (_frame - 20 >= distance) {
-      *tc += -distance;
+      *c += -distance;
     }
   }
 }
 
 void Widget::display() {
-  int16_t x, y;
-  uint16_t w, h;
+  int16_t x, y, tx, ty;
+  uint16_t tw, th;
 
-  _canvas->getTextBounds(*_message, 0, 0, &x, &y, &w, &h);
-  x = -x;
-  y = -y;
+  _canvas->getTextBounds(*_message, 0, 0, &tx, &ty, &tw, &th);
+  x = -tx;
+  y = -ty;
 
   if (_text_wrap) {
-    applyScroll(BC_HEIGHT, h, &y);
+    applyScroll(BC_HEIGHT, th, &y);
   } else {
-    applyScroll(BC_WIDTH, w, &x);
+    applyScroll(BC_WIDTH, th, &x);
   }
 
-  applyVerticalAlign(h, &y);
+  applyVerticalAlign(th, &y);
 
   _canvas->fillScreen(0);
-  _canvas->setCursor(x, y);
-  this->printMessage();
+  this->printMessage(x, y);
   _canvas->display();
 }
 
-void Widget::printMessage() {
+void Widget::printMessage(int16_t x, int16_t y) {
   int16_t begin = 0, end = 0;
   String s = *_message;
-  int16_t x = _canvas->getCursorX();
 
   while (s[end]) {
     if (s[end] == '\n') {
-      begin++;
       _canvas->println();
+
+      y = _canvas->getCursorY();
+      begin++;
     } else if (s[end + 1] == '\n' || !s[end + 1]) {
       String line = s.substring(begin, end + 1);
       int16_t x1 = x, bx, by;
       uint16_t bw, bh;
 
-      _canvas->getTextBounds(line, x, _canvas->getCursorY(), &bx, &by, &bw, &bh);
+      _canvas->getTextBounds(line, x, y, &bx, &by, &bw, &bh);
       applyHorizontalAlign(bw, &x1);
 
-      _canvas->setCursor(x1, _canvas->getCursorY());
+      _canvas->setCursor(x1, y);
       _canvas->print(line);
 
+      y = _canvas->getCursorY();
       begin = end + 1;
     }
 

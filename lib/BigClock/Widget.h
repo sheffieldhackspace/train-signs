@@ -49,7 +49,7 @@ public:
   void applyScroll(int16_t dw, int16_t w, int16_t *x);
   void begin();
   void display();
-  void printMessage();
+  void printMessage(int16_t x, int16_t y);
   void waitForNextFrame();
 
   void setInvert(bool invert) {
