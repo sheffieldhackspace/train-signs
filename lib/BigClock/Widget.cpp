@@ -56,11 +56,13 @@ void Widget::applyScroll(int16_t b, int16_t d, int16_t *c) {
   int16_t distance = d - b;
 
   if (distance > 0) {
-    _frames = distance + 40;
+    _frames = FRAMES_BEFORE + distance + FRAMES_AFTER;
 
-    if (_frame >= 20 && _frame - 20 < distance) {
-      *c -= _frame - 20;
-    } else if (_frame - 20 >= distance) {
+    if (_frame < FRAMES_BEFORE) {
+      *c -= 0;
+    } else if (_frame < FRAMES_BEFORE + distance) {
+      *c -= _frame - FRAMES_BEFORE;
+    } else {
       *c -= distance;
     }
   }

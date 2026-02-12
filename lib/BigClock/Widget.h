@@ -27,6 +27,9 @@
 
 #include "Adafruit_BigClock.h"
 
+#define FRAMES_BEFORE 20
+#define FRAMES_AFTER 20
+
 enum TEXT_ALIGN {
   LEFT = -1,
   CENTER = 0,
