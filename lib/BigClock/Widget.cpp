@@ -79,27 +79,29 @@ void Widget::display() {
 
   _canvas->fillScreen(0);
   _canvas->getTextBounds(*_message, 0, 0, &tx, &ty, &tw, &th);
-  x -= tx;
-  y -= ty;
 
   if (_text_wrap) {
-    applyScroll(BC_HEIGHT, th + _imageHeight, &y);
+    applyScroll(BC_HEIGHT, th + _imageHeight + 2, &y);
   } else {
     applyScroll(BC_WIDTH, tw + _imageWidth, &x);
   }
 
-  applyAlign(_vertical_align, BC_HEIGHT, th, &y);
   applyFlash();
 
   if (_image != nullptr) {
-    _canvas->drawBitmap(x, 1, reinterpret_cast<uint8_t *>(_image), _imageWidth, _imageHeight, 1, 0);
+    _canvas->drawBitmap(x, y + 1, reinterpret_cast<uint8_t *>(_image), _imageWidth, _imageHeight, 1, 0);
   }
+
+  applyAlign(_vertical_align, BC_HEIGHT, th, &y);
 
   if (_text_wrap) {
     y += 2 + _imageHeight;
   } else {
     x += _imageWidth;
   }
+
+  x -= tx;
+  y -= ty;
 
   printMessage(x, y, max(BC_WIDTH, tw));
 
