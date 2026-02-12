@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
-#define TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
+#ifndef ADAFRUIT_BIGCLOCK_H
+#define ADAFRUIT_BIGCLOCK_H
 
 
 #include <Adafruit_GFX.h>
@@ -57,4 +57,4 @@ private:
 };
 
 
-#endif //TRAIN_SIGNS_ADAFRUIT_BIGCLOCK_H
+#endif //ADAFRUIT_BIGCLOCK_H

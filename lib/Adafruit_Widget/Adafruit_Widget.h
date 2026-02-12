@@ -22,13 +22,12 @@
  * SOFTWARE.
  */
 
-#ifndef TRAIN_SIGNS_WIDGET_H
-#define TRAIN_SIGNS_WIDGET_H
+#ifndef ADAFRUIT_WIDGET_H
+#define ADAFRUIT_WIDGET_H
 
+#include <Adafruit_BigClock.h>
 #include <Base64.h>
 #include <Fonts/Org_01.h>
-
-#include "Adafruit_BigClock.h"
 
 #define FRAMES_BEFORE 20
 #define FRAMES_AFTER 20
@@ -45,9 +44,9 @@ enum VERTICAL_ALIGN {
   BOTTOM = 1,
 };
 
-class Widget {
+class Adafruit_Widget {
 public:
-  Widget(Adafruit_BigClock *canvas)
+  Adafruit_Widget(Adafruit_BigClock *canvas)
     : _canvas(canvas), _frame(0), _frames(FRAMES_BEFORE + FRAMES_AFTER),
       _image(nullptr), _imageWidth(0), _imageHeight(0), _message(nullptr),
       _flash(false), _invert(false), _speed(5), _text_align(LEFT), _text_wrap(false), _vertical_align(TOP) {}
@@ -126,4 +125,4 @@ private:
 };
 
 
-#endif //TRAIN_SIGNS_WIDGET_H
+#endif //ADAFRUIT_WIDGET_H

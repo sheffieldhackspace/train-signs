@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-#include "Widget.h"
+#include "Adafruit_Widget.h"
 
-void Widget::begin() {
+void Adafruit_Widget::begin() {
   _canvas->begin();
   _canvas->setTextSize(1);
   _canvas->fillScreen(0);
@@ -36,7 +36,7 @@ void Widget::begin() {
 // b - boundary dimension (ie. width of the display)
 // d - text dimension (ie. width of the text)
 // c - text coordinate (ie. x position of the text)
-void Widget::applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c) {
+void Adafruit_Widget::applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c) {
   int16_t distance = b - d;
 
   if (distance > 0) {
@@ -48,8 +48,9 @@ void Widget::applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c) {
   }
 }
 
-void Widget::applyFlash() {
-  if (_flash && _frame % (_speed / 2) == 0) {
+void Adafruit_Widget::applyFlash() {
+  if (_flash && _frame % (_speed / 2) == 0
+  ) {
     setInvert(!_invert);
   }
 }
@@ -57,7 +58,7 @@ void Widget::applyFlash() {
 // b - boundary dimension (ie. width of the display)
 // d - text dimension (ie. width of the text)
 // c - text coordinate (ie. x position of the text)
-void Widget::applyScroll(int16_t b, int16_t d, int16_t *c) {
+void Adafruit_Widget::applyScroll(int16_t b, int16_t d, int16_t *c) {
   int16_t distance = d - b;
 
   if (distance > 0) {
@@ -73,7 +74,7 @@ void Widget::applyScroll(int16_t b, int16_t d, int16_t *c) {
   }
 }
 
-void Widget::display() {
+void Adafruit_Widget::display() {
   int16_t x = 0, y = 0, tx, ty;
   uint16_t tw, th;
 
@@ -108,7 +109,7 @@ void Widget::display() {
   _canvas->display();
 }
 
-void Widget::printMessage(int16_t x, int16_t y, uint16_t w) {
+void Adafruit_Widget::printMessage(int16_t x, int16_t y, uint16_t w) {
   int16_t begin = 0, end = 0;
   String s = *_message;
 
@@ -137,7 +138,7 @@ void Widget::printMessage(int16_t x, int16_t y, uint16_t w) {
   }
 }
 
-void Widget::waitForNextFrame() {
+void Adafruit_Widget::waitForNextFrame() {
   _frame++;
 
   if (_frame >= _frames) {

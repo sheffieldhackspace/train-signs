@@ -1,7 +1,7 @@
 #include <Adafruit_BigClock.h>
+#include <Adafruit_Widget.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <Widget.h>
 #include <WiFi.h>
 
 #include "Credentials.h"
@@ -12,7 +12,7 @@
 
 WiFiServer server(80);
 
-Widget *widget = new Widget(
+Adafruit_Widget *widget = new Adafruit_Widget(
   new Adafruit_BigClock(
     new Adafruit_BigClockSPI(D2, D4, D6, D8),
     new Adafruit_BigClockSPI(D1, D3, D5, D7)
