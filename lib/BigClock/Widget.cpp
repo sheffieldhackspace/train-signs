@@ -77,11 +77,9 @@ void Widget::applyVerticalScroll(int16_t h, int16_t *y) {
   if (yd > 0) {
     _frames = yd + 40;
 
-    if (_frame < 20) {
-      *y += 0;
-    } else if (_frame - 20 < yd) {
+    if (_frame >= 20 && _frame - 20 < yd) {
       *y += -(_frame - 20);
-    } else {
+    } else if (_frame - 20 >= yd) {
       *y += -yd;
     }
   }
@@ -95,9 +93,13 @@ void Widget::display() {
   x = -x;
   y = -y;
 
+  if (_text_wrap) {
+    applyVerticalScroll(h, &y);
+  } else {
+    applyHorizontalScroll(w, &x);
+  }
+
   applyVerticalAlign(h, &y);
-  applyHorizontalScroll(w, &x);
-  applyVerticalScroll(h, &y);
 
   _canvas->fillScreen(0);
   _canvas->setCursor(x, y);

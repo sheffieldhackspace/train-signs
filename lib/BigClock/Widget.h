@@ -71,6 +71,7 @@ public:
   }
 
   void setTextWrap(bool wrap) {
+    _text_wrap = wrap;
     _canvas->setTextWrap(wrap);
   }
 
@@ -86,6 +87,7 @@ private:
   String *_message;
   uint8_t _speed;
   TEXT_ALIGN _text_align;
+  bool _text_wrap;
   VERTICAL_ALIGN _vertical_align;
 };
 

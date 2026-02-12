@@ -23,6 +23,8 @@ void setup() {
   widget->begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
+  widget->setTextAlign(CENTER);
+  widget->setVerticalAlign(MIDDLE);
   widget->setInvert(true);
   widget->setMessage(new String("SSID: " + WIFI_SSID + "\nConnecting..."));
   widget->display();
