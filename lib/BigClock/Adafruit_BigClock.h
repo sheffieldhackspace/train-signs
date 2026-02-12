@@ -45,6 +45,7 @@ public:
   void display();
   uint8_t getPixel(int16_t x, int16_t y);
   void invertDisplay(bool invert) override;
+
   [[noreturn]] static void keepaliveCallback(void *arg);
 
 private:

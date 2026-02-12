@@ -27,16 +27,16 @@
 
 #include "Adafruit_BigClock.h"
 
-enum VERTICAL_ALIGN {
-  TOP = -1,
-  MIDDLE = 0,
-  BOTTOM = 1,
-};
-
 enum TEXT_ALIGN {
   LEFT = -1,
   CENTER = 0,
   RIGHT = 1,
+};
+
+enum VERTICAL_ALIGN {
+  TOP = -1,
+  MIDDLE = 0,
+  BOTTOM = 1,
 };
 
 class Widget {
@@ -44,10 +44,13 @@ public:
   Widget(Adafruit_BigClock *canvas)
     : _canvas(canvas), _frame(0), _frames(1), _message(nullptr), _speed(5), _text_align(LEFT), _vertical_align(TOP) {}
 
+  void applyHorizontalAlign(int16_t w, int16_t *x);
+  void applyVerticalAlign(int16_t h, int16_t *y);
+  void applyHorizontalScroll(int16_t w, int16_t *x);
+  void applyVerticalScroll(int16_t h, int16_t *y);
   void begin();
   void display();
-  void getAlignmentOffset(int16_t w, int16_t h, int16_t *x1, int16_t *y1);
-  void getAnimationOffset(int16_t w, int16_t h, int16_t *x1, int16_t *y1);
+  void printMessage();
   void waitForNextFrame();
 
   void setInvert(bool invert) {

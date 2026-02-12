@@ -33,69 +33,102 @@ void Widget::begin() {
   _canvas->setFont(&Org_01);
 }
 
-void Widget::display() {
-  int16_t x, y, ax, ay, bx, by;
-  uint16_t w, h;
-
-  _canvas->getTextBounds(*_message, 0, 0, &x, &y, &w, &h);
-  getAlignmentOffset(w, h, &ax, &ay);
-  getAnimationOffset(w, h, &bx, &by);
-
-  _canvas->fillScreen(0);
-  _canvas->setCursor(-x + ax + bx, -y + ay + by);
-  _canvas->println(*_message);
-  _canvas->display();
-}
-
-void Widget::getAlignmentOffset(int16_t w, int16_t h, int16_t *x1, int16_t *y1) {
-  int16_t yd = BC_HEIGHT - h;
+void Widget::applyHorizontalAlign(int16_t w, int16_t *x) {
   int16_t xd = BC_WIDTH - w;
-  *x1 = *y1 = 0;
-
-  if (yd > 0) {
-    if (_vertical_align == MIDDLE) {
-      *y1 = yd / 2;
-    } else if (_vertical_align == BOTTOM) {
-      *y1 = yd;
-    }
-  }
 
   if (xd > 0) {
     if (_text_align == CENTER) {
-      *x1 = xd / 2;
+      *x += xd / 2;
     } else if (_text_align == RIGHT) {
-      *x1 = xd;
+      *x += xd;
     }
   }
 }
 
-void Widget::getAnimationOffset(int16_t w, int16_t h, int16_t *x1, int16_t *y1) {
-  int16_t yd = h - BC_HEIGHT;
+void Widget::applyVerticalAlign(int16_t h, int16_t *y) {
+  int16_t yd = BC_HEIGHT - h;
+
+  if (yd > 0) {
+    if (_vertical_align == MIDDLE) {
+      *y += yd / 2;
+    } else if (_vertical_align == BOTTOM) {
+      *y += yd;
+    }
+  }
+}
+
+void Widget::applyHorizontalScroll(int16_t w, int16_t *x) {
   int16_t xd = w - BC_WIDTH;
-  *x1 = *y1 = 0;
+
+  if (xd > 0) {
+    _frames = xd + 40;
+
+    if (_frame >= 20 && _frame - 20 < xd) {
+      *x += -(_frame - 20);
+    } else if (_frame - 20 >= xd) {
+      *x += -xd;
+    }
+  }
+}
+
+void Widget::applyVerticalScroll(int16_t h, int16_t *y) {
+  int16_t yd = h - BC_HEIGHT;
 
   if (yd > 0) {
     _frames = yd + 40;
 
     if (_frame < 20) {
-      *y1 = 0;
+      *y += 0;
     } else if (_frame - 20 < yd) {
-      *y1 = -(_frame - 20);
+      *y += -(_frame - 20);
     } else {
-      *y1 = -yd;
+      *y += -yd;
     }
   }
+}
 
-  if (xd > 0) {
-    _frames = xd + 40;
+void Widget::display() {
+  int16_t x, y;
+  uint16_t w, h;
 
-    if (_frame < 20) {
-      *x1 = 0;
-    } else if (_frame - 20 < xd) {
-      *x1 = -(_frame - 20);
-    } else {
-      *x1 = -xd;
+  _canvas->getTextBounds(*_message, 0, 0, &x, &y, &w, &h);
+  x = -x;
+  y = -y;
+
+  applyVerticalAlign(h, &y);
+  applyHorizontalScroll(w, &x);
+  applyVerticalScroll(h, &y);
+
+  _canvas->fillScreen(0);
+  _canvas->setCursor(x, y);
+  this->printMessage();
+  _canvas->display();
+}
+
+void Widget::printMessage() {
+  int16_t begin = 0, end = 0;
+  String s = *_message;
+  int16_t x = _canvas->getCursorX();
+
+  while (s[end]) {
+    if (s[end] == '\n') {
+      begin++;
+      _canvas->println();
+    } else if (s[end + 1] == '\n' || !s[end + 1]) {
+      String line = s.substring(begin, end + 1);
+      int16_t x1 = x, bx, by;
+      uint16_t bw, bh;
+
+      _canvas->getTextBounds(line, x, _canvas->getCursorY(), &bx, &by, &bw, &bh);
+      applyHorizontalAlign(bw, &x1);
+
+      _canvas->setCursor(x1, _canvas->getCursorY());
+      _canvas->print(line);
+
+      begin = end + 1;
     }
+
+    end++;
   }
 }
 
