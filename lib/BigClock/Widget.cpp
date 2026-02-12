@@ -23,7 +23,6 @@
  */
 
 #include "Widget.h"
-#include <Fonts/Org_01.h>
 
 void Widget::begin() {
   _canvas->begin();
@@ -75,24 +74,35 @@ void Widget::applyScroll(int16_t b, int16_t d, int16_t *c) {
 }
 
 void Widget::display() {
-  int16_t x, y, tx, ty;
+  int16_t x = 0, y = 0, tx, ty;
   uint16_t tw, th;
 
+  _canvas->fillScreen(0);
   _canvas->getTextBounds(*_message, 0, 0, &tx, &ty, &tw, &th);
-  x = -tx;
-  y = -ty;
+  x -= tx;
+  y -= ty;
 
   if (_text_wrap) {
-    applyScroll(BC_HEIGHT, th, &y);
+    applyScroll(BC_HEIGHT, th + _imageHeight, &y);
   } else {
-    applyScroll(BC_WIDTH, tw, &x);
+    applyScroll(BC_WIDTH, tw + _imageWidth, &x);
   }
 
   applyAlign(_vertical_align, BC_HEIGHT, th, &y);
   applyFlash();
 
-  _canvas->fillScreen(0);
+  if (_image != nullptr) {
+    _canvas->drawBitmap(x, 1, reinterpret_cast<uint8_t *>(_image), _imageWidth, _imageHeight, 1, 0);
+  }
+
+  if (_text_wrap) {
+    y += 2 + _imageHeight;
+  } else {
+    x += _imageWidth;
+  }
+
   printMessage(x, y, max(BC_WIDTH, tw));
+
   _canvas->display();
 }
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # convert an image (.bmp) to bytes, where
 #  each byte represents 8 bits of the image
 #  columns are wrapped

@@ -25,6 +25,9 @@
 #ifndef TRAIN_SIGNS_WIDGET_H
 #define TRAIN_SIGNS_WIDGET_H
 
+#include <Base64.h>
+#include <Fonts/Org_01.h>
+
 #include "Adafruit_BigClock.h"
 
 #define FRAMES_BEFORE 20
@@ -46,7 +49,8 @@ class Widget {
 public:
   Widget(Adafruit_BigClock *canvas)
     : _canvas(canvas), _frame(0), _frames(FRAMES_BEFORE + FRAMES_AFTER),
-      _flash(false), _message(nullptr), _speed(5), _text_align(LEFT), _text_wrap(false), _vertical_align(TOP) {}
+      _image(nullptr), _imageWidth(0), _imageHeight(0), _message(nullptr),
+      _flash(false), _invert(false), _speed(5), _text_align(LEFT), _text_wrap(false), _vertical_align(TOP) {}
 
   void applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c);
   void applyFlash();
@@ -58,6 +62,20 @@ public:
 
   void setFlash(bool flash) {
     _flash = flash;
+  }
+
+  void setImage(String *image) {
+    if (*image == "") {
+      _image = nullptr;
+      _imageWidth = 0;
+      _imageHeight = 0;
+      return;
+    }
+
+    _image = (char *) malloc(sizeof(char) * 73);
+    Base64.decode(_image, (char *) image->c_str(), image->length());
+    _imageWidth = 24;
+    _imageHeight = 24;
   }
 
   void setInvert(bool invert) {
@@ -93,9 +111,14 @@ private:
   uint16_t _frame;
   uint16_t _frames;
 
+  char *_image;
+  uint8_t _imageWidth;
+  uint8_t _imageHeight;
+
+  String *_message;
+
   bool _flash;
   bool _invert;
-  String *_message;
   uint8_t _speed;
   TEXT_ALIGN _text_align;
   bool _text_wrap;

@@ -53,6 +53,7 @@ void loop() {
       deserializeJson(document, client);
 
       widget->setFlash(document["flash"] | false);
+      widget->setImage(new String(document["image"] | ""));
       widget->setInvert(document["invert"] | false);
       widget->setMessage(new String(document["message"] | ""));
       widget->setSpeed(document["speed"] | 5);
