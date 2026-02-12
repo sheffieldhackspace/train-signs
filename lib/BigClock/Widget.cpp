@@ -49,6 +49,12 @@ void Widget::applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c) {
   }
 }
 
+void Widget::applyFlash() {
+  if (_flash && _frame % (_speed / 2) == 0) {
+    setInvert(!_invert);
+  }
+}
+
 // b - boundary dimension (ie. width of the display)
 // d - text dimension (ie. width of the text)
 // c - text coordinate (ie. x position of the text)
@@ -83,9 +89,10 @@ void Widget::display() {
   }
 
   applyAlign(_vertical_align, BC_HEIGHT, th, &y);
+  applyFlash();
 
   _canvas->fillScreen(0);
-  this->printMessage(x, y, max(BC_WIDTH, tw));
+  printMessage(x, y, max(BC_WIDTH, tw));
   _canvas->display();
 }
 

@@ -52,6 +52,7 @@ void loop() {
       JsonDocument document;
       deserializeJson(document, client);
 
+      widget->setFlash(document["flash"] | false);
       widget->setInvert(document["invert"] | false);
       widget->setMessage(new String(document["message"] | ""));
       widget->setSpeed(document["speed"] | 5);
