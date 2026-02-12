@@ -30,8 +30,8 @@
 
 #include "Adafruit_BigClockSPI.h"
 
-#define BC_WIDTH 96
-#define BC_HEIGHT 26
+#define BC_WIDTH (uint16_t) 96
+#define BC_HEIGHT (uint16_t) 26
 
 enum BOARD {
   BOARD_BOTTOM = 0,

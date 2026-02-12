@@ -83,32 +83,32 @@ void Widget::display() {
   applyAlign(_vertical_align, BC_HEIGHT, th, &y);
 
   _canvas->fillScreen(0);
-  this->printMessage(x, y);
+  this->printMessage(x, y, max(BC_WIDTH, tw));
   _canvas->display();
 }
 
-void Widget::printMessage(int16_t x, int16_t y) {
+void Widget::printMessage(int16_t x, int16_t y, uint16_t w) {
   int16_t begin = 0, end = 0;
   String s = *_message;
 
   while (s[end]) {
     if (s[end] == '\n') {
       _canvas->println();
-
       y = _canvas->getCursorY();
+
       begin++;
     } else if (s[end + 1] == '\n' || !s[end + 1]) {
       String line = s.substring(begin, end + 1);
-      int16_t x1 = x, bx, by;
-      uint16_t bw, bh;
+      int16_t x1 = x, tx, ty;
+      uint16_t tw, th;
 
-      _canvas->getTextBounds(line, x, y, &bx, &by, &bw, &bh);
-      applyAlign(_text_align, BC_WIDTH, bw, &x1);
+      _canvas->getTextBounds(line, 0, 0, &tx, &ty, &tw, &th);
+      applyAlign(_text_align, w, tw, &x1);
 
       _canvas->setCursor(x1, y);
       _canvas->print(line);
-
       y = _canvas->getCursorY();
+
       begin = end + 1;
     }
 
