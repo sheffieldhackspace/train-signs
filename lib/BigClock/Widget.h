@@ -44,9 +44,8 @@ public:
   Widget(Adafruit_BigClock *canvas)
     : _canvas(canvas), _frame(0), _frames(1), _message(nullptr), _speed(5), _text_align(LEFT), _vertical_align(TOP) {}
 
-  void applyHorizontalAlign(int16_t w, int16_t *x);
-  void applyVerticalAlign(int16_t h, int16_t *y);
-  void applyScroll(int16_t dw, int16_t w, int16_t *x);
+  void applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c);
+  void applyScroll(int16_t b, int16_t d, int16_t *c);
   void begin();
   void display();
   void printMessage(int16_t x, int16_t y);

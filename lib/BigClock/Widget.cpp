@@ -33,26 +33,18 @@ void Widget::begin() {
   _canvas->setFont(&Org_01);
 }
 
-void Widget::applyHorizontalAlign(int16_t w, int16_t *x) {
-  int16_t xd = BC_WIDTH - w;
+// a - alignment value
+// b - boundary dimension (ie. width of the display)
+// d - text dimension (ie. width of the text)
+// c - text coordinate (ie. x position of the text)
+void Widget::applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c) {
+  int16_t distance = b - d;
 
-  if (xd > 0) {
-    if (_text_align == CENTER) {
-      *x += xd / 2;
-    } else if (_text_align == RIGHT) {
-      *x += xd;
-    }
-  }
-}
-
-void Widget::applyVerticalAlign(int16_t h, int16_t *y) {
-  int16_t yd = BC_HEIGHT - h;
-
-  if (yd > 0) {
-    if (_vertical_align == MIDDLE) {
-      *y += yd / 2;
-    } else if (_vertical_align == BOTTOM) {
-      *y += yd;
+  if (distance > 0) {
+    if (a == 0) {
+      *c += distance / 2;
+    } else if (a == 1) {
+      *c += distance;
     }
   }
 }
@@ -67,9 +59,9 @@ void Widget::applyScroll(int16_t b, int16_t d, int16_t *c) {
     _frames = distance + 40;
 
     if (_frame >= 20 && _frame - 20 < distance) {
-      *c += -(_frame - 20);
+      *c -= _frame - 20;
     } else if (_frame - 20 >= distance) {
-      *c += -distance;
+      *c -= distance;
     }
   }
 }
@@ -85,10 +77,10 @@ void Widget::display() {
   if (_text_wrap) {
     applyScroll(BC_HEIGHT, th, &y);
   } else {
-    applyScroll(BC_WIDTH, th, &x);
+    applyScroll(BC_WIDTH, tw, &x);
   }
 
-  applyVerticalAlign(th, &y);
+  applyAlign(_vertical_align, BC_HEIGHT, th, &y);
 
   _canvas->fillScreen(0);
   this->printMessage(x, y);
@@ -111,7 +103,7 @@ void Widget::printMessage(int16_t x, int16_t y) {
       uint16_t bw, bh;
 
       _canvas->getTextBounds(line, x, y, &bx, &by, &bw, &bh);
-      applyHorizontalAlign(bw, &x1);
+      applyAlign(_text_align, BC_WIDTH, bw, &x1);
 
       _canvas->setCursor(x1, y);
       _canvas->print(line);
