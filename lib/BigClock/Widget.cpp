@@ -57,30 +57,19 @@ void Widget::applyVerticalAlign(int16_t h, int16_t *y) {
   }
 }
 
-void Widget::applyHorizontalScroll(int16_t w, int16_t *x) {
-  int16_t xd = w - BC_WIDTH;
+// bd - boundary dimension
+// td - text dimension
+// tc - text coordinate
+void Widget::applyScroll(int16_t bd, int16_t td, int16_t *tc) {
+  int16_t distance = td - bd;
 
-  if (xd > 0) {
-    _frames = xd + 40;
+  if (distance > 0) {
+    _frames = distance + 40;
 
-    if (_frame >= 20 && _frame - 20 < xd) {
-      *x += -(_frame - 20);
-    } else if (_frame - 20 >= xd) {
-      *x += -xd;
-    }
-  }
-}
-
-void Widget::applyVerticalScroll(int16_t h, int16_t *y) {
-  int16_t yd = h - BC_HEIGHT;
-
-  if (yd > 0) {
-    _frames = yd + 40;
-
-    if (_frame >= 20 && _frame - 20 < yd) {
-      *y += -(_frame - 20);
-    } else if (_frame - 20 >= yd) {
-      *y += -yd;
+    if (_frame >= 20 && _frame - 20 < distance) {
+      *tc += -(_frame - 20);
+    } else if (_frame - 20 >= distance) {
+      *tc += -distance;
     }
   }
 }
@@ -94,9 +83,9 @@ void Widget::display() {
   y = -y;
 
   if (_text_wrap) {
-    applyVerticalScroll(h, &y);
+    applyScroll(BC_HEIGHT, h, &y);
   } else {
-    applyHorizontalScroll(w, &x);
+    applyScroll(BC_WIDTH, w, &x);
   }
 
   applyVerticalAlign(h, &y);

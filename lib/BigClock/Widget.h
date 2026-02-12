@@ -46,8 +46,7 @@ public:
 
   void applyHorizontalAlign(int16_t w, int16_t *x);
   void applyVerticalAlign(int16_t h, int16_t *y);
-  void applyHorizontalScroll(int16_t w, int16_t *x);
-  void applyVerticalScroll(int16_t h, int16_t *y);
+  void applyScroll(int16_t dw, int16_t w, int16_t *x);
   void begin();
   void display();
   void printMessage();
