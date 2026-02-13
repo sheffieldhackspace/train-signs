@@ -23,10 +23,10 @@ void setup() {
   widget->begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-  widget->setTextAlign(CENTER);
+  widget->setHorizontalAlign(CENTER);
   widget->setVerticalAlign(MIDDLE);
   widget->setInvert(true);
-  widget->setMessage(new String("SSID: " + WIFI_SSID + "\nConnecting..."));
+  widget->setText(new String("SSID: " + WIFI_SSID + "\nConnecting..."));
   widget->display();
 
   while (!WiFi.isConnected()) {
@@ -40,7 +40,7 @@ void setup() {
   server.begin();
 
   widget->setInvert(false);
-  widget->setMessage(new String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":80"));
+  widget->setText(new String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":80"));
   widget->display();
 }
 
@@ -52,17 +52,19 @@ void loop() {
       JsonDocument document;
       deserializeJson(document, client);
 
-      widget->setFlash(document["flash"] | false);
       widget->setImage(new String(document["image"] | ""));
+      widget->setText(new String(document["text"] | ""));
+
+      widget->setFlash(document["flash"] | false);
       widget->setInvert(document["invert"] | false);
-      widget->setMessage(new String(document["message"] | ""));
       widget->setSpeed(document["speed"] | 5);
-      widget->setTextAlign(document["text_align"] | LEFT);
       widget->setTextWrap(document["text_wrap"] | true);
+
+      widget->setHorizontalAlign(document["horizontal_align"] | LEFT);
       widget->setVerticalAlign(document["vertical_align"] | TOP);
     }
   }
 
   widget->display();
-  widget->waitForNextFrame();
+  widget->advanceFrame();
 }

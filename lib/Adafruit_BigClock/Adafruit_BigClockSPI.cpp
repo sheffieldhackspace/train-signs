@@ -26,7 +26,10 @@
 
 Adafruit_BigClockSPI::Adafruit_BigClockSPI(int8_t sck, int8_t mosi, int8_t latch, int8_t keepalive)
   : Adafruit_SPIDevice(-1, sck, -1, mosi, SPI_CLOCK_DIV2, SPI_BITORDER_MSBFIRST, SPI_MODE1),
-    _keepalive(keepalive), _latch(latch), _buffer(0), _buffer_size(0) {}
+    _keepalive(keepalive),
+    _latch(latch),
+    _buffer(0),
+    _buffer_size(0) {}
 
 bool Adafruit_BigClockSPI::begin() {
   if (_latch != -1) {

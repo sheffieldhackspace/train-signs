@@ -28,5 +28,4 @@ void setup() {
   canvas->display();
 }
 
-void loop() {
-}
+void loop() {}

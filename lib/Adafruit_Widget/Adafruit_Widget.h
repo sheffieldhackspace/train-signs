@@ -32,7 +32,7 @@
 #define FRAMES_BEFORE 20
 #define FRAMES_AFTER 20
 
-enum TEXT_ALIGN {
+enum HORIZONTAL_ALIGN {
   LEFT = -1,
   CENTER = 0,
   RIGHT = 1,
@@ -46,18 +46,28 @@ enum VERTICAL_ALIGN {
 
 class Adafruit_Widget {
 public:
-  Adafruit_Widget(Adafruit_BigClock *canvas)
-    : _canvas(canvas), _frame(0), _frames(FRAMES_BEFORE + FRAMES_AFTER),
-      _image(nullptr), _image_width(0), _image_height(0), _message(nullptr),
-      _flash(false), _invert(false), _speed(5), _text_align(LEFT), _text_wrap(false), _vertical_align(TOP) {}
+  Adafruit_Widget(Adafruit_BigClock *canvas) : _canvas(canvas),
+                                               _frame(0),
+                                               _frames(FRAMES_BEFORE + FRAMES_AFTER),
+                                               _image(nullptr),
+                                               _image_width(0),
+                                               _image_height(0),
+                                               _text(nullptr),
+                                               _flash(false),
+                                               _invert(false),
+                                               _speed(5),
+                                               _horizontal_align(LEFT),
+                                               _text_wrap(false),
+                                               _vertical_align(TOP) {}
 
   int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
   int16_t getScroll(uint16_t b, uint16_t d);
+
+  void advanceFrame();
   void begin();
   void display();
   void flash();
   void printText(int16_t x, int16_t y, uint16_t w, uint16_t h);
-  void waitForNextFrame();
 
   void setFlash(bool flash) {
     _flash = flash;
@@ -82,18 +92,18 @@ public:
     _canvas->invertDisplay(invert);
   }
 
-  void setMessage(String *message) {
+  void setText(String *text) {
     _frame = 0;
     _frames = FRAMES_BEFORE + FRAMES_AFTER;
-    _message = message;
+    _text = text;
   }
 
   void setSpeed(uint8_t speed) {
     _speed = speed;
   }
 
-  void setTextAlign(TEXT_ALIGN align) {
-    _text_align = align;
+  void setHorizontalAlign(HORIZONTAL_ALIGN align) {
+    _horizontal_align = align;
   }
 
   void setTextWrap(bool wrap) {
@@ -114,13 +124,14 @@ private:
   uint8_t _image_width;
   uint8_t _image_height;
 
-  String *_message;
+  String *_text;
 
   bool _flash;
   bool _invert;
   uint8_t _speed;
-  TEXT_ALIGN _text_align;
   bool _text_wrap;
+
+  HORIZONTAL_ALIGN _horizontal_align;
   VERTICAL_ALIGN _vertical_align;
 };
 

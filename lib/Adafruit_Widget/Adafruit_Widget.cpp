@@ -24,14 +24,6 @@
 
 #include "Adafruit_Widget.h"
 
-void Adafruit_Widget::begin() {
-  _canvas->begin();
-  _canvas->setTextSize(1);
-  _canvas->fillScreen(0);
-  _canvas->setTextColor(1);
-  _canvas->setFont(&Org_01);
-}
-
 // a - alignment value
 // b - boundary dimension (ie. width of the display)
 // d - text dimension (ie. width of the text)
@@ -71,12 +63,30 @@ int16_t Adafruit_Widget::getScroll(uint16_t b, uint16_t d) {
   return 0;
 }
 
+void Adafruit_Widget::advanceFrame() {
+  _frame++;
+
+  if (_frame >= _frames) {
+    _frame = 0;
+  }
+
+  delay(1000 / _speed);
+}
+
+void Adafruit_Widget::begin() {
+  _canvas->begin();
+  _canvas->setTextSize(1);
+  _canvas->fillScreen(0);
+  _canvas->setTextColor(1);
+  _canvas->setFont(&Org_01);
+}
+
 void Adafruit_Widget::display() {
   int16_t x = 0, y = 0, text_x, text_y;
   uint16_t text_width, text_height;
 
   _canvas->fillScreen(0);
-  _canvas->getTextBounds(*_message, 0, 0, &text_x, &text_y, &text_width, &text_height);
+  _canvas->getTextBounds(*_text, 0, 0, &text_x, &text_y, &text_width, &text_height);
 
   flash();
 
@@ -90,7 +100,7 @@ void Adafruit_Widget::display() {
     y += getScroll(BC_HEIGHT, widget_height);
 
     if (_image != nullptr) {
-      x += getAlign(_text_align, BC_WIDTH, _image_width);
+      x += getAlign(_horizontal_align, BC_WIDTH, _image_width);
       _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
       x = 0;
       y += _image_height + 2;
@@ -100,14 +110,14 @@ void Adafruit_Widget::display() {
   } else {
     uint16_t widget_width = text_width + _image_width;
 
-    if (_text_align == CENTER) {
+    if (_horizontal_align == CENTER) {
       widget_width += _image_width;
     }
 
     x += getScroll(BC_WIDTH, widget_width);
-    x += getAlign(_text_align, BC_WIDTH, widget_width);
+    x += getAlign(_horizontal_align, BC_WIDTH, widget_width);
 
-    if (_image != nullptr && _text_align != RIGHT) {
+    if (_image != nullptr && _horizontal_align != RIGHT) {
       _canvas->drawBitmap(x, 1, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
       x += _image_width;
     }
@@ -115,7 +125,7 @@ void Adafruit_Widget::display() {
     printText(x - text_x, y - text_y, text_width, text_height);
     x += text_width;
 
-    if (_image != nullptr && _text_align != LEFT) {
+    if (_image != nullptr && _horizontal_align != LEFT) {
       _canvas->drawBitmap(x, 1, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
     }
   }
@@ -131,7 +141,7 @@ void Adafruit_Widget::flash() {
 
 void Adafruit_Widget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
   int16_t begin = 0, end = 0;
-  String s = *_message;
+  String s = *_text;
 
   y += getAlign(_vertical_align, BC_HEIGHT, h);
 
@@ -147,7 +157,7 @@ void Adafruit_Widget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
       uint16_t tw, th;
 
       _canvas->getTextBounds(line, 0, 0, &tx, &ty, &tw, &th);
-      _canvas->setCursor(x + getAlign(_text_align, w, tw), y);
+      _canvas->setCursor(x + getAlign(_horizontal_align, w, tw), y);
 
       _canvas->print(line);
 
@@ -157,14 +167,4 @@ void Adafruit_Widget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
 
     end++;
   }
-}
-
-void Adafruit_Widget::waitForNextFrame() {
-  _frame++;
-
-  if (_frame >= _frames) {
-    _frame = 0;
-  }
-
-  delay(1000 / _speed);
 }
