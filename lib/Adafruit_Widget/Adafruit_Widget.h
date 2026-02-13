@@ -73,18 +73,20 @@ public:
     _flash = flash;
   }
 
-  void setImage(String *image) {
+  void setImage(String *image, uint16_t width, uint16_t height) {
+    _image_width = width;
+    _image_height = height;
+
     if (*image == "") {
       _image = nullptr;
-      _image_width = 0;
-      _image_height = 0;
       return;
     }
 
-    _image = (char *) malloc(sizeof(char) * 73);
-    Base64.decode(_image, (char *) image->c_str(), image->length());
-    _image_width = 24;
-    _image_height = 24;
+    auto input = (char *) image->c_str();
+    auto length = Base64.decodedLength(input, image->length()) + 1;
+
+    _image = (char *) malloc(sizeof(char) * length);
+    Base64.decode(_image, input, image->length());
   }
 
   void setInvert(bool invert) {

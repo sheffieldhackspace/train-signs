@@ -52,7 +52,7 @@ void loop() {
       JsonDocument document;
       deserializeJson(document, client);
 
-      widget->setImage(new String(document["image"] | ""));
+      widget->setImage(new String(document["image"] | ""), document["image_width"] | 0, document["image_height"] | 0);
       widget->setText(new String(document["text"] | ""));
 
       widget->setFlash(document["flash"] | false);
