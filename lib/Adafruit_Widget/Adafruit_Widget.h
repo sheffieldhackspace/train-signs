@@ -25,7 +25,7 @@
 #ifndef ADAFRUIT_WIDGET_H
 #define ADAFRUIT_WIDGET_H
 
-#include <Adafruit_BigClock.h>
+#include <Adafruit_GFX.h>
 #include <Base64.h>
 #include <Fonts/Org_01.h>
 
@@ -46,26 +46,26 @@ enum VERTICAL_ALIGN {
 
 class Adafruit_Widget {
 public:
-  Adafruit_Widget(Adafruit_BigClock *canvas) : _canvas(canvas),
-                                               _frame(0),
-                                               _frames(FRAMES_BEFORE + FRAMES_AFTER),
-                                               _image(nullptr),
-                                               _image_width(0),
-                                               _image_height(0),
-                                               _text(nullptr),
-                                               _flash(false),
-                                               _invert(false),
-                                               _speed(5),
-                                               _horizontal_align(LEFT),
-                                               _text_wrap(false),
-                                               _vertical_align(TOP) {}
+  Adafruit_Widget(Adafruit_GFX *canvas) : _canvas(canvas),
+                                          _frame(0),
+                                          _frames(FRAMES_BEFORE + FRAMES_AFTER),
+                                          _image(nullptr),
+                                          _image_width(0),
+                                          _image_height(0),
+                                          _text(nullptr),
+                                          _flash(false),
+                                          _invert(false),
+                                          _speed(5),
+                                          _horizontal_align(LEFT),
+                                          _text_wrap(false),
+                                          _vertical_align(TOP) {}
 
   int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
   int16_t getScroll(uint16_t b, uint16_t d);
 
   void advanceFrame();
   void begin();
-  void display();
+  void print();
   void flash();
   void printText(int16_t x, int16_t y, uint16_t w, uint16_t h);
 
@@ -118,7 +118,7 @@ public:
   }
 
 private:
-  Adafruit_BigClock *_canvas;
+  Adafruit_GFX *_canvas;
   uint16_t _frame;
   uint16_t _frames;
 

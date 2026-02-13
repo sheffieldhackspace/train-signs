@@ -4,6 +4,7 @@
 */
 
 #include <Adafruit_BigClock.h>
+#include <Adafruit_GFX.h>
 #include <Arduino.h>
 
 #define MAX_X_DEVIATION 36

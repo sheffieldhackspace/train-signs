@@ -1,4 +1,5 @@
 #include <Adafruit_BigClock.h>
+#include <Adafruit_GFX.h>
 #include <Adafruit_Widget.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -12,14 +13,15 @@
 
 WiFiServer server(80);
 
-Adafruit_Widget *widget = new Adafruit_Widget(
-  new Adafruit_BigClock(
-    new Adafruit_BigClockSPI(D2, D4, D6, D8),
-    new Adafruit_BigClockSPI(D1, D3, D5, D7)
-  )
+Adafruit_BigClock *big_clock = new Adafruit_BigClock(
+  new Adafruit_BigClockSPI(D2, D4, D6, D8),
+  new Adafruit_BigClockSPI(D1, D3, D5, D7)
 );
 
+Adafruit_Widget *widget = new Adafruit_Widget(big_clock);
+
 void setup() {
+  big_clock->begin();
   widget->begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
@@ -27,7 +29,8 @@ void setup() {
   widget->setVerticalAlign(MIDDLE);
   widget->setInvert(true);
   widget->setText(new String("SSID: " + WIFI_SSID + "\nConnecting..."));
-  widget->display();
+  widget->print();
+  big_clock->display();
 
   while (!WiFi.isConnected()) {
     if (WiFiClass::status() == WL_DISCONNECTED) {
@@ -41,7 +44,8 @@ void setup() {
 
   widget->setInvert(false);
   widget->setText(new String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":80"));
-  widget->display();
+  widget->print();
+  big_clock->display();
 }
 
 void loop() {
@@ -65,6 +69,7 @@ void loop() {
     }
   }
 
-  widget->display();
+  widget->print();
   widget->advanceFrame();
+  big_clock->display();
 }

@@ -74,14 +74,19 @@ void Adafruit_Widget::advanceFrame() {
 }
 
 void Adafruit_Widget::begin() {
-  _canvas->begin();
   _canvas->setTextSize(1);
   _canvas->fillScreen(0);
   _canvas->setTextColor(1);
   _canvas->setFont(&Org_01);
 }
 
-void Adafruit_Widget::display() {
+void Adafruit_Widget::flash() {
+  if (_flash && _frame % (_speed / 2) == 0) {
+    setInvert(!_invert);
+  }
+}
+
+void Adafruit_Widget::print() {
   int16_t x = 0, y = 0, text_x, text_y;
   uint16_t text_width, text_height;
 
@@ -97,10 +102,10 @@ void Adafruit_Widget::display() {
       widget_height += _image_height + 2;
     }
 
-    y += getScroll(BC_HEIGHT, widget_height);
+    y += getScroll(_canvas->height(), widget_height);
 
     if (_image != nullptr) {
-      x += getAlign(_horizontal_align, BC_WIDTH, _image_width);
+      x += getAlign(_horizontal_align, _canvas->width(), _image_width);
 
       _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
 
@@ -116,11 +121,11 @@ void Adafruit_Widget::display() {
       widget_width += _image_width;
     }
 
-    x += getScroll(BC_WIDTH, widget_width);
-    x += getAlign(_horizontal_align, BC_WIDTH, widget_width);
+    x += getScroll(_canvas->width(), widget_width);
+    x += getAlign(_horizontal_align, _canvas->width(), widget_width);
 
     if (_image != nullptr && _horizontal_align != RIGHT) {
-      y = getAlign(_vertical_align, BC_HEIGHT, _image_height);
+      y = getAlign(_vertical_align, _canvas->height(), _image_height);
 
       _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
 
@@ -132,18 +137,10 @@ void Adafruit_Widget::display() {
     x += text_width;
 
     if (_image != nullptr && _horizontal_align != LEFT) {
-      y = getAlign(_vertical_align, BC_HEIGHT, _image_height);
+      y = getAlign(_vertical_align, _canvas->height(), _image_height);
 
       _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
     }
-  }
-
-  _canvas->display();
-}
-
-void Adafruit_Widget::flash() {
-  if (_flash && _frame % (_speed / 2) == 0) {
-    setInvert(!_invert);
   }
 }
 
@@ -151,7 +148,7 @@ void Adafruit_Widget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
   int16_t begin = 0, end = 0;
   String s = *_text;
 
-  y += getAlign(_vertical_align, BC_HEIGHT, h);
+  y += getAlign(_vertical_align, _canvas->height(), h);
 
   while (s[end]) {
     if (s[end] == '\n') {
