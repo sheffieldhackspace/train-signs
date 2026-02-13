@@ -51,11 +51,11 @@ public:
       _image(nullptr), _image_width(0), _image_height(0), _message(nullptr),
       _flash(false), _invert(false), _speed(5), _text_align(LEFT), _text_wrap(false), _vertical_align(TOP) {}
 
-  void applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c);
-  void applyFlash();
-  void applyScroll(int16_t b, int16_t d, int16_t *c);
+  int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
+  int16_t getScroll(uint16_t b, uint16_t d);
   void begin();
   void display();
+  void flash();
   void printText(int16_t x, int16_t y, uint16_t w, uint16_t h);
   void waitForNextFrame();
 
