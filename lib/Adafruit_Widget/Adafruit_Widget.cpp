@@ -101,7 +101,9 @@ void Adafruit_Widget::display() {
 
     if (_image != nullptr) {
       x += getAlign(_horizontal_align, BC_WIDTH, _image_width);
+
       _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+
       x = 0;
       y += _image_height + 2;
     }
@@ -118,15 +120,21 @@ void Adafruit_Widget::display() {
     x += getAlign(_horizontal_align, BC_WIDTH, widget_width);
 
     if (_image != nullptr && _horizontal_align != RIGHT) {
-      _canvas->drawBitmap(x, 1, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+      y = getAlign(_vertical_align, BC_HEIGHT, _image_height);
+
+      _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+
       x += _image_width;
+      y = 0;
     }
 
     printText(x - text_x, y - text_y, text_width, text_height);
     x += text_width;
 
     if (_image != nullptr && _horizontal_align != LEFT) {
-      _canvas->drawBitmap(x, 1, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+      y = getAlign(_vertical_align, BC_HEIGHT, _image_height);
+
+      _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
     }
   }
 
