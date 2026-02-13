@@ -48,7 +48,7 @@ class Adafruit_Widget {
 public:
   Adafruit_Widget(Adafruit_BigClock *canvas)
     : _canvas(canvas), _frame(0), _frames(FRAMES_BEFORE + FRAMES_AFTER),
-      _image(nullptr), _imageWidth(0), _imageHeight(0), _message(nullptr),
+      _image(nullptr), _image_width(0), _image_height(0), _message(nullptr),
       _flash(false), _invert(false), _speed(5), _text_align(LEFT), _text_wrap(false), _vertical_align(TOP) {}
 
   void applyAlign(int8_t a, int16_t b, int16_t d, int16_t *c);
@@ -56,7 +56,7 @@ public:
   void applyScroll(int16_t b, int16_t d, int16_t *c);
   void begin();
   void display();
-  void printMessage(int16_t x, int16_t y, uint16_t w);
+  void printText(int16_t x, int16_t y, uint16_t w, uint16_t h);
   void waitForNextFrame();
 
   void setFlash(bool flash) {
@@ -66,15 +66,15 @@ public:
   void setImage(String *image) {
     if (*image == "") {
       _image = nullptr;
-      _imageWidth = 0;
-      _imageHeight = 0;
+      _image_width = 0;
+      _image_height = 0;
       return;
     }
 
     _image = (char *) malloc(sizeof(char) * 73);
     Base64.decode(_image, (char *) image->c_str(), image->length());
-    _imageWidth = 24;
-    _imageHeight = 24;
+    _image_width = 24;
+    _image_height = 24;
   }
 
   void setInvert(bool invert) {
@@ -111,8 +111,8 @@ private:
   uint16_t _frames;
 
   char *_image;
-  uint8_t _imageWidth;
-  uint8_t _imageHeight;
+  uint8_t _image_width;
+  uint8_t _image_height;
 
   String *_message;
 

@@ -75,43 +75,64 @@ void Adafruit_Widget::applyScroll(int16_t b, int16_t d, int16_t *c) {
 }
 
 void Adafruit_Widget::display() {
-  int16_t x = 0, y = 0, tx, ty;
-  uint16_t tw, th;
+  int16_t x = 0, y = 0, text_x, text_y;
+  uint16_t text_width, text_height;
 
   _canvas->fillScreen(0);
-  _canvas->getTextBounds(*_message, 0, 0, &tx, &ty, &tw, &th);
-
-  if (_text_wrap) {
-    applyScroll(BC_HEIGHT, th + _imageHeight + 2, &y);
-  } else {
-    applyScroll(BC_WIDTH, tw + _imageWidth, &x);
-  }
+  _canvas->getTextBounds(*_message, 0, 0, &text_x, &text_y, &text_width, &text_height);
 
   applyFlash();
 
-  if (_image != nullptr) {
-    _canvas->drawBitmap(x, y + 1, reinterpret_cast<uint8_t *>(_image), _imageWidth, _imageHeight, 1, 0);
-  }
-
-  applyAlign(_vertical_align, BC_HEIGHT, th, &y);
-
   if (_text_wrap) {
-    y += 2 + _imageHeight;
+    uint16_t widget_height = text_height;
+
+    if (_image_height) {
+      widget_height += _image_height + 2;
+    }
+
+    applyScroll(BC_HEIGHT, widget_height, &y);
+
+    if (_image != nullptr) {
+      applyAlign(_text_align, BC_WIDTH, _image_width, &x);
+      _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+      x = 0;
+      y += _image_height;
+    }
+
+    printText(x - text_x, y - text_y, text_width, text_height);
+    x += text_width;
   } else {
-    x += _imageWidth;
+    uint16_t widget_width = text_width + _image_width;
+
+    if (_text_align == CENTER) {
+      widget_width += _image_width;
+    }
+
+    applyScroll(BC_WIDTH, widget_width, &x);
+    applyAlign(_text_align, BC_WIDTH, widget_width, &x);
+
+    if (_image != nullptr && _text_align != RIGHT) {
+      _canvas->drawBitmap(x, 1, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+      x += _image_width;
+    }
+
+    printText(x - text_x, y - text_y, text_width, text_height);
+    x += text_width;
+
+    if (_image != nullptr && _text_align != LEFT) {
+      _canvas->drawBitmap(x, 1, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+      x += _image_width;
+    }
   }
-
-  x -= tx;
-  y -= ty;
-
-  printMessage(x, y, max(BC_WIDTH, tw));
 
   _canvas->display();
 }
 
-void Adafruit_Widget::printMessage(int16_t x, int16_t y, uint16_t w) {
+void Adafruit_Widget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
   int16_t begin = 0, end = 0;
   String s = *_message;
+
+  applyAlign(_vertical_align, BC_HEIGHT, h, &y);
 
   while (s[end]) {
     if (s[end] == '\n') {
