@@ -14,8 +14,8 @@
 WiFiServer server(80);
 
 Adafruit_BigClock *big_clock = new Adafruit_BigClock(
-  new Adafruit_BigClockSPI(D2, D4, D6, D8),
-  new Adafruit_BigClockSPI(D1, D3, D5, D7)
+  new Adafruit_BigClockSPI(D1, D3, D5, D8),
+  new Adafruit_BigClockSPI(D0, D2, D4, D7)
 );
 
 Adafruit_Widget *widget = new Adafruit_Widget(big_clock);
