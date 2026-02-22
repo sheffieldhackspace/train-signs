@@ -7,9 +7,8 @@
 
 #include "Credentials.h"
 
-#ifndef HTTP_SEPARATOR
-#define HTTP_SEPARATOR "\r\n\r\n"
-#endif
+const char *HTTP_SEPARATOR = "\r\n\r\n";
+const char *RESPONSE_200 = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
 
 WiFiServer server(80);
 
@@ -66,6 +65,9 @@ void loop() {
 
       widget->setHorizontalAlign(document["horizontal_align"] | LEFT);
       widget->setVerticalAlign(document["vertical_align"] | TOP);
+
+      client.print(RESPONSE_200);
+      client.stop();
     }
   }
 
