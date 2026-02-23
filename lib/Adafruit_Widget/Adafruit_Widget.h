@@ -78,7 +78,7 @@ public:
     _image_height = height;
 
     if (image == "") {
-      delete(_image);
+      free(_image);
       _image = nullptr;
       return;
     }
