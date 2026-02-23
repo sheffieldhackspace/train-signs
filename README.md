@@ -46,15 +46,15 @@ $ ./icons/image2bytes.py ./icons/skull.gif
 
 ```bash
 $ curl http://ip_address:port/ --data '{
-  text: "Repair cafe @\nSheffield Hackspace",
-  text_wrap: false,
-  flash: false,
-  invert: false,
-  horizontal_align: 0,
-  vertical_align: 0,
-  image: "AAAAAAAAAAAAAAAAAAAADAAwHAA4Hn54Bv9gAf+AATyAATyAAeeAAeeAAH4AA0LAD37wDjxwBgBgAAAAAAAAAAAAAAAAAAAA",
-  image_width: 24,
-  image_height: 24
+  "text": "Repair cafe @\nSheffield Hackspace",
+  "text_wrap": false,
+  "flash": false,
+  "invert": false,
+  "horizontal_align": -1,
+  "vertical_align": 0,
+  "image": "ABgAAZmAAf+AGf+YH//4DgAwDv/wfH/+fv+uP/UEP1VU8VF39xV/MVX8PV/8cf++f/8eD/+wDgAwH//4Gf+YAf+AAZmAABgA",
+  "image_width": 24,
+  "image_height": 24
 }'
 ```
 
@@ -70,8 +70,6 @@ $ curl http://ip_address:port/ --data '{
 
 ### Included libraries
 
-* Based on the BigClock library made by the Nottingham Hackspace
-* Adafruit_BigClock provides an Adafruit_GFX compatible driver for the display
-* Adafruit_Widget provides an interface for displaying information
-
-The BigClock library has been heavily rewritten by [`dredzik`](https://typedef.io/).
+* Adafruit GFX Library - The base for our implementation
+* Adafruit BigClock - Provides an Adafruit GFX compatible driver for the display; Based on the BigClock library made by the Nottingham Hackspace, heavily rewritten by [`dredzik`](https://typedef.io/)
+* Adafruit Widget - Provided a standard way of building a display widget for small IoT screens
