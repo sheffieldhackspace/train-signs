@@ -1,4 +1,3 @@
-#include <Adafruit_BigClock.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_Widget.h>
 #include <Arduino.h>
@@ -17,13 +16,24 @@ const char *RESPONSE_413 = "HTTP/1.1 413 Payload Too Large\r\nContent-Length: 0\
 
 WiFiServer server(SERVER_PORT);
 
-Adafruit_BigClockSPI spi1(D1, D3, D5, D8);
-Adafruit_BigClockSPI spi2(D0, D2, D4, D7);
-Adafruit_BigClock big_clock(&spi1, &spi2);
-Adafruit_Widget widget(&big_clock);
+#ifdef USE_OLED
+  #include <Adafruit_SSD1306.h>
+  Adafruit_SSD1306 display(128, 64, &Wire, -1);
+#else
+  #include <Adafruit_BigClock.h>
+  Adafruit_BigClockSPI spi1(D1, D3, D5, D8);
+  Adafruit_BigClockSPI spi2(D0, D2, D4, D7);
+  Adafruit_BigClock display(&spi1, &spi2);
+#endif
+
+Adafruit_Widget widget(&display);
 
 void setup() {
-  big_clock.begin();
+#ifdef USE_OLED
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+#else
+  display.begin();
+#endif
   widget.begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
@@ -32,7 +42,7 @@ void setup() {
   widget.setInvert(true);
   widget.setText(String("SSID: " + WIFI_SSID + "\nConnecting..."));
   widget.print();
-  big_clock.display();
+  display.display();
 
   while (!WiFi.isConnected()) {
     if (WiFiClass::status() == WL_DISCONNECTED) {
@@ -47,7 +57,7 @@ void setup() {
   widget.setInvert(false);
   widget.setText(String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":" + SERVER_PORT));
   widget.print();
-  big_clock.display();
+  display.display();
 }
 
 void loop() {
@@ -84,5 +94,5 @@ void loop() {
 
   widget.print();
   widget.advanceFrame();
-  big_clock.display();
+  display.display();
 }
