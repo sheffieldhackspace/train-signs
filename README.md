@@ -16,7 +16,7 @@ The clocks in the space. See also Nottingham Hackspace's wiki:
 
 ## Hardware driver
 
-The microcontroller is a XIAO Studio Seeed ESP32C3.
+The microcontroller is a Seeed Studio XIAO ESP32C3.
 
 ### Pinout
 
@@ -30,11 +30,32 @@ See [`kicad project`](./kicad) for the latest version.
 
 ## Running the project
 
+### Prerequisites
+
+* [PlatformIO](https://platformio.org/) installed
+
 ### Installation
+
+Flash the server environment to the device:
 
 ```bash
 $ pio run -t clean -t upload -e server
 ```
+
+To run on an SSD1306 OLED display instead, use the `server-oled` environment:
+
+```bash
+$ pio run -t clean -t upload -e server-oled
+```
+
+For wiring the OLED, connect it to the XIAO ESP32C3 as follows:
+
+| SSD1306 | XIAO ESP32C3 |
+|---------|--------------|
+| VCC     | 3V3          |
+| GND     | GND          |
+| SDA     | D4           |
+| SCL     | D5           |
 
 ### Generation of compatible image data
 
@@ -43,6 +64,8 @@ $ ./icons/image2bytes.py ./icons/skull.gif
 ```
 
 ### Setting the status of the display
+
+Once flashed, the display will show its IP address. You can then control it via HTTP:
 
 ```bash
 $ curl http://ip_address:port/ --data '{
@@ -58,18 +81,21 @@ $ curl http://ip_address:port/ --data '{
 }'
 ```
 
-* text - The text to be displayed. If it is too long, the display will scroll the text accordingly.
-* text_wrap - Should the text be wrapped or not. If true, the overflow will be scrolled vertially; if false, horizontally.
-* flash - Set true to invert the colours every second producing a flashing animation
-* invert - Invert the colours of the display
-* horizontal_align - -1 left, 0 centre, 1 right
-* vertical_align - -1 top, 0 centre, 1 bottom
-* image - base64 of an image (output of the other script)
-* image_width - image width
-* image_height - image height
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `text` | string | `""` | The text to display. If too long, the display will scroll it. |
+| `text_wrap` | boolean | `true` | If true, overflow scrolls vertically; if false, horizontally. |
+| `flash` | boolean | `false` | If true, inverts colours every second producing a flashing animation. |
+| `invert` | boolean | `false` | Invert the colours of the display. |
+| `speed` | integer | `5` | Scroll speed. |
+| `horizontal_align` | integer | `-1` (left) | -1 left, 0 centre, 1 right. |
+| `vertical_align` | integer | `-1` (top) | -1 top, 0 centre, 1 bottom. |
+| `image` | string | `""` | Base64-encoded image (output of the image2bytes script). |
+| `image_width` | integer | `0` | Image width in pixels. |
+| `image_height` | integer | `0` | Image height in pixels. |
 
 ### Included libraries
 
 * Adafruit GFX Library - The base for our implementation
-* Adafruit BigClock - Provides an Adafruit GFX compatible driver for the display; Based on the BigClock library made by the Nottingham Hackspace, heavily rewritten by [`dredzik`](https://typedef.io/)
-* Adafruit Widget - Provided a standard way of building a display widget for small IoT screens
+* Adafruit BigClock - Provides an Adafruit GFX compatible driver for the display; based on the BigClock library made by the Nottingham Hackspace, heavily rewritten by [`dredzik`](https://typedef.io/)
+* Adafruit Widget - Provides a standard way of building a display widget for small IoT screens
