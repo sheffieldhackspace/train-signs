@@ -59,7 +59,14 @@ void loop() {
       JsonDocument document;
       deserializeJson(document, client);
 
-      widget.setImage(String(document["image"] | ""), document["image_width"] | 0, document["image_height"] | 0);
+      int image_width = document["image_width"] | 0;
+      int image_height = document["image_height"] | 0;
+      if (image_width < 0 || image_width > 255 || image_height < 0 || image_height > 255) {
+        client.print(RESPONSE_413);
+        client.stop();
+        return;
+      }
+      widget.setImage(String(document["image"] | ""), image_width, image_height);
       widget.setText(String(document["text"] | ""));
 
       widget.setFlash(document["flash"] | false);
