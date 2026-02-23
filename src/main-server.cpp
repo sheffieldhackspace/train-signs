@@ -9,6 +9,8 @@
 
 const char *HTTP_SEPARATOR = "\r\n\r\n";
 const char *RESPONSE_200 = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+const char *RESPONSE_413 = "HTTP/1.1 413 Payload Too Large\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+const int MAX_PAYLOAD_SIZE = 4096;
 
 WiFiServer server(80);
 
@@ -48,7 +50,10 @@ void setup() {
 
 void loop() {
   if (WiFiClient client = server.accept()) {
-    while (client.available()) {
+    if (client.available() > MAX_PAYLOAD_SIZE) {
+      client.print(RESPONSE_413);
+      client.stop();
+    } else if (client.available()) {
       client.find(HTTP_SEPARATOR);
 
       JsonDocument document;
