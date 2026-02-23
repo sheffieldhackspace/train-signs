@@ -8,15 +8,17 @@
 #include "Credentials.h"
 
 const char *HTTP_SEPARATOR = "\r\n\r\n";
-const char *RESPONSE_200 = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
-const char *RESPONSE_413 = "HTTP/1.1 413 Payload Too Large\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
-const int MAX_PAYLOAD_SIZE = 4096;
+const size_t MAX_PAYLOAD_SIZE = 4096;
+const int SERVER_PORT = 80;
 
-WiFiServer server(80);
+const char *RESPONSE_200 = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+const char *RESPONSE_400 = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+const char *RESPONSE_413 = "HTTP/1.1 413 Payload Too Large\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+
+WiFiServer server(SERVER_PORT);
 
 Adafruit_BigClockSPI spi1(D1, D3, D5, D8);
 Adafruit_BigClockSPI spi2(D0, D2, D4, D7);
-
 Adafruit_BigClock big_clock(&spi1, &spi2);
 Adafruit_Widget widget(&big_clock);
 
@@ -43,7 +45,7 @@ void setup() {
   server.begin();
 
   widget.setInvert(false);
-  widget.setText(String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":80"));
+  widget.setText(String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":" + SERVER_PORT));
   widget.print();
   big_clock.display();
 }
@@ -57,7 +59,12 @@ void loop() {
       client.find(HTTP_SEPARATOR);
 
       JsonDocument document;
-      deserializeJson(document, client);
+
+      if (deserializeJson(document, client)) {
+        client.print(RESPONSE_400);
+        client.stop();
+        return;
+      }
 
       widget.setImage(String(document["image"] | ""), document["image_width"] | 0, document["image_height"] | 0);
       widget.setText(String(document["text"] | ""));
