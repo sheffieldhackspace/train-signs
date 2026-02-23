@@ -87,6 +87,7 @@ public:
     auto length = Base64.decodedLength(input, image.length()) + 1;
 
     _image = (char *) malloc(sizeof(char) * length);
+    if (!_image) return;
     Base64.decode(_image, input, image.length());
   }
 
