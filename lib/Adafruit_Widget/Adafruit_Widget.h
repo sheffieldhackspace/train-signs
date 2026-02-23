@@ -83,6 +83,9 @@ public:
       return;
     }
 
+    free(_image);
+    _image = nullptr;
+
     auto input = (char *) image.c_str();
     auto length = Base64.decodedLength(input, image.length()) + 1;
 
