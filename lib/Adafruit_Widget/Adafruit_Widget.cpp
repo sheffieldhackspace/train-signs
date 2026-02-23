@@ -91,7 +91,7 @@ void Adafruit_Widget::print() {
   uint16_t text_width, text_height;
 
   _canvas->fillScreen(0);
-  _canvas->getTextBounds(*_text, 0, 0, &text_x, &text_y, &text_width, &text_height);
+  _canvas->getTextBounds(_text, 0, 0, &text_x, &text_y, &text_width, &text_height);
 
   flash();
 
@@ -146,7 +146,7 @@ void Adafruit_Widget::print() {
 
 void Adafruit_Widget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
   int16_t begin = 0, end = 0;
-  String s = *_text;
+  String s = _text;
 
   y += getAlign(_vertical_align, _canvas->height(), h);
 

@@ -52,7 +52,7 @@ public:
                                           _image(nullptr),
                                           _image_width(0),
                                           _image_height(0),
-                                          _text(nullptr),
+                                          _text(""),
                                           _flash(false),
                                           _invert(false),
                                           _speed(5),
@@ -73,20 +73,21 @@ public:
     _flash = flash;
   }
 
-  void setImage(String *image, uint16_t width, uint16_t height) {
+  void setImage(String image, uint16_t width, uint16_t height) {
     _image_width = width;
     _image_height = height;
 
-    if (*image == "") {
+    if (image == "") {
+      delete(_image);
       _image = nullptr;
       return;
     }
 
-    auto input = (char *) image->c_str();
-    auto length = Base64.decodedLength(input, image->length()) + 1;
+    auto input = (char *) image.c_str();
+    auto length = Base64.decodedLength(input, image.length()) + 1;
 
     _image = (char *) malloc(sizeof(char) * length);
-    Base64.decode(_image, input, image->length());
+    Base64.decode(_image, input, image.length());
   }
 
   void setInvert(bool invert) {
@@ -94,7 +95,7 @@ public:
     _canvas->invertDisplay(invert);
   }
 
-  void setText(String *text) {
+  void setText(String text) {
     _frame = 0;
     _frames = FRAMES_BEFORE + FRAMES_AFTER;
     _text = text;
@@ -126,7 +127,7 @@ private:
   uint8_t _image_width;
   uint8_t _image_height;
 
-  String *_text;
+  String _text;
 
   bool _flash;
   bool _invert;
