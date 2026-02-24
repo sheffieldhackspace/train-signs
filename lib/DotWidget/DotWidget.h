@@ -27,8 +27,8 @@
 #include <Adafruit_GFX.h>
 #include <Base64.h>
 
-#define FRAMES_BEFORE 20
-#define FRAMES_AFTER 20
+constexpr int16_t FRAMES_BEFORE = 20;
+constexpr int16_t FRAMES_AFTER = 20;
 
 enum HORIZONTAL_ALIGN {
   LEFT = -1,
@@ -84,7 +84,7 @@ public:
     const auto input = const_cast<char *>(image.c_str());
     const auto length = Base64.decodedLength(input, static_cast<int>(image.length())) + 1;
 
-    _image = static_cast<char *>(malloc(sizeof(char) * length));
+    _image = new char[length];
     Base64.decode(_image, input, static_cast<int>(image.length()));
   }
 
@@ -122,8 +122,8 @@ private:
   uint16_t _frames;
 
   char *_image;
-  uint8_t _image_width;
-  uint8_t _image_height;
+  uint16_t _image_width;
+  uint16_t _image_height;
 
   String _text;
 
