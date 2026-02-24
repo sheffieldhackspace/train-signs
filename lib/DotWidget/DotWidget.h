@@ -47,7 +47,7 @@ public:
   explicit DotWidget(Adafruit_GFX *canvas) : _canvas(canvas),
                                              _frame(0),
                                              _frames(FRAMES_BEFORE + FRAMES_AFTER),
-                                             _image(nullptr),
+                                             _image_bitmap(nullptr),
                                              _image_width(0),
                                              _image_height(0),
                                              _text(""),
@@ -82,7 +82,7 @@ private:
   uint16_t _frame;
   uint16_t _frames;
 
-  char *_image;
+  uint8_t *_image_bitmap;
   uint16_t _image_width;
   uint16_t _image_height;
 

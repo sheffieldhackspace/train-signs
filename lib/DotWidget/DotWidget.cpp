@@ -27,7 +27,7 @@
 #include "DotWidget.h"
 
 DotWidget::~DotWidget() {
-  delete[] _image;
+  delete[] _image_bitmap;
 }
 
 // a - alignment value
@@ -140,10 +140,10 @@ void DotWidget::print() {
 
     y += getScroll(_canvas->height(), widget_height);
 
-    if (_image != nullptr) {
+    if (_image_bitmap != nullptr) {
       x += getAlign(_horizontal_align, _canvas->width(), _image_width);
 
-      _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+      _canvas->drawBitmap(x, y, _image_bitmap, _image_width, _image_height, 1, 0);
 
       x = 0;
       y += _image_height + 2;
@@ -160,10 +160,10 @@ void DotWidget::print() {
     x += getScroll(_canvas->width(), widget_width);
     x += getAlign(_horizontal_align, _canvas->width(), widget_width);
 
-    if (_image != nullptr && _horizontal_align != RIGHT) {
+    if (_image_bitmap != nullptr && _horizontal_align != RIGHT) {
       y = getAlign(_vertical_align, _canvas->height(), _image_height);
 
-      _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+      _canvas->drawBitmap(x, y, _image_bitmap, _image_width, _image_height, 1, 0);
 
       x += _image_width;
       y = 0;
@@ -172,10 +172,10 @@ void DotWidget::print() {
     printText(x - text_x, y - text_y, text_width, text_height);
     x += text_width;
 
-    if (_image != nullptr && _horizontal_align != LEFT) {
+    if (_image_bitmap != nullptr && _horizontal_align != LEFT) {
       y = getAlign(_vertical_align, _canvas->height(), _image_height);
 
-      _canvas->drawBitmap(x, y, reinterpret_cast<uint8_t *>(_image), _image_width, _image_height, 1, 0);
+      _canvas->drawBitmap(x, y, _image_bitmap, _image_width, _image_height, 1, 0);
     }
   }
 }
@@ -192,8 +192,8 @@ void DotWidget::setImage(const String &image, const uint16_t width, const uint16
   _image_width = width;
   _image_height = height;
 
-  delete[] _image;
-  _image = nullptr;
+  delete[] _image_bitmap;
+  _image_bitmap = nullptr;
 
   if (image == "") {
     return;
@@ -202,8 +202,8 @@ void DotWidget::setImage(const String &image, const uint16_t width, const uint16
   const auto input = const_cast<char *>(image.c_str());
   const auto length = Base64.decodedLength(input, static_cast<int>(image.length())) + 1;
 
-  _image = new char[length];
-  Base64.decode(_image, input, static_cast<int>(image.length()));
+  _image_bitmap = new uint8_t[length];
+  Base64.decode(reinterpret_cast<char *>(_image_bitmap), input, static_cast<int>(image.length()));
 }
 
 void DotWidget::setInverted(const bool inverted) {
