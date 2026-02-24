@@ -51,7 +51,7 @@ public:
                                              _image_width(0),
                                              _image_height(0),
                                              _text(""),
-                                             _flash(false),
+                                             _flashing(false),
                                              _invert(false),
                                              _speed(5),
                                              _text_wrap(false),
@@ -67,8 +67,8 @@ public:
   void flash();
   void printText(int16_t x, int16_t y, uint16_t w, uint16_t h) const;
 
-  void setFlash(const bool flash) {
-    _flash = flash;
+  void setFlashing(const bool flashing) {
+    _flashing = flashing;
   }
 
   void setImage(const String &image, const uint16_t width, const uint16_t height) {
@@ -128,7 +128,7 @@ private:
 
   String _text;
 
-  bool _flash;
+  bool _flashing;
   bool _invert;
   uint8_t _speed;
   bool _text_wrap;

@@ -81,7 +81,7 @@ void loop() {
       widget.setImage(document["image"] | "", document["image_width"] | 0, document["image_height"] | 0);
       widget.setText(document["text"] | "");
 
-      widget.setFlash(document["flash"] | false);
+      widget.setFlashing(document["flashing"] | false);
       widget.setInvert(document["invert"] | false);
       widget.setSpeed(document["speed"] | 5);
       widget.setTextWrap(document["text_wrap"] | true);
