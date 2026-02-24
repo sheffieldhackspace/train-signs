@@ -58,6 +58,10 @@ public:
                                              _horizontal_align(LEFT),
                                              _vertical_align(TOP) {}
 
+  ~DotWidget() {
+    delete[] _image;
+  }
+
   void advanceFrame();
   void begin() const;
   void print();
