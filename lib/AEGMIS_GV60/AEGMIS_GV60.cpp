@@ -22,24 +22,24 @@
  * SOFTWARE.
  */
 
-#include "Adafruit_BigClock.h"
+#include "AEGMIS_GV60.h"
 
-Adafruit_BigClock::Adafruit_BigClock(Adafruit_BigClockSPI *spi0, Adafruit_BigClockSPI *spi1)
+AEGMIS_GV60::AEGMIS_GV60(AEGMIS_GV60_SPI *spi0, AEGMIS_GV60_SPI *spi1)
   : GFXcanvas1(BC_WIDTH, BC_HEIGHT), _invert(false), _spi{spi0, spi1} {}
 
-void Adafruit_BigClock::begin() {
+void AEGMIS_GV60::begin() {
   _spi[BOARD_TOP]->begin();
   _spi[BOARD_BOTTOM]->begin();
 
   xTaskCreate(keepaliveCallback, "keepalive", 4096, (void *) _spi, 2, NULL);
 }
 
-void Adafruit_BigClock::display() {
+void AEGMIS_GV60::display() {
   displayBoard(BOARD_TOP);
   displayBoard(BOARD_BOTTOM);
 }
 
-void Adafruit_BigClock::displayBoard(BOARD board) {
+void AEGMIS_GV60::displayBoard(BOARD board) {
   _spi[board]->setLatch(HIGH);
 
   for (uint8_t n = 0; n < 16; n++) {
@@ -56,7 +56,7 @@ void Adafruit_BigClock::displayBoard(BOARD board) {
   _spi[board]->setLatch(LOW);
 }
 
-void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_row) {
+void AEGMIS_GV60::displaySegment(BOARD board, uint8_t segment, bool even_row) {
   // Odd segments start in the first column and second row of the current segment
   // Even segments start in the last column and last row of the previous segment
   bool even_segment = segment % 2;
@@ -121,16 +121,16 @@ void Adafruit_BigClock::displaySegment(BOARD board, uint8_t segment, bool even_r
   _spi[board]->transfer(false);
 }
 
-uint8_t Adafruit_BigClock::getPixel(int16_t x, int16_t y) {
+uint8_t AEGMIS_GV60::getPixel(int16_t x, int16_t y) {
   return GFXcanvas1::getPixel(x, y) ^ _invert;
 }
 
-void Adafruit_BigClock::invertDisplay(bool invert) {
+void AEGMIS_GV60::invertDisplay(bool invert) {
   _invert = invert;
 }
 
-[[noreturn]] void Adafruit_BigClock::keepaliveCallback(void *arg) {
-  auto **spi = static_cast<Adafruit_BigClockSPI **>(arg);
+[[noreturn]] void AEGMIS_GV60::keepaliveCallback(void *arg) {
+  auto **spi = static_cast<AEGMIS_GV60_SPI **>(arg);
 
   while (true) {
     spi[BOARD_TOP]->setKeepalive(HIGH);

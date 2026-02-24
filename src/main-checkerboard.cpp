@@ -2,25 +2,24 @@
  * checkerboard
  * Show a checkerboard pattern on the screen.
  */
-#include <Adafruit_BigClock.h>
-#include <Adafruit_GFX.h>
+#include <AEGMIS_GV60.h>
 #include <Arduino.h>
 
-Adafruit_BigClock *canvas = new Adafruit_BigClock(
-  new Adafruit_BigClockSPI(D2, D4, D6, D8),
-  new Adafruit_BigClockSPI(D1, D3, D5, D7)
+AEGMIS_GV60 *display = new AEGMIS_GV60(
+  new AEGMIS_GV60_SPI(D2, D4, D6, D8),
+  new AEGMIS_GV60_SPI(D1, D3, D5, D7)
 );
 
 void setup() {
-  canvas->begin();
+  display->begin();
 
   for (int i = 0; i < BC_WIDTH; i++) {
     for (int j = 0; j < BC_HEIGHT; j++) {
-      canvas->drawPixel(i, j, (i + j) % 2);
+      display->drawPixel(i, j, (i + j) % 2);
     }
   }
 
-  canvas->display();
+  display->display();
 }
 
 void loop() {}

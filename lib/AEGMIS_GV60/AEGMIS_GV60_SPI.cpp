@@ -22,39 +22,43 @@
  * SOFTWARE.
  */
 
-#ifndef ADAFRUIT_BIGCLOCK_H
-#define ADAFRUIT_BIGCLOCK_H
+#include "AEGMIS_GV60_SPI.h"
 
+AEGMIS_GV60_SPI::AEGMIS_GV60_SPI(int8_t sck, int8_t mosi, int8_t latch, int8_t keepalive)
+  : Adafruit_SPIDevice(-1, sck, -1, mosi, SPI_CLOCK_DIV2, SPI_BITORDER_MSBFIRST, SPI_MODE1),
+    _keepalive(keepalive),
+    _latch(latch),
+    _buffer(0),
+    _buffer_size(0) {}
 
-#include <Adafruit_GFX.h>
+bool AEGMIS_GV60_SPI::begin() {
+  if (_latch != -1) {
+    pinMode(_latch, OUTPUT);
+  }
 
-#include "Adafruit_BigClockSPI.h"
+  if (_keepalive != -1) {
+    pinMode(_keepalive, OUTPUT);
+  }
 
-#define BC_WIDTH (uint16_t) 96
-#define BC_HEIGHT (uint16_t) 26
+  return Adafruit_SPIDevice::begin();
+}
 
-enum BOARD {
-  BOARD_BOTTOM = 0,
-  BOARD_TOP = 1,
-};
+void AEGMIS_GV60_SPI::transfer(bool bit) {
+  _buffer <<= 1;
+  _buffer |= bit;
+  _buffer_size++;
 
-class Adafruit_BigClock : public GFXcanvas1 {
-public:
-  Adafruit_BigClock(Adafruit_BigClockSPI *spi0, Adafruit_BigClockSPI *spi1);
-  void begin();
-  void display();
-  uint8_t getPixel(int16_t x, int16_t y);
-  void invertDisplay(bool invert) override;
+  if (_buffer_size >= 8) {
+    Adafruit_SPIDevice::transfer(_buffer);
+    _buffer = 0;
+    _buffer_size = 0;
+  }
+}
 
-  [[noreturn]] static void keepaliveCallback(void *arg);
+void AEGMIS_GV60_SPI::setLatch(bool b) {
+  digitalWrite(_latch, b);
+}
 
-private:
-  void displayBoard(BOARD board);
-  void displaySegment(BOARD board, uint8_t segment, bool even_row);
-
-  bool _invert;
-  Adafruit_BigClockSPI *_spi[2];
-};
-
-
-#endif //ADAFRUIT_BIGCLOCK_H
+void AEGMIS_GV60_SPI::setKeepalive(bool b) {
+  digitalWrite(_keepalive, b);
+}

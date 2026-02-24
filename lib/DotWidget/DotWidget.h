@@ -22,8 +22,7 @@
  * SOFTWARE.
  */
 
-#ifndef ADAFRUIT_WIDGET_H
-#define ADAFRUIT_WIDGET_H
+#pragma once
 
 #include <Adafruit_GFX.h>
 #include <Base64.h>
@@ -44,9 +43,9 @@ enum VERTICAL_ALIGN {
   BOTTOM = 1,
 };
 
-class Adafruit_Widget {
+class DotWidget {
 public:
-  Adafruit_Widget(Adafruit_GFX *canvas) : _canvas(canvas),
+  DotWidget(Adafruit_GFX *canvas) : _canvas(canvas),
                                           _frame(0),
                                           _frames(FRAMES_BEFORE + FRAMES_AFTER),
                                           _image(nullptr),
@@ -138,5 +137,3 @@ private:
   VERTICAL_ALIGN _vertical_align;
 };
 
-
-#endif //ADAFRUIT_WIDGET_H

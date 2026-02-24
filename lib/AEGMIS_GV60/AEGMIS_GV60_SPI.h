@@ -22,15 +22,14 @@
  * SOFTWARE.
  */
 
-#ifndef ADAFRUIT_BIGCLOCKSPI_H
-#define ADAFRUIT_BIGCLOCKSPI_H
+#pragma once
 
 
 #include <Adafruit_SPIDevice.h>
 
-class Adafruit_BigClockSPI : public Adafruit_SPIDevice {
+class AEGMIS_GV60_SPI : public Adafruit_SPIDevice {
 public:
-  Adafruit_BigClockSPI(int8_t sck, int8_t mosi, int8_t latch, int8_t keepalive);
+  AEGMIS_GV60_SPI(int8_t sck, int8_t mosi, int8_t latch, int8_t keepalive);
   bool begin();
   void transfer(bool b);
   void setKeepalive(bool b);
@@ -44,5 +43,3 @@ private:
   int8_t _buffer_size;
 };
 
-
-#endif //ADAFRUIT_BIGCLOCKSPI_H

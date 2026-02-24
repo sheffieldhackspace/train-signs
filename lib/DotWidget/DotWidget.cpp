@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-#include "Adafruit_Widget.h"
+#include "DotWidget.h"
 
 // a - alignment value
 // b - boundary dimension (ie. width of the display)
 // d - text dimension (ie. width of the text)
 // return - text coordinate (ie. x position of the text)
-int16_t Adafruit_Widget::getAlign(int8_t a, uint16_t b, uint16_t d) {
+int16_t DotWidget::getAlign(int8_t a, uint16_t b, uint16_t d) {
   int16_t distance = b - d;
 
   if (distance > 0) {
@@ -45,7 +45,7 @@ int16_t Adafruit_Widget::getAlign(int8_t a, uint16_t b, uint16_t d) {
 // b - boundary dimension (ie. width of the display)
 // d - text dimension (ie. width of the text)
 // return - text coordinate (ie. x position of the text)
-int16_t Adafruit_Widget::getScroll(uint16_t b, uint16_t d) {
+int16_t DotWidget::getScroll(uint16_t b, uint16_t d) {
   int16_t distance = d - b;
 
   if (distance > 0) {
@@ -63,7 +63,7 @@ int16_t Adafruit_Widget::getScroll(uint16_t b, uint16_t d) {
   return 0;
 }
 
-void Adafruit_Widget::advanceFrame() {
+void DotWidget::advanceFrame() {
   _frame++;
 
   if (_frame >= _frames) {
@@ -73,20 +73,20 @@ void Adafruit_Widget::advanceFrame() {
   delay(1000 / _speed);
 }
 
-void Adafruit_Widget::begin() {
+void DotWidget::begin() {
   _canvas->setTextSize(1);
   _canvas->fillScreen(0);
   _canvas->setTextColor(1);
   _canvas->setFont(&Org_01);
 }
 
-void Adafruit_Widget::flash() {
+void DotWidget::flash() {
   if (_flash && _frame % (_speed / 2) == 0) {
     setInvert(!_invert);
   }
 }
 
-void Adafruit_Widget::print() {
+void DotWidget::print() {
   int16_t x = 0, y = 0, text_x, text_y;
   uint16_t text_width, text_height;
 
@@ -144,7 +144,7 @@ void Adafruit_Widget::print() {
   }
 }
 
-void Adafruit_Widget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
+void DotWidget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
   int16_t begin = 0, end = 0;
   String s = _text;
 

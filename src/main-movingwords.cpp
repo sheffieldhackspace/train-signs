@@ -3,8 +3,7 @@
  * Scroll two lines of text around on the display.
 */
 
-#include <Adafruit_BigClock.h>
-#include <Adafruit_GFX.h>
+#include <AEGMIS_GV60.h>
 #include <Arduino.h>
 
 #define MAX_X_DEVIATION 36
@@ -16,13 +15,13 @@ int reverse = 0;
 uint8_t scrolly = 0;
 int reversey = 0;
 
-Adafruit_BigClock *canvas = new Adafruit_BigClock(
-  new Adafruit_BigClockSPI(D2, D4, D6, D8),
-  new Adafruit_BigClockSPI(D1, D3, D5, D7)
+AEGMIS_GV60 *display = new AEGMIS_GV60(
+  new AEGMIS_GV60_SPI(D2, D4, D6, D8),
+  new AEGMIS_GV60_SPI(D1, D3, D5, D7)
 );
 
 void setup() {
-  canvas->begin();
+  display->begin();
 }
 
 void loop() {
@@ -46,13 +45,13 @@ void loop() {
   else
     scrolly++;
 
-  canvas->fillScreen(0);
-  canvas->setCursor(1 + scroll, 1 + scrolly);
-  canvas->print("Sheffield");
-  canvas->setCursor(37 - scroll, 9 + scrolly);
-  canvas->print("Hackspace");
+  display->fillScreen(0);
+  display->setCursor(1 + scroll, 1 + scrolly);
+  display->print("Sheffield");
+  display->setCursor(37 - scroll, 9 + scrolly);
+  display->print("Hackspace");
 
-  canvas->display();
+  display->display();
 
   delay(50);
 }

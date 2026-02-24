@@ -1,5 +1,4 @@
-#include <Adafruit_GFX.h>
-#include <Adafruit_Widget.h>
+#include <DotWidget.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
@@ -20,13 +19,13 @@ WiFiServer server(SERVER_PORT);
 #include <Adafruit_SSD1306.h>
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 #else
-#include <Adafruit_BigClock.h>
-Adafruit_BigClockSPI spi1(D1, D3, D5, D8);
-Adafruit_BigClockSPI spi2(D0, D2, D4, D7);
-Adafruit_BigClock display(&spi1, &spi2);
+#include <AEGMIS_GV60.h>
+AEGMIS_GV60_SPI spi1(D1, D3, D5, D8);
+AEGMIS_GV60_SPI spi2(D0, D2, D4, D7);
+AEGMIS_GV60 display(&spi1, &spi2);
 #endif
 
-Adafruit_Widget widget(&display);
+DotWidget widget(&display);
 
 void setup() {
 #ifdef USE_OLED
