@@ -84,7 +84,7 @@ void DotWidget::begin() const {
 
 void DotWidget::flash() {
   if (_flashing && _frame % (_speed / 2) == 0) {
-    setInvert(!_invert);
+    setInverted(!_inverted);
   }
 }
 

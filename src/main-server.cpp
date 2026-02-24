@@ -41,7 +41,7 @@ void setup() {
   widget.begin();
   widget.setHorizontalAlign(CENTER);
   widget.setVerticalAlign(MIDDLE);
-  widget.setInvert(true);
+  widget.setInverted(true);
   widget.setText(String("SSID: " + WIFI_SSID + "\nConnecting..."));
   widget.print();
   display.display();
@@ -56,7 +56,7 @@ void setup() {
 
   server.begin();
 
-  widget.setInvert(false);
+  widget.setInverted(false);
   widget.setText(String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":" + SERVER_PORT));
   widget.print();
   display.display();
@@ -82,7 +82,7 @@ void loop() {
       widget.setText(document["text"] | "");
 
       widget.setFlashing(document["flashing"] | false);
-      widget.setInvert(document["invert"] | false);
+      widget.setInverted(document["invert"] | false);
       widget.setSpeed(document["speed"] | 5);
       widget.setTextWrap(document["text_wrap"] | true);
 

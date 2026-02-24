@@ -52,7 +52,7 @@ public:
                                              _image_height(0),
                                              _text(""),
                                              _flashing(false),
-                                             _invert(false),
+                                             _inverted(false),
                                              _speed(5),
                                              _text_wrap(false),
                                              _horizontal_align(LEFT),
@@ -89,9 +89,9 @@ public:
     Base64.decode(_image, input, static_cast<int>(image.length()));
   }
 
-  void setInvert(const bool invert) {
-    _invert = invert;
-    _canvas->invertDisplay(invert);
+  void setInverted(const bool inverted) {
+    _inverted = inverted;
+    _canvas->invertDisplay(inverted);
   }
 
   void setText(const String &text) {
@@ -129,7 +129,7 @@ private:
   String _text;
 
   bool _flashing;
-  bool _invert;
+  bool _inverted;
   uint8_t _speed;
   bool _text_wrap;
 
