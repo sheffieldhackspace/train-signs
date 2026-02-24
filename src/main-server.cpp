@@ -6,24 +6,24 @@
 
 #include "Credentials.h"
 
-const char *HTTP_SEPARATOR = "\r\n\r\n";
-const size_t MAX_PAYLOAD_SIZE = 4096;
-const int SERVER_PORT = 80;
+constexpr const char *HTTP_SEPARATOR = "\r\n\r\n";
+constexpr size_t MAX_PAYLOAD_SIZE = 4096;
+constexpr int SERVER_PORT = 80;
 
-const char *RESPONSE_200 = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
-const char *RESPONSE_400 = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
-const char *RESPONSE_413 = "HTTP/1.1 413 Payload Too Large\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+constexpr const char *RESPONSE_200 = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+constexpr const char *RESPONSE_400 = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+constexpr const char *RESPONSE_413 = "HTTP/1.1 413 Payload Too Large\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
 
 WiFiServer server(SERVER_PORT);
 
 #ifdef USE_OLED
-  #include <Adafruit_SSD1306.h>
-  Adafruit_SSD1306 display(128, 64, &Wire, -1);
+#include <Adafruit_SSD1306.h>
+Adafruit_SSD1306 display(128, 64, &Wire, -1);
 #else
-  #include <Adafruit_BigClock.h>
-  Adafruit_BigClockSPI spi1(D1, D3, D5, D8);
-  Adafruit_BigClockSPI spi2(D0, D2, D4, D7);
-  Adafruit_BigClock display(&spi1, &spi2);
+#include <Adafruit_BigClock.h>
+Adafruit_BigClockSPI spi1(D1, D3, D5, D8);
+Adafruit_BigClockSPI spi2(D0, D2, D4, D7);
+Adafruit_BigClock display(&spi1, &spi2);
 #endif
 
 Adafruit_Widget widget(&display);
@@ -61,7 +61,7 @@ void setup() {
 }
 
 void loop() {
-  if (WiFiClient client = server.accept()) {
+  if (auto client = server.accept()) {
     if (client.available() > MAX_PAYLOAD_SIZE) {
       client.print(RESPONSE_413);
       client.stop();
