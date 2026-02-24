@@ -58,14 +58,9 @@ public:
                                              _horizontal_align(LEFT),
                                              _vertical_align(TOP) {}
 
-  static int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
-  int16_t getScroll(uint16_t b, uint16_t d);
-
   void advanceFrame();
   void begin() const;
   void print();
-  void updateFlash();
-  void printText(int16_t x, int16_t y, uint16_t w, uint16_t h) const;
 
   void setFlashing(const bool flashing) {
     _flashing = flashing;
@@ -118,6 +113,12 @@ public:
   }
 
 private:
+  static int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
+  int16_t getScroll(uint16_t b, uint16_t d);
+
+  void printText(int16_t x, int16_t y, uint16_t w, uint16_t h) const;
+  void updateFlash();
+
   Adafruit_GFX *_canvas;
   uint16_t _frame;
   uint16_t _frames;

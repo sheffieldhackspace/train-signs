@@ -82,12 +82,6 @@ void DotWidget::begin() const {
   _canvas->setFont(&Org_01);
 }
 
-void DotWidget::updateFlash() {
-  if (_flashing && _frame % (_speed / 2) == 0) {
-    setInverted(!_inverted);
-  }
-}
-
 void DotWidget::print() {
   int16_t x = 0, y = 0, text_x, text_y;
   uint16_t text_width, text_height;
@@ -173,5 +167,11 @@ void DotWidget::printText(const int16_t x, const int16_t y, const uint16_t w, co
     }
 
     end++;
+  }
+}
+
+void DotWidget::updateFlash() {
+  if (_flashing && _frame % (_speed / 2) == 0) {
+    setInverted(!_inverted);
   }
 }
