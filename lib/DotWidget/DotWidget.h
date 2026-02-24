@@ -26,7 +26,6 @@
 
 #include <Adafruit_GFX.h>
 #include <Base64.h>
-#include <Fonts/Org_01.h>
 
 #define FRAMES_BEFORE 20
 #define FRAMES_AFTER 20
@@ -45,34 +44,34 @@ enum VERTICAL_ALIGN {
 
 class DotWidget {
 public:
-  DotWidget(Adafruit_GFX *canvas) : _canvas(canvas),
-                                          _frame(0),
-                                          _frames(FRAMES_BEFORE + FRAMES_AFTER),
-                                          _image(nullptr),
-                                          _image_width(0),
-                                          _image_height(0),
-                                          _text(""),
-                                          _flash(false),
-                                          _invert(false),
-                                          _speed(5),
-                                          _horizontal_align(LEFT),
-                                          _text_wrap(false),
-                                          _vertical_align(TOP) {}
+  explicit DotWidget(Adafruit_GFX *canvas) : _canvas(canvas),
+                                             _frame(0),
+                                             _frames(FRAMES_BEFORE + FRAMES_AFTER),
+                                             _image(nullptr),
+                                             _image_width(0),
+                                             _image_height(0),
+                                             _text(""),
+                                             _flash(false),
+                                             _invert(false),
+                                             _speed(5),
+                                             _text_wrap(false),
+                                             _horizontal_align(LEFT),
+                                             _vertical_align(TOP) {}
 
-  int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
+  static int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
   int16_t getScroll(uint16_t b, uint16_t d);
 
   void advanceFrame();
-  void begin();
+  void begin() const;
   void print();
   void flash();
-  void printText(int16_t x, int16_t y, uint16_t w, uint16_t h);
+  void printText(int16_t x, int16_t y, uint16_t w, uint16_t h) const;
 
-  void setFlash(bool flash) {
+  void setFlash(const bool flash) {
     _flash = flash;
   }
 
-  void setImage(String image, uint16_t width, uint16_t height) {
+  void setImage(const String &image, const uint16_t width, const uint16_t height) {
     _image_width = width;
     _image_height = height;
 
@@ -82,38 +81,38 @@ public:
       return;
     }
 
-    auto input = (char *) image.c_str();
-    auto length = Base64.decodedLength(input, image.length()) + 1;
+    const auto input = const_cast<char *>(image.c_str());
+    const auto length = Base64.decodedLength(input, static_cast<int>(image.length())) + 1;
 
-    _image = (char *) malloc(sizeof(char) * length);
-    Base64.decode(_image, input, image.length());
+    _image = static_cast<char *>(malloc(sizeof(char) * length));
+    Base64.decode(_image, input, static_cast<int>(image.length()));
   }
 
-  void setInvert(bool invert) {
+  void setInvert(const bool invert) {
     _invert = invert;
     _canvas->invertDisplay(invert);
   }
 
-  void setText(String text) {
+  void setText(const String &text) {
     _frame = 0;
     _frames = FRAMES_BEFORE + FRAMES_AFTER;
     _text = text;
   }
 
-  void setSpeed(uint8_t speed) {
+  void setSpeed(const uint8_t speed) {
     _speed = speed;
   }
 
-  void setHorizontalAlign(HORIZONTAL_ALIGN align) {
+  void setHorizontalAlign(const HORIZONTAL_ALIGN align) {
     _horizontal_align = align;
   }
 
-  void setTextWrap(bool wrap) {
+  void setTextWrap(const bool wrap) {
     _text_wrap = wrap;
     _canvas->setTextWrap(wrap);
   }
 
-  void setVerticalAlign(VERTICAL_ALIGN align) {
+  void setVerticalAlign(const VERTICAL_ALIGN align) {
     _vertical_align = align;
   }
 
@@ -136,4 +135,3 @@ private:
   HORIZONTAL_ALIGN _horizontal_align;
   VERTICAL_ALIGN _vertical_align;
 };
-

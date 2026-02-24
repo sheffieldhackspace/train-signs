@@ -22,45 +22,47 @@
  * SOFTWARE.
  */
 
+#include <Fonts/Org_01.h>
+
 #include "DotWidget.h"
 
 // a - alignment value
-// b - boundary dimension (ie. width of the display)
-// d - text dimension (ie. width of the text)
-// return - text coordinate (ie. x position of the text)
-int16_t DotWidget::getAlign(int8_t a, uint16_t b, uint16_t d) {
-  int16_t distance = b - d;
+// b - boundary dimension (i.e. width of the display)
+// d - text dimension (i.e. width of the text)
+// return - text coordinate (i.e. x position of the text)
+int16_t DotWidget::getAlign(const int8_t a, const uint16_t b, const uint16_t d) {
+  auto result = 0;
 
-  if (distance > 0) {
+  if (const auto distance = b - d; distance > 0) {
     if (a == 0) {
-      return distance / 2;
+      result = distance / 2;
     } else if (a == 1) {
-      return distance;
+      result = distance;
     }
   }
 
-  return 0;
+  return static_cast<int16_t>(result);
 }
 
-// b - boundary dimension (ie. width of the display)
-// d - text dimension (ie. width of the text)
-// return - text coordinate (ie. x position of the text)
-int16_t DotWidget::getScroll(uint16_t b, uint16_t d) {
-  int16_t distance = d - b;
+// b - boundary dimension (i.e. width of the display)
+// d - text dimension (i.e. width of the text)
+// return - text coordinate (i.e. x position of the text)
+int16_t DotWidget::getScroll(const uint16_t b, const uint16_t d) {
+  auto result = 0;
 
-  if (distance > 0) {
+  if (const auto distance = d - b; distance > 0) {
     _frames = FRAMES_BEFORE + distance + FRAMES_AFTER;
 
     if (_frame < FRAMES_BEFORE) {
-      return 0;
+      result = 0;
     } else if (_frame < FRAMES_BEFORE + distance) {
-      return -(_frame - FRAMES_BEFORE);
+      result = -(_frame - FRAMES_BEFORE);
     } else {
-      return -distance;
+      result = -distance;
     }
   }
 
-  return 0;
+  return static_cast<int16_t>(result);
 }
 
 void DotWidget::advanceFrame() {
@@ -73,7 +75,7 @@ void DotWidget::advanceFrame() {
   delay(1000 / _speed);
 }
 
-void DotWidget::begin() {
+void DotWidget::begin() const {
   _canvas->setTextSize(1);
   _canvas->fillScreen(0);
   _canvas->setTextColor(1);
@@ -144,17 +146,17 @@ void DotWidget::print() {
   }
 }
 
-void DotWidget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
-  int16_t begin = 0, end = 0;
+void DotWidget::printText(const int16_t x, const int16_t y, const uint16_t w, const uint16_t h) const {
+  int16_t begin = 0, end = 0, y1 = y;
   String s = _text;
 
-  y += getAlign(_vertical_align, _canvas->height(), h);
+  y1 += getAlign(_vertical_align, _canvas->height(), h);
 
   while (s[end]) {
     if (s[end] == '\n') {
       _canvas->println();
 
-      y = _canvas->getCursorY();
+      y1 = _canvas->getCursorY();
       begin++;
     } else if (s[end + 1] == '\n' || !s[end + 1]) {
       String line = s.substring(begin, end + 1);
@@ -162,11 +164,11 @@ void DotWidget::printText(int16_t x, int16_t y, uint16_t w, uint16_t h) {
       uint16_t tw, th;
 
       _canvas->getTextBounds(line, 0, 0, &tx, &ty, &tw, &th);
-      _canvas->setCursor(x + getAlign(_horizontal_align, w, tw), y);
+      _canvas->setCursor(x + getAlign(_horizontal_align, w, tw), y1);
 
       _canvas->print(line);
 
-      y = _canvas->getCursorY();
+      y1 = _canvas->getCursorY();
       begin = end + 1;
     }
 
