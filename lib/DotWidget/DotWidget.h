@@ -64,7 +64,7 @@ public:
   void advanceFrame();
   void begin() const;
   void print();
-  void flash();
+  void updateFlash();
   void printText(int16_t x, int16_t y, uint16_t w, uint16_t h) const;
 
   void setFlashing(const bool flashing) {

@@ -82,7 +82,7 @@ void DotWidget::begin() const {
   _canvas->setFont(&Org_01);
 }
 
-void DotWidget::flash() {
+void DotWidget::updateFlash() {
   if (_flashing && _frame % (_speed / 2) == 0) {
     setInverted(!_inverted);
   }
@@ -95,7 +95,7 @@ void DotWidget::print() {
   _canvas->fillScreen(0);
   _canvas->getTextBounds(_text, 0, 0, &text_x, &text_y, &text_width, &text_height);
 
-  flash();
+  updateFlash();
 
   if (_text_wrap) {
     uint16_t widget_height = text_height;

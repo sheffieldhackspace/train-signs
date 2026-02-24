@@ -82,7 +82,7 @@ void loop() {
       widget.setText(document["text"] | "");
 
       widget.setFlashing(document["flashing"] | false);
-      widget.setInverted(document["invert"] | false);
+      widget.setInverted(document["inverted"] | false);
       widget.setSpeed(document["speed"] | 5);
       widget.setTextWrap(document["text_wrap"] | true);
 
