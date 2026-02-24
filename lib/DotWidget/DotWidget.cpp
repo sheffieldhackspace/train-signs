@@ -26,6 +26,10 @@
 
 #include "DotWidget.h"
 
+DotWidget::~DotWidget() {
+  delete[] _image;
+}
+
 // a - alignment value
 // b - boundary dimension (i.e. width of the display)
 // d - text dimension (i.e. width of the text)
@@ -63,6 +67,42 @@ int16_t DotWidget::getScroll(const uint16_t b, const uint16_t d) {
   }
 
   return static_cast<int16_t>(result);
+}
+
+void DotWidget::updateFlash() {
+  if (_flashing && _frame % (_speed / 2) == 0) {
+    setInverted(!_inverted);
+  }
+}
+
+void DotWidget::printText(const int16_t x, const int16_t y, const uint16_t w, const uint16_t h) const {
+  int16_t begin = 0, end = 0, y1 = y;
+  String s = _text;
+
+  y1 += getAlign(_vertical_align, _canvas->height(), h);
+
+  while (s[end]) {
+    if (s[end] == '\n') {
+      _canvas->println();
+
+      y1 = _canvas->getCursorY();
+      begin++;
+    } else if (s[end + 1] == '\n' || !s[end + 1]) {
+      String line = s.substring(begin, end + 1);
+      int16_t tx, ty;
+      uint16_t tw, th;
+
+      _canvas->getTextBounds(line, 0, 0, &tx, &ty, &tw, &th);
+      _canvas->setCursor(x + getAlign(_horizontal_align, w, tw), y1);
+
+      _canvas->print(line);
+
+      y1 = _canvas->getCursorY();
+      begin = end + 1;
+    }
+
+    end++;
+  }
 }
 
 void DotWidget::advanceFrame() {
@@ -140,38 +180,52 @@ void DotWidget::print() {
   }
 }
 
-void DotWidget::printText(const int16_t x, const int16_t y, const uint16_t w, const uint16_t h) const {
-  int16_t begin = 0, end = 0, y1 = y;
-  String s = _text;
-
-  y1 += getAlign(_vertical_align, _canvas->height(), h);
-
-  while (s[end]) {
-    if (s[end] == '\n') {
-      _canvas->println();
-
-      y1 = _canvas->getCursorY();
-      begin++;
-    } else if (s[end + 1] == '\n' || !s[end + 1]) {
-      String line = s.substring(begin, end + 1);
-      int16_t tx, ty;
-      uint16_t tw, th;
-
-      _canvas->getTextBounds(line, 0, 0, &tx, &ty, &tw, &th);
-      _canvas->setCursor(x + getAlign(_horizontal_align, w, tw), y1);
-
-      _canvas->print(line);
-
-      y1 = _canvas->getCursorY();
-      begin = end + 1;
-    }
-
-    end++;
-  }
+void DotWidget::setFlashing(const bool flashing) {
+  _flashing = flashing;
 }
 
-void DotWidget::updateFlash() {
-  if (_flashing && _frame % (_speed / 2) == 0) {
-    setInverted(!_inverted);
+void DotWidget::setHorizontalAlign(const HORIZONTAL_ALIGN align) {
+  _horizontal_align = align;
+}
+
+void DotWidget::setImage(const String &image, const uint16_t width, const uint16_t height) {
+  _image_width = width;
+  _image_height = height;
+
+  delete[] _image;
+  _image = nullptr;
+
+  if (image == "") {
+    return;
   }
+
+  const auto input = const_cast<char *>(image.c_str());
+  const auto length = Base64.decodedLength(input, static_cast<int>(image.length())) + 1;
+
+  _image = new char[length];
+  Base64.decode(_image, input, static_cast<int>(image.length()));
+}
+
+void DotWidget::setInverted(const bool inverted) {
+  _inverted = inverted;
+  _canvas->invertDisplay(inverted);
+}
+
+void DotWidget::setSpeed(const uint8_t speed) {
+  _speed = speed;
+}
+
+void DotWidget::setText(const String &text) {
+  _frame = 0;
+  _frames = FRAMES_BEFORE + FRAMES_AFTER;
+  _text = text;
+}
+
+void DotWidget::setTextWrap(const bool wrap) {
+  _text_wrap = wrap;
+  _canvas->setTextWrap(wrap);
+}
+
+void DotWidget::setVerticalAlign(const VERTICAL_ALIGN align) {
+  _vertical_align = align;
 }

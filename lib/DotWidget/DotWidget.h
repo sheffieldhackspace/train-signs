@@ -58,68 +58,23 @@ public:
                                              _horizontal_align(LEFT),
                                              _vertical_align(TOP) {}
 
-  ~DotWidget() {
-    delete[] _image;
-  }
-
+  ~DotWidget();
   void advanceFrame();
   void begin() const;
   void print();
 
-  void setFlashing(const bool flashing) {
-    _flashing = flashing;
-  }
-
-  void setImage(const String &image, const uint16_t width, const uint16_t height) {
-    _image_width = width;
-    _image_height = height;
-
-    delete[] _image;
-    _image = nullptr;
-
-    if (image == "") {
-      return;
-    }
-
-    const auto input = const_cast<char *>(image.c_str());
-    const auto length = Base64.decodedLength(input, static_cast<int>(image.length())) + 1;
-
-    _image = new char[length];
-    Base64.decode(_image, input, static_cast<int>(image.length()));
-  }
-
-  void setInverted(const bool inverted) {
-    _inverted = inverted;
-    _canvas->invertDisplay(inverted);
-  }
-
-  void setText(const String &text) {
-    _frame = 0;
-    _frames = FRAMES_BEFORE + FRAMES_AFTER;
-    _text = text;
-  }
-
-  void setSpeed(const uint8_t speed) {
-    _speed = speed;
-  }
-
-  void setHorizontalAlign(const HORIZONTAL_ALIGN align) {
-    _horizontal_align = align;
-  }
-
-  void setTextWrap(const bool wrap) {
-    _text_wrap = wrap;
-    _canvas->setTextWrap(wrap);
-  }
-
-  void setVerticalAlign(const VERTICAL_ALIGN align) {
-    _vertical_align = align;
-  }
+  void setFlashing(bool flashing);
+  void setHorizontalAlign(HORIZONTAL_ALIGN align);
+  void setImage(const String &image, uint16_t width, uint16_t height);
+  void setInverted(bool inverted);
+  void setSpeed(uint8_t speed);
+  void setText(const String &text);
+  void setTextWrap(bool wrap);
+  void setVerticalAlign(VERTICAL_ALIGN align);
 
 private:
   static int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
   int16_t getScroll(uint16_t b, uint16_t d);
-
   void printText(int16_t x, int16_t y, uint16_t w, uint16_t h) const;
   void updateFlash();
 
