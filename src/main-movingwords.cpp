@@ -15,13 +15,12 @@ int reverse = 0;
 uint8_t scrolly = 0;
 int reversey = 0;
 
-AEGMIS_GV60 *display = new AEGMIS_GV60(
-  new AEGMIS_GV60_SPI(D2, D4, D6, D8),
-  new AEGMIS_GV60_SPI(D1, D3, D5, D7)
-);
+AEGMIS_GV60_SPI spi1(D1, D3, D5, D8);
+AEGMIS_GV60_SPI spi2(D0, D2, D4, D7);
+AEGMIS_GV60 display(&spi1, &spi2);
 
 void setup() {
-  display->begin();
+  display.begin();
 }
 
 void loop() {
@@ -45,13 +44,13 @@ void loop() {
   else
     scrolly++;
 
-  display->fillScreen(0);
-  display->setCursor(1 + scroll, 1 + scrolly);
-  display->print("Sheffield");
-  display->setCursor(37 - scroll, 9 + scrolly);
-  display->print("Hackspace");
+  display.fillScreen(0);
+  display.setCursor(1 + scroll, 1 + scrolly);
+  display.print("Sheffield");
+  display.setCursor(37 - scroll, 9 + scrolly);
+  display.print("Hackspace");
 
-  display->display();
+  display.display();
 
   delay(50);
 }
