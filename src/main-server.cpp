@@ -13,6 +13,7 @@ constexpr const char *RESPONSE_200 = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nCo
 constexpr const char *RESPONSE_400 = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
 constexpr const char *RESPONSE_413 = "HTTP/1.1 413 Payload Too Large\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
 
+unsigned long last = 0;
 WiFiServer server(SERVER_PORT);
 
 #ifdef USE_OLED
@@ -28,14 +29,16 @@ AEGMIS_GV60 display(&spi1, &spi2);
 DotWidget widget(&display);
 
 void setup() {
+  Serial.begin(115200);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
 #ifdef USE_OLED
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 #else
   display.begin();
 #endif
-  widget.begin();
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
+  widget.begin();
   widget.setHorizontalAlign(CENTER);
   widget.setVerticalAlign(MIDDLE);
   widget.setInvert(true);
@@ -75,8 +78,8 @@ void loop() {
         return;
       }
 
-      widget.setImage(String(document["image"] | ""), document["image_width"] | 0, document["image_height"] | 0);
-      widget.setText(String(document["text"] | ""));
+      widget.setImage(document["image"] | "", document["image_width"] | 0, document["image_height"] | 0);
+      widget.setText(document["text"] | "");
 
       widget.setFlash(document["flash"] | false);
       widget.setInvert(document["invert"] | false);
@@ -94,4 +97,9 @@ void loop() {
   widget.print();
   widget.advanceFrame();
   display.display();
+
+  if (millis() - last >= 5000) {
+    Serial.printf("Free: %dB, Min free: %dB\n", ESP.getFreeHeap(), ESP.getMinFreeHeap());
+    last = millis();
+  }
 }

@@ -75,9 +75,10 @@ public:
     _image_width = width;
     _image_height = height;
 
+    delete[] _image;
+    _image = nullptr;
+
     if (image == "") {
-      delete(_image);
-      _image = nullptr;
       return;
     }
 
