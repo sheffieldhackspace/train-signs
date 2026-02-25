@@ -74,7 +74,7 @@ void DotWidget::renderText() {
   delete[] _text_bitmap;
   _text_bitmap = nullptr;
 
-  if (_text == "") {
+  if (_text.isEmpty()) {
     return;
   }
 
@@ -220,7 +220,7 @@ void DotWidget::setImage(const String &image, const uint16_t width, const uint16
   delete[] _image_bitmap;
   _image_bitmap = nullptr;
 
-  if (image == "") {
+  if (image.isEmpty()) {
     return;
   }
 
