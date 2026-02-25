@@ -1,6 +1,7 @@
 #include <DotWidget.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <Fonts/Org_01.h>
 #include <WiFi.h>
 
 #include "Credentials.h"
@@ -39,6 +40,8 @@ void setup() {
 #endif
 
   widget.begin();
+  widget.setFont(&Org_01);
+
   widget.setHorizontalAlign(CENTER);
   widget.setVerticalAlign(MIDDLE);
   widget.setInverted(true);

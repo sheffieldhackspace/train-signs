@@ -56,6 +56,7 @@ public:
                                              _text_width(0),
                                              _text_height(0),
                                              _flashing(false),
+                                             _font(nullptr),
                                              _inverted(false),
                                              _speed(5),
                                              _text_wrap(false),
@@ -69,6 +70,7 @@ public:
   void render();
 
   void setFlashing(bool flashing);
+  void setFont(const GFXfont *font);
   void setHorizontalAlign(HORIZONTAL_ALIGN align);
   void setImage(const String &image, uint16_t width, uint16_t height);
   void setInverted(bool inverted);
@@ -98,6 +100,7 @@ private:
   uint16_t _text_height;
 
   bool _flashing;
+  const GFXfont *_font;
   bool _inverted;
   uint8_t _speed;
   bool _text_wrap;

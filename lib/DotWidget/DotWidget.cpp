@@ -22,8 +22,6 @@
  * SOFTWARE.
  */
 
-#include <Fonts/Org_01.h>
-
 #include "DotWidget.h"
 
 DotWidget::~DotWidget() {
@@ -88,7 +86,7 @@ void DotWidget::renderText() {
   offscreen.setTextColor(1);
   offscreen.setTextSize(1);
   offscreen.setTextWrap(_text_wrap);
-  offscreen.setFont(&Org_01);
+  offscreen.setFont(_font);
 
   while (_text[end]) {
     if (_text[end] == '\n') {
@@ -138,7 +136,6 @@ void DotWidget::begin() const {
   _canvas->setTextSize(1);
   _canvas->fillScreen(0);
   _canvas->setTextColor(1);
-  _canvas->setFont(&Org_01);
 }
 
 void DotWidget::render() {
@@ -206,6 +203,11 @@ void DotWidget::render() {
 
 void DotWidget::setFlashing(const bool flashing) {
   _flashing = flashing;
+}
+
+void DotWidget::setFont(const GFXfont *font) {
+  _font = font;
+  _canvas->setFont(font);
 }
 
 void DotWidget::setHorizontalAlign(const HORIZONTAL_ALIGN align) {
