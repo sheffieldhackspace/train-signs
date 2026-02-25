@@ -51,6 +51,9 @@ public:
                                              _image_width(0),
                                              _image_height(0),
                                              _text(""),
+                                             _text_bitmap(nullptr),
+                                             _text_width(0),
+                                             _text_height(0),
                                              _flashing(false),
                                              _inverted(false),
                                              _speed(5),
@@ -75,7 +78,7 @@ public:
 private:
   static int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
   int16_t getScroll(uint16_t b, uint16_t d);
-  void printText(int16_t x, int16_t y, uint16_t w, uint16_t h) const;
+  void drawText();
   void updateFlash();
 
   Adafruit_GFX *_canvas;
@@ -87,6 +90,9 @@ private:
   uint16_t _image_height;
 
   String _text;
+  uint8_t *_text_bitmap;
+  uint16_t _text_width;
+  uint16_t _text_height;
 
   bool _flashing;
   bool _inverted;
