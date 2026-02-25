@@ -35,7 +35,7 @@ DotWidget::~DotWidget() {
 // b - boundary dimension (i.e. width of the display)
 // d - text dimension (i.e. width of the text)
 // return - text coordinate (i.e. x position of the text)
-int16_t DotWidget::getAlign(const int8_t a, const uint16_t b, const uint16_t d) {
+int16_t DotWidget::calculateAlign(const int8_t a, const uint16_t b, const uint16_t d) {
   auto result = 0;
 
   if (const auto distance = b - d; distance > 0) {
@@ -52,7 +52,7 @@ int16_t DotWidget::getAlign(const int8_t a, const uint16_t b, const uint16_t d) 
 // b - boundary dimension (i.e. width of the display)
 // d - text dimension (i.e. width of the text)
 // return - text coordinate (i.e. x position of the text)
-int16_t DotWidget::getScroll(const uint16_t b, const uint16_t d) {
+int16_t DotWidget::calculateScroll(const uint16_t b, const uint16_t d) {
   auto result = 0;
 
   if (const auto distance = d - b; distance > 0) {
@@ -70,7 +70,14 @@ int16_t DotWidget::getScroll(const uint16_t b, const uint16_t d) {
   return static_cast<int16_t>(result);
 }
 
-void DotWidget::drawText() {
+void DotWidget::renderText() {
+  delete[] _text_bitmap;
+  _text_bitmap = nullptr;
+
+  if (_text == "") {
+    return;
+  }
+
   int16_t text_x, text_y;
   _canvas->getTextBounds(_text, 0, 0, &text_x, &text_y, &_text_width, &_text_height);
   GFXcanvas1 offscreen(_text_width, _text_height);
@@ -95,7 +102,7 @@ void DotWidget::drawText() {
       uint16_t tw, th;
 
       offscreen.getTextBounds(line, 0, 0, &tx, &ty, &tw, &th);
-      offscreen.setCursor(getAlign(_horizontal_align, _text_width, tw), text_y);
+      offscreen.setCursor(calculateAlign(_horizontal_align, _text_width, tw), text_y);
 
       offscreen.print(line);
 
@@ -105,8 +112,6 @@ void DotWidget::drawText() {
 
     end++;
   }
-
-  delete[] _text_bitmap;
 
   const auto size = ((offscreen.width() + 7) / 8) * offscreen.height();
   _text_bitmap = new uint8_t[size];
@@ -136,7 +141,12 @@ void DotWidget::begin() const {
   _canvas->setFont(&Org_01);
 }
 
-void DotWidget::print() {
+void DotWidget::render() {
+  if (_dirty) {
+    renderText();
+    _dirty = false;
+  }
+
   int16_t x = 0, y = 0;
 
   _canvas->fillScreen(0);
@@ -150,10 +160,10 @@ void DotWidget::print() {
       widget_height += _image_height + 2;
     }
 
-    y += getScroll(_canvas->height(), widget_height);
+    y += calculateScroll(_canvas->height(), widget_height);
 
     if (_image_bitmap != nullptr) {
-      x += getAlign(_horizontal_align, _canvas->width(), _image_width);
+      x += calculateAlign(_horizontal_align, _canvas->width(), _image_width);
 
       _canvas->drawBitmap(x, y, _image_bitmap, _image_width, _image_height, 1, 0);
 
@@ -161,7 +171,7 @@ void DotWidget::print() {
       y += _image_height + 2;
     }
 
-    y += getAlign(_vertical_align, _canvas->height(), _text_height);
+    y += calculateAlign(_vertical_align, _canvas->height(), _text_height);
     _canvas->drawBitmap(x, y, _text_bitmap, _text_width, _text_height, 1, 0);
   } else {
     uint16_t widget_width = _text_width + _image_width;
@@ -170,11 +180,11 @@ void DotWidget::print() {
       widget_width += _image_width;
     }
 
-    x += getScroll(_canvas->width(), widget_width);
-    x += getAlign(_horizontal_align, _canvas->width(), widget_width);
+    x += calculateScroll(_canvas->width(), widget_width);
+    x += calculateAlign(_horizontal_align, _canvas->width(), widget_width);
 
     if (_image_bitmap != nullptr && _horizontal_align != RIGHT) {
-      y = getAlign(_vertical_align, _canvas->height(), _image_height);
+      y = calculateAlign(_vertical_align, _canvas->height(), _image_height);
 
       _canvas->drawBitmap(x, y, _image_bitmap, _image_width, _image_height, 1, 0);
 
@@ -182,12 +192,12 @@ void DotWidget::print() {
       y = 0;
     }
 
-    y += getAlign(_vertical_align, _canvas->height(), _text_height);
+    y += calculateAlign(_vertical_align, _canvas->height(), _text_height);
     _canvas->drawBitmap(x, y, _text_bitmap, _text_width, _text_height, 1, 0);
     x += _text_width;
 
     if (_image_bitmap != nullptr && _horizontal_align != LEFT) {
-      y = getAlign(_vertical_align, _canvas->height(), _image_height);
+      y = calculateAlign(_vertical_align, _canvas->height(), _image_height);
 
       _canvas->drawBitmap(x, y, _image_bitmap, _image_width, _image_height, 1, 0);
     }
@@ -199,9 +209,8 @@ void DotWidget::setFlashing(const bool flashing) {
 }
 
 void DotWidget::setHorizontalAlign(const HORIZONTAL_ALIGN align) {
+  _dirty = true;
   _horizontal_align = align;
-
-  drawText();
 }
 
 void DotWidget::setImage(const String &image, const uint16_t width, const uint16_t height) {
@@ -216,10 +225,12 @@ void DotWidget::setImage(const String &image, const uint16_t width, const uint16
   }
 
   const auto input = const_cast<char *>(image.c_str());
-  const auto length = Base64.decodedLength(input, static_cast<int>(image.length())) + 1;
+  const auto input_length = static_cast<int>(image.length());
 
-  _image_bitmap = new uint8_t[length];
-  Base64.decode(reinterpret_cast<char *>(_image_bitmap), input, static_cast<int>(image.length()));
+  const auto bitmap_length = Base64.decodedLength(input, input_length) + 1;
+  _image_bitmap = new uint8_t[bitmap_length];
+
+  Base64.decode(reinterpret_cast<char *>(_image_bitmap), input, input_length);
 }
 
 void DotWidget::setInverted(const bool inverted) {
@@ -232,18 +243,16 @@ void DotWidget::setSpeed(const uint8_t speed) {
 }
 
 void DotWidget::setText(const String &text) {
+  _dirty = true;
   _frame = 0;
   _frames = FRAMES_BEFORE + FRAMES_AFTER;
   _text = text;
-
-  drawText();
 }
 
 void DotWidget::setTextWrap(const bool wrap) {
+  _dirty = true;
   _text_wrap = wrap;
   _canvas->setTextWrap(wrap);
-
-  drawText();
 }
 
 void DotWidget::setVerticalAlign(const VERTICAL_ALIGN align) {

@@ -43,7 +43,7 @@ void setup() {
   widget.setVerticalAlign(MIDDLE);
   widget.setInverted(true);
   widget.setText(String("SSID: " + WIFI_SSID + "\nConnecting..."));
-  widget.print();
+  widget.render();
   display.display();
 
   while (!WiFi.isConnected()) {
@@ -58,7 +58,7 @@ void setup() {
 
   widget.setInverted(false);
   widget.setText(String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":" + SERVER_PORT));
-  widget.print();
+  widget.render();
   display.display();
 }
 
@@ -94,7 +94,7 @@ void loop() {
     }
   }
 
-  widget.print();
+  widget.render();
   widget.advanceFrame();
   display.display();
 

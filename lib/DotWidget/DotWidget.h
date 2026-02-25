@@ -45,6 +45,7 @@ enum VERTICAL_ALIGN {
 class DotWidget {
 public:
   explicit DotWidget(Adafruit_GFX *canvas) : _canvas(canvas),
+                                             _dirty(true),
                                              _frame(0),
                                              _frames(FRAMES_BEFORE + FRAMES_AFTER),
                                              _image_bitmap(nullptr),
@@ -63,8 +64,9 @@ public:
 
   ~DotWidget();
   void advanceFrame();
+  // Must be called before render() or any set* methods
   void begin() const;
-  void print();
+  void render();
 
   void setFlashing(bool flashing);
   void setHorizontalAlign(HORIZONTAL_ALIGN align);
@@ -76,12 +78,13 @@ public:
   void setVerticalAlign(VERTICAL_ALIGN align);
 
 private:
-  static int16_t getAlign(int8_t a, uint16_t b, uint16_t d);
-  int16_t getScroll(uint16_t b, uint16_t d);
-  void drawText();
+  static int16_t calculateAlign(int8_t a, uint16_t b, uint16_t d);
+  int16_t calculateScroll(uint16_t b, uint16_t d);
+  void renderText();
   void updateFlash();
 
   Adafruit_GFX *_canvas;
+  bool _dirty;
   uint16_t _frame;
   uint16_t _frames;
 
