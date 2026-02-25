@@ -82,11 +82,11 @@ void DotWidget::renderText() {
   int16_t begin = 0, end = 0;
   text_y = -text_y;
 
-  offscreen.fillScreen(0);
+  offscreen.setFont(_font);
   offscreen.setTextColor(1);
   offscreen.setTextSize(1);
   offscreen.setTextWrap(_text_wrap);
-  offscreen.setFont(_font);
+  offscreen.fillScreen(0);
 
   while (_text[end]) {
     if (_text[end] == '\n') {
@@ -133,9 +133,9 @@ void DotWidget::advanceFrame() {
 }
 
 void DotWidget::begin() const {
+  _canvas->setTextColor(1);
   _canvas->setTextSize(1);
   _canvas->fillScreen(0);
-  _canvas->setTextColor(1);
 }
 
 void DotWidget::render() {
