@@ -1,6 +1,8 @@
 #include <DotWidget.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <Fonts/FreeMonoBold9pt7b.h>
+#include <Fonts/FreeMonoBold12pt7b.h>
 #include <Fonts/Org_01.h>
 #include <WiFi.h>
 
@@ -29,6 +31,12 @@ AEGMIS_GV60 display(&spi1, &spi2);
 
 DotWidget widget(&display);
 
+const GFXfont *getFont(const String &name) {
+  if (name == "medium") return &FreeMonoBold9pt7b;
+  if (name == "large") return &FreeMonoBold12pt7b;
+  return &Org_01;
+}
+
 void setup() {
   Serial.begin(115200);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -45,7 +53,7 @@ void setup() {
   widget.setHorizontalAlign(CENTER);
   widget.setVerticalAlign(MIDDLE);
   widget.setInverted(true);
-  widget.setText(String("SSID: " + WIFI_SSID + "\nConnecting..."));
+  widget.setText("SSID: " + WIFI_SSID + "\nConnecting...");
   widget.render();
   display.display();
 
@@ -60,7 +68,7 @@ void setup() {
   server.begin();
 
   widget.setInverted(false);
-  widget.setText(String("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":" + SERVER_PORT));
+  widget.setText("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":" + SERVER_PORT);
   widget.render();
   display.display();
 }
@@ -85,6 +93,7 @@ void loop() {
       widget.setText(document["text"] | "");
 
       widget.setFlashing(document["flashing"] | false);
+      widget.setFont(getFont(document["font"] | "small"));
       widget.setInverted(document["inverted"] | false);
       widget.setSpeed(document["speed"] | 5);
       widget.setTextWrap(document["text_wrap"] | true);
