@@ -4,7 +4,7 @@ The clocks in the space. See also Nottingham Hackspace's wiki:
 
 <https://wiki.nottinghack.org.uk/wiki/BigClocks>
 
-![Gif of "Sheffield Hackspace" moving around train clock sign](images/sign_moving.gif)
+![Gif of "Sheffield Hackspace" moving around train clock sign](images/train-sign.gif)
 
 ![Picture of train clock sign](images/train-sign.png)
 
@@ -47,13 +47,13 @@ See [`kicad project`](./kicad) for the latest version.
 Flash the server environment to the device:
 
 ```bash
-$ pio run -t clean -t upload -e server
+$ pio run -t clean -t upload
 ```
 
-To run on an SSD1306 OLED display instead, use the `server-oled` environment:
+To run on an SSD1306 OLED display instead, use the `oled` environment:
 
 ```bash
-$ pio run -t clean -t upload -e server-oled
+$ pio run -t clean -t upload -e oled
 ```
 
 For wiring the OLED, connect it to the XIAO ESP32C3 as follows:
