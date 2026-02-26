@@ -103,7 +103,7 @@ void DotWidget::renderText() {
 
   offscreen.setFont(_font);
   offscreen.setTextColor(1);
-  offscreen.setTextSize(1);
+  offscreen.setTextSize(_text_size);
   offscreen.setTextWrap(_text_wrap);
   offscreen.fillScreen(0);
 
@@ -267,6 +267,12 @@ void DotWidget::setText(const String &text) {
   _frame = 0;
   _frames = FRAMES_BEFORE + FRAMES_AFTER;
   _text = text;
+}
+
+void DotWidget::setTextSize(const uint8_t size) {
+  _dirty = true;
+  _text_size = size;
+  _canvas->setTextSize(size);
 }
 
 void DotWidget::setTextWrap(const bool wrap) {

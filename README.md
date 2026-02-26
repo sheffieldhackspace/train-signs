@@ -54,9 +54,9 @@ Once flashed, the display will show its IP address. You can then control it via 
 ```bash
 $ curl http://ip_address:port/ --data '{
   "text": "Repair cafe @\nSheffield Hackspace",
+  "text_size": 1,
   "text_wrap": true,
   "flashing": false,
-  "font": "small",
   "inverted": false,
   "horizontal_align": -1,
   "vertical_align": -1,
@@ -69,9 +69,9 @@ $ curl http://ip_address:port/ --data '{
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `text` | string | `""` | The text to display. If too long, the display will scroll it. |
+| `text_size` | integer | `1` | Text size. 1-5. |
 | `text_wrap` | boolean | `true` | If true, overflow scrolls vertically; if false, horizontally. |
 | `flashing` | boolean | `false` | If true, inverts colours every second producing a flashing animation. |
-| `font` | string | `"small"` | Font to use: `"small"` (Org_01), `"medium"` (FreeSans9pt7b), `"large"` (FreeSans12pt7b). |
 | `inverted` | boolean | `false` | Invert the colours of the display. |
 | `speed` | integer | `5` | Scroll speed. |
 | `horizontal_align` | integer | `-1` (left) | -1 left, 0 centre, 1 right. |

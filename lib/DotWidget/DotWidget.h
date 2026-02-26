@@ -59,6 +59,7 @@ public:
                                              _font(nullptr),
                                              _inverted(false),
                                              _speed(5),
+                                             _text_size(1),
                                              _text_wrap(false),
                                              _horizontal_align(LEFT),
                                              _vertical_align(TOP) {}
@@ -76,6 +77,7 @@ public:
   void setInverted(bool inverted);
   void setSpeed(uint8_t speed);
   void setText(const String &text);
+  void setTextSize(uint8_t size);
   void setTextWrap(bool wrap);
   void setVerticalAlign(VERTICAL_ALIGN align);
 
@@ -104,6 +106,7 @@ private:
   const GFXfont *_font;
   bool _inverted;
   uint8_t _speed;
+  uint8_t _text_size;
   bool _text_wrap;
 
   HORIZONTAL_ALIGN _horizontal_align;
