@@ -8,33 +8,9 @@ The clocks in the space. See also Nottingham Hackspace's wiki:
 
 ![Picture of train clock sign](images/train-sign.png)
 
-## Clock information
+## Hardware
 
-### Train sign
-
-* Dimensions: 96 × 26
-* Operating voltage: 3.3V
-* Power voltage: 5V
-
-### OLED
-
-* Dimensions: 128 × 64
-* Operating voltage: 3.3V
-* Power voltage: 3.3V or 5V
-
-## Hardware driver
-
-The microcontroller is a Seeed Studio XIAO ESP32C3.
-
-### Pinout
-
-![Screenshot of a schematic presenting the pinout](images/schema.png)
-
-See [`kicad project`](./kicad) for the latest version.
-
-### Prototype
-
-![Photo of the prototyped circuit board](images/proto.jpeg)
+The microcontroller is a Seeed Studio XIAO ESP32C3. For hardware details, schematic, and PCB layout, see the [AEGMIS_GV60 repository](https://github.com/sheffieldhackspace/AEGMIS_GV60).
 
 ## Running the project
 
@@ -107,5 +83,5 @@ $ curl http://ip_address:port/ --data '{
 ### Included libraries
 
 * Adafruit GFX Library - The base for our implementation
-* AEGMIS_GV60 - Provides an Adafruit GFX compatible driver for the train sign display; based on the reverse engineering work of [`daniel1111`](https://github.com/daniel1111/BigClockSnake) from the Nottingham Hackspace.
+* [AEGMIS_GV60](https://github.com/sheffieldhackspace/AEGMIS_GV60) - Provides an Adafruit GFX compatible driver for the train sign display; based on the reverse engineering work of [`daniel1111`](https://github.com/daniel1111/BigClockSnake) from the Nottingham Hackspace
 * DotWidget - Provides a standard way of building a display widget for small IoT screens
