@@ -10,9 +10,17 @@ The clocks in the space. See also Nottingham Hackspace's wiki:
 
 ## Clock information
 
+### Train sign
+
 * Dimensions: 96 × 26
 * Operating voltage: 3.3V
 * Power voltage: 5V
+
+### OLED
+
+* Dimensions: 128 × 64
+* Operating voltage: 3.3V
+* Power voltage: 3.3V or 5V
 
 ## Hardware driver
 
@@ -70,12 +78,12 @@ Once flashed, the display will show its IP address. You can then control it via 
 ```bash
 $ curl http://ip_address:port/ --data '{
   "text": "Repair cafe @\nSheffield Hackspace",
-  "text_wrap": false,
+  "text_wrap": true,
   "flashing": false,
-  "font": "medium",
+  "font": "small",
   "inverted": false,
   "horizontal_align": -1,
-  "vertical_align": 0,
+  "vertical_align": -1,
   "image": "ABgAAZmAAf+AGf+YH//4DgAwDv/wfH/+fv+uP/UEP1VU8VF39xV/MVX8PV/8cf++f/8eD/+wDgAwH//4Gf+YAf+AAZmAABgA",
   "image_width": 24,
   "image_height": 24
@@ -87,7 +95,7 @@ $ curl http://ip_address:port/ --data '{
 | `text` | string | `""` | The text to display. If too long, the display will scroll it. |
 | `text_wrap` | boolean | `true` | If true, overflow scrolls vertically; if false, horizontally. |
 | `flashing` | boolean | `false` | If true, inverts colours every second producing a flashing animation. |
-| `font` | string | `"small"` | "small", "medium", "large" |
+| `font` | string | `"small"` | Font to use: `"small"` (Org_01), `"medium"` (FreeSans9pt7b), `"large"` (FreeSans12pt7b). |
 | `inverted` | boolean | `false` | Invert the colours of the display. |
 | `speed` | integer | `5` | Scroll speed. |
 | `horizontal_align` | integer | `-1` (left) | -1 left, 0 centre, 1 right. |
@@ -99,5 +107,5 @@ $ curl http://ip_address:port/ --data '{
 ### Included libraries
 
 * Adafruit GFX Library - The base for our implementation
-* Adafruit BigClock - Provides an Adafruit GFX compatible driver for the display; based on the BigClock library made by the Nottingham Hackspace, heavily rewritten by [`dredzik`](https://typedef.io/)
-* Adafruit Widget - Provides a standard way of building a display widget for small IoT screens
+* AEGMIS_GV60 - Provides an Adafruit GFX compatible driver for the train sign display; based on the reverse engineering work of [`daniel1111`](https://github.com/daniel1111/BigClockSnake) from the Nottingham Hackspace.
+* DotWidget - Provides a standard way of building a display widget for small IoT screens
