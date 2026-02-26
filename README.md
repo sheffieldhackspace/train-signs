@@ -23,7 +23,7 @@ The microcontroller is a Seeed Studio XIAO ESP32C3. For hardware details, schema
 Flash the server environment to the device:
 
 ```bash
-$ pio run -t clean -t upload
+$ pio run -t clean -t upload -e aegmis
 ```
 
 To run on an SSD1306 OLED display instead, use the `oled` environment:
