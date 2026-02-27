@@ -68,25 +68,6 @@ int16_t DotWidget::calculateScroll(const uint16_t b, const uint16_t d) {
   return static_cast<int16_t>(result);
 }
 
-void DotWidget::drawVisible(
-  const uint8_t *bitmap,
-  const int16_t x,
-  const int16_t y,
-  const uint16_t w,
-  const uint16_t h
-) {
-  const int16_t srcY = max(static_cast<int16_t>(0), static_cast<int16_t>(-y));
-  const int16_t dstY = max(static_cast<int16_t>(0), static_cast<int16_t>(y));
-  const uint16_t visibleHeight = min(static_cast<int16_t>(h) - srcY, _canvas->height() - dstY);
-
-  if (visibleHeight <= 0) return;
-
-  const auto rowBytes = (w + 7) / 8;
-  const auto *visibleBuffer = bitmap + (srcY * rowBytes);
-
-  _canvas->drawBitmap(x, dstY, visibleBuffer, w, visibleHeight, 1, 0);
-}
-
 void DotWidget::renderText() {
   delete[] _text_bitmap;
   _text_bitmap = nullptr;
@@ -187,7 +168,7 @@ void DotWidget::render() {
     }
 
     y += calculateAlign(_vertical_align, _canvas->height(), _text_height);
-    drawVisible(_text_bitmap, x, y, _text_width, _text_height);
+    _canvas->drawBitmap(x, y, _text_bitmap, _text_width, _text_height, 1, 0);
   } else {
     uint16_t widget_width = _text_width;
 
@@ -207,7 +188,7 @@ void DotWidget::render() {
 
     if (_text_bitmap != nullptr) {
       y = calculateAlign(_vertical_align, _canvas->height(), _text_height);
-      drawVisible(_text_bitmap, x, y, _text_width, _text_height);
+      _canvas->drawBitmap(x, y, _text_bitmap, _text_width, _text_height, 1, 0);
 
       x += _text_width;
     }

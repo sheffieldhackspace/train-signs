@@ -84,7 +84,6 @@ public:
 private:
   static int16_t calculateAlign(int8_t a, uint16_t b, uint16_t d);
   int16_t calculateScroll(uint16_t b, uint16_t d);
-  void drawVisible(const uint8_t *bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h);
   void renderText();
   void updateFlash();
 
