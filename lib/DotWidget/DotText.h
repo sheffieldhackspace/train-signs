@@ -28,15 +28,21 @@
 
 class DotText {
 public:
-  DotText(Adafruit_GFX *canvas, const String &text);
+  DotText(Adafruit_GFX *canvas, const String &text, int8_t align);
 
   void draw(int16_t x, int16_t y) const;
+  uint8_t align() const { return _align; }
   uint16_t width() const { return _width; }
   uint16_t height() const { return _height; }
 
 private:
+  static int16_t calculateAlign(int8_t a, uint16_t b, uint16_t d);
+
   Adafruit_GFX *_canvas;
   String _text;
+  int8_t _align;
+  int16_t _x;
+  int16_t _y;
   uint16_t _width;
   uint16_t _height;
 };

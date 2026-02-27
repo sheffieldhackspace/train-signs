@@ -25,9 +25,9 @@
 #pragma once
 
 #include <Adafruit_GFX.h>
-#include <Base64.h>
 
 #include "DotImage.h"
+#include "DotText.h"
 
 constexpr int16_t FRAMES_BEFORE = 20;
 constexpr int16_t FRAMES_AFTER = 20;
@@ -47,14 +47,10 @@ enum VERTICAL_ALIGN {
 class DotWidget {
 public:
   explicit DotWidget(Adafruit_GFX *canvas) : _canvas(canvas),
-                                             _dirty(true),
                                              _frame(0),
                                              _frames(FRAMES_BEFORE + FRAMES_AFTER),
                                              _image(nullptr),
-                                             _text(""),
-                                             _text_bitmap(nullptr),
-                                             _text_width(0),
-                                             _text_height(0),
+                                             _text(nullptr),
                                              _flashing(false),
                                              _font(nullptr),
                                              _inverted(false),
@@ -84,20 +80,14 @@ public:
 private:
   static int16_t calculateAlign(int8_t a, uint16_t b, uint16_t d);
   int16_t calculateScroll(uint16_t b, uint16_t d);
-  void renderText();
   void updateFlash();
 
   Adafruit_GFX *_canvas;
-  bool _dirty;
   uint16_t _frame;
   uint16_t _frames;
 
   DotImage *_image;
-
-  String _text;
-  uint8_t *_text_bitmap;
-  uint16_t _text_width;
-  uint16_t _text_height;
+  DotText *_text;
 
   bool _flashing;
   const GFXfont *_font;

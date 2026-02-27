@@ -82,9 +82,6 @@ void loop() {
         return;
       }
 
-      widget.setImage(document["image"] | "", document["image_width"] | 0, document["image_height"] | 0);
-      widget.setText(document["text"] | "");
-
       widget.setFlashing(document["flashing"] | false);
       widget.setInverted(document["inverted"] | false);
       widget.setSpeed(document["speed"] | 5);
@@ -93,6 +90,9 @@ void loop() {
 
       widget.setHorizontalAlign(document["horizontal_align"] | LEFT);
       widget.setVerticalAlign(document["vertical_align"] | TOP);
+
+      widget.setImage(document["image"] | "", document["image_width"] | 0, document["image_height"] | 0);
+      widget.setText(document["text"] | "");
 
       client.print(RESPONSE_200);
       client.stop();
