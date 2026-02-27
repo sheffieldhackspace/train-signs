@@ -25,7 +25,7 @@
 #include "DotWidget.h"
 
 DotWidget::~DotWidget() {
-  delete[] _image_bitmap;
+  delete _image;
   delete[] _text_bitmap;
 }
 
@@ -172,37 +172,37 @@ void DotWidget::render() {
   if (_text_wrap) {
     uint16_t widget_height = _text_height;
 
-    if (_image_height) {
-      widget_height += _image_height + 2;
+    if (_image != nullptr) {
+      widget_height += _image->height() + 2;
     }
 
     y += calculateScroll(_canvas->height(), widget_height);
 
-    if (_image_bitmap != nullptr) {
-      x += calculateAlign(_horizontal_align, _canvas->width(), _image_width);
-      drawVisible(_image_bitmap, x, y, _image_width, _image_height);
+    if (_image != nullptr) {
+      x += calculateAlign(_horizontal_align, _canvas->width(), _image->width());
+      _image->draw(x, y);
 
       x = 0;
-      y += _image_height + 2;
+      y += _image->height() + 2;
     }
 
     y += calculateAlign(_vertical_align, _canvas->height(), _text_height);
     drawVisible(_text_bitmap, x, y, _text_width, _text_height);
   } else {
-    uint16_t widget_width = _text_width + _image_width;
+    uint16_t widget_width = _text_width;
 
-    if (_horizontal_align == CENTER) {
-      widget_width += _image_width;
+    if (_image != nullptr) {
+      widget_width += _image->width() * (_horizontal_align == CENTER ? 2 : 1);
     }
 
     x += calculateScroll(_canvas->width(), widget_width);
     x += calculateAlign(_horizontal_align, _canvas->width(), widget_width);
 
-    if (_image_bitmap != nullptr && _horizontal_align != RIGHT) {
-      y = calculateAlign(_vertical_align, _canvas->height(), _image_height);
-      drawVisible(_image_bitmap, x, y, _image_width, _image_height);
+    if (_image != nullptr && _horizontal_align != RIGHT) {
+      y = calculateAlign(_vertical_align, _canvas->height(), _image->height());
+      _image->draw(x, y);
 
-      x += _image_width;
+      x += _image->width();
     }
 
     if (_text_bitmap != nullptr) {
@@ -212,9 +212,9 @@ void DotWidget::render() {
       x += _text_width;
     }
 
-    if (_image_bitmap != nullptr && _horizontal_align != LEFT) {
-      y = calculateAlign(_vertical_align, _canvas->height(), _image_height);
-      drawVisible(_image_bitmap, x, y, _image_width, _image_height);
+    if (_image != nullptr && _horizontal_align != LEFT) {
+      y = calculateAlign(_vertical_align, _canvas->height(), _image->height());
+      _image->draw(x, y);
     }
   }
 }
@@ -234,23 +234,13 @@ void DotWidget::setHorizontalAlign(const HORIZONTAL_ALIGN align) {
 }
 
 void DotWidget::setImage(const String &image, const uint16_t width, const uint16_t height) {
-  _image_width = width;
-  _image_height = height;
-
-  delete[] _image_bitmap;
-  _image_bitmap = nullptr;
+  delete _image;
 
   if (image.isEmpty()) {
     return;
   }
 
-  const auto input = const_cast<char *>(image.c_str());
-  const auto input_length = static_cast<int>(image.length());
-
-  const auto bitmap_length = Base64.decodedLength(input, input_length) + 1;
-  _image_bitmap = new uint8_t[bitmap_length];
-
-  Base64.decode(reinterpret_cast<char *>(_image_bitmap), input, input_length);
+  _image = new DotImage(_canvas, image, width, height);
 }
 
 void DotWidget::setInverted(const bool inverted) {

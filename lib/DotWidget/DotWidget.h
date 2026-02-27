@@ -27,6 +27,8 @@
 #include <Adafruit_GFX.h>
 #include <Base64.h>
 
+#include "DotImage.h"
+
 constexpr int16_t FRAMES_BEFORE = 20;
 constexpr int16_t FRAMES_AFTER = 20;
 
@@ -48,9 +50,7 @@ public:
                                              _dirty(true),
                                              _frame(0),
                                              _frames(FRAMES_BEFORE + FRAMES_AFTER),
-                                             _image_bitmap(nullptr),
-                                             _image_width(0),
-                                             _image_height(0),
+                                             _image(nullptr),
                                              _text(""),
                                              _text_bitmap(nullptr),
                                              _text_width(0),
@@ -93,9 +93,7 @@ private:
   uint16_t _frame;
   uint16_t _frames;
 
-  uint8_t *_image_bitmap;
-  uint16_t _image_width;
-  uint16_t _image_height;
+  DotImage *_image;
 
   String _text;
   uint8_t *_text_bitmap;
