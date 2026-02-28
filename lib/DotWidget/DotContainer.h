@@ -29,34 +29,59 @@
 
 #include "DotElement.h"
 
+// Horizontal - bits 0-1
+constexpr uint8_t ALIGN_LEFT = 0b00000001;
+constexpr uint8_t ALIGN_RIGHT = 0b00000010;
+constexpr uint8_t ALIGN_CENTER = 0b00000011;
+constexpr uint8_t ALIGN_HORIZONTAL = 0b00000011;
+
+
+// Vertical - bits 2-3
+constexpr uint8_t ALIGN_TOP = 0b00000100;
+constexpr uint8_t ALIGN_BOTTOM = 0b00001000;
+constexpr uint8_t ALIGN_MIDDLE = 0b00001100;
+constexpr uint8_t ALIGN_VERTICAL = 0b00001100;
+
+inline int16_t alignOffset(uint8_t align, uint16_t containerSize, uint16_t elementSize) {
+  if (containerSize <= elementSize) return 0;
+  const auto distance = containerSize - elementSize;
+  if ((align & ALIGN_HORIZONTAL) == ALIGN_CENTER || (align & ALIGN_VERTICAL) == ALIGN_MIDDLE) return distance / 2;
+  if ((align & ALIGN_HORIZONTAL) == ALIGN_RIGHT || (align & ALIGN_VERTICAL) == ALIGN_BOTTOM) return distance;
+  return 0;
+}
+
 class DotHorizontal : public DotElement {
 public:
-  explicit DotHorizontal(Adafruit_GFX *canvas) : _canvas(canvas), _width(0), _height(0) {}
+  explicit DotHorizontal(Adafruit_GFX *canvas, uint8_t align) : _canvas(canvas), _align(align), _width(0), _height(0) {}
 
   void add(DotElement *element);
   void draw(int16_t x, int16_t y) const override;
+  [[nodiscard]] uint8_t align() const { return _align; }
   [[nodiscard]] uint16_t width() const override { return _width; }
   [[nodiscard]] uint16_t height() const override { return _height; }
 
 private:
   Adafruit_GFX *_canvas;
   std::vector<DotElement *> _elements;
+  uint8_t _align;
   uint16_t _width;
   uint16_t _height;
 };
 
 class DotVertical : public DotElement {
 public:
-  explicit DotVertical(Adafruit_GFX *canvas) : _canvas(canvas), _width(0), _height(0) {}
+  explicit DotVertical(Adafruit_GFX *canvas, uint8_t align) : _canvas(canvas), _align(align), _width(0), _height(0) {}
 
   void add(DotElement *element);
   void draw(int16_t x, int16_t y) const override;
+  [[nodiscard]] uint8_t align() const { return _align; }
   [[nodiscard]] uint16_t width() const override { return _width; }
   [[nodiscard]] uint16_t height() const override { return _height; }
 
 private:
   Adafruit_GFX *_canvas;
   std::vector<DotElement *> _elements;
+  uint8_t _align;
   uint16_t _width;
   uint16_t _height;
 };

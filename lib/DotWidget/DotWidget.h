@@ -33,34 +33,21 @@
 constexpr int16_t FRAMES_BEFORE = 20;
 constexpr int16_t FRAMES_AFTER = 20;
 
-enum HORIZONTAL_ALIGN {
-  LEFT = -1,
-  CENTER = 0,
-  RIGHT = 1,
-};
-
-enum VERTICAL_ALIGN {
-  TOP = -1,
-  MIDDLE = 0,
-  BOTTOM = 1,
-};
-
 class DotWidget {
 public:
   explicit DotWidget(Adafruit_GFX *canvas) : _canvas(canvas),
                                              _frame(0),
                                              _frames(FRAMES_BEFORE + FRAMES_AFTER),
+                                             _align(ALIGN_CENTER | ALIGN_MIDDLE),
                                              _container(nullptr),
                                              _image(nullptr),
                                              _text(nullptr),
-                                             _flashing(false),
                                              _font(nullptr),
-                                             _inverted(false),
-                                             _speed(5),
                                              _text_size(1),
                                              _text_wrap(false),
-                                             _horizontal_align(LEFT),
-                                             _vertical_align(TOP) {}
+                                             _flashing(false),
+                                             _inverted(false),
+                                             _speed(5) {}
 
   ~DotWidget();
   void advanceFrame();
@@ -69,16 +56,14 @@ public:
   void rebuild();
   void render();
 
+  void setAlign(uint8_t align);
   void setFlashing(bool flashing);
-  void setHorizontalAlign(HORIZONTAL_ALIGN align);
   void setImage(const String &image, uint16_t width, uint16_t height);
   void setInverted(bool inverted);
   void setSpeed(uint8_t speed);
   void setText(const String &text, const GFXfont *font = nullptr, uint8_t size = 1, bool wrap = false);
-  void setVerticalAlign(VERTICAL_ALIGN align);
 
 private:
-  static int16_t calculateAlign(int8_t a, uint16_t b, uint16_t d);
   int16_t calculateScroll(uint16_t b, uint16_t d);
   void updateFlash();
 
@@ -86,17 +71,16 @@ private:
   uint16_t _frame;
   uint16_t _frames;
 
+  uint8_t _align;
   DotElement *_container;
   DotImage *_image;
   DotText *_text;
 
-  bool _flashing;
   const GFXfont *_font;
-  bool _inverted;
-  uint8_t _speed;
   uint8_t _text_size;
   bool _text_wrap;
 
-  HORIZONTAL_ALIGN _horizontal_align;
-  VERTICAL_ALIGN _vertical_align;
+  bool _flashing;
+  bool _inverted;
+  uint8_t _speed;
 };

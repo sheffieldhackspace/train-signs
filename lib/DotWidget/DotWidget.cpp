@@ -30,24 +30,6 @@ DotWidget::~DotWidget() {
   delete _text;
 }
 
-// a - alignment value
-// b - boundary dimension (i.e. width of the display)
-// d - text dimension (i.e. width of the text)
-// return - text coordinate (i.e. x position of the text)
-int16_t DotWidget::calculateAlign(const int8_t a, const uint16_t b, const uint16_t d) {
-  auto result = 0;
-
-  if (const auto distance = b - d; distance > 0) {
-    if (a == 0) {
-      result = distance / 2;
-    } else if (a == 1) {
-      result = distance;
-    }
-  }
-
-  return static_cast<int16_t>(result);
-}
-
 // b - boundary dimension (i.e. width of the display)
 // d - text dimension (i.e. width of the text)
 // return - text coordinate (i.e. x position of the text)
@@ -99,19 +81,19 @@ void DotWidget::rebuild() {
   _container = nullptr;
 
   if (_text_wrap) {
-    auto *container = new DotVertical(_canvas);
+    auto *container = new DotVertical(_canvas, _align);
     if (_image) container->add(_image);
     if (_text) container->add(_text);
     _container = container;
   } else if (_image && !_text) {
-    auto *container = new DotHorizontal(_canvas);
+    auto *container = new DotHorizontal(_canvas, _align);
     container->add(_image);
     _container = container;
   } else {
-    auto *container = new DotHorizontal(_canvas);
-    if (_image && _horizontal_align != RIGHT) container->add(_image);
+    auto *container = new DotHorizontal(_canvas, _align);
+    if (_image && (_align & ALIGN_LEFT)) container->add(_image);
     if (_text) container->add(_text);
-    if (_image && _horizontal_align != LEFT) container->add(_image);
+    if (_image && (_align & ALIGN_RIGHT)) container->add(_image);
     _container = container;
   }
 }
@@ -120,32 +102,32 @@ void DotWidget::render() {
   if (_container == nullptr) rebuild();
   if (_container == nullptr) return;
 
-  int16_t x = 0, y = 0;
+  int16_t cursor_x = 0, cursor_y = 0;
 
   _canvas->fillScreen(0);
   updateFlash();
 
   if (_text_wrap) {
-    y += calculateScroll(_canvas->height(), _container->height());
+    cursor_y += calculateScroll(_canvas->height(), _container->height());
   } else {
-    x += calculateScroll(_canvas->width(), _container->width());
+    cursor_x += calculateScroll(_canvas->width(), _container->width());
   }
 
-  x += calculateAlign(_horizontal_align, _canvas->width(), _container->width());
-  y += calculateAlign(_vertical_align, _canvas->height(), _container->height());
+  cursor_x += alignOffset(_align & ALIGN_HORIZONTAL, _canvas->width(), _container->width());
+  cursor_y += alignOffset(_align & ALIGN_VERTICAL, _canvas->height(), _container->height());
 
-  _container->draw(x, y);
+  _container->draw(cursor_x, cursor_y);
+}
+
+void DotWidget::setAlign(const uint8_t align) {
+  _align = align;
+
+  delete _container;
+  _container = nullptr;
 }
 
 void DotWidget::setFlashing(const bool flashing) {
   _flashing = flashing;
-}
-
-void DotWidget::setHorizontalAlign(const HORIZONTAL_ALIGN align) {
-  _horizontal_align = align;
-
-  delete _container;
-  _container = nullptr;
 }
 
 void DotWidget::setImage(const String &image, const uint16_t width, const uint16_t height) {
@@ -182,18 +164,11 @@ void DotWidget::setText(const String &text, const GFXfont *font, uint8_t size, b
   _canvas->setTextWrap(_text_wrap);
 
   if (!text.isEmpty()) {
-    _text = new DotText(_canvas, text, _horizontal_align);
+    _text = new DotText(_canvas, _align, text);
   }
 
   _frame = 0;
   _frames = FRAMES_BEFORE + FRAMES_AFTER;
-
-  delete _container;
-  _container = nullptr;
-}
-
-void DotWidget::setVerticalAlign(const VERTICAL_ALIGN align) {
-  _vertical_align = align;
 
   delete _container;
   _container = nullptr;

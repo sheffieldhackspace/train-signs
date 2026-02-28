@@ -31,9 +31,13 @@ void DotHorizontal::add(DotElement *element) {
 }
 
 void DotHorizontal::draw(int16_t x, int16_t y) const {
+  int cursor_x = x;
+
   for (const auto *element: _elements) {
-    element->draw(x, y);
-    x += element->width();
+    int16_t cursor_y = y + alignOffset(_align & ALIGN_VERTICAL, _height, element->height());
+
+    element->draw(cursor_x, cursor_y);
+    cursor_x += element->width();
   }
 }
 
@@ -43,9 +47,13 @@ void DotVertical::add(DotElement *element) {
   _height += element->height();
 }
 
-void DotVertical::draw(int16_t x, int16_t y) const {
+void DotVertical::draw(const int16_t x, const int16_t y) const {
+  int16_t cursor_y = y;
+
   for (const auto *element: _elements) {
-    element->draw(x, y);
-    y += element->height();
+    int16_t cursor_x = x + alignOffset(_align & ALIGN_HORIZONTAL, _width, element->width());
+
+    element->draw(cursor_x, cursor_y);
+    cursor_y += element->height();
   }
 }

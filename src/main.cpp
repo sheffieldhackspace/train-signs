@@ -41,8 +41,7 @@ void setup() {
 
   widget.begin();
 
-  widget.setHorizontalAlign(CENTER);
-  widget.setVerticalAlign(MIDDLE);
+  widget.setAlign(ALIGN_CENTER | ALIGN_MIDDLE);
   widget.setInverted(true);
   widget.setText("SSID: " + WIFI_SSID + "\nConnecting...", &Org_01);
   widget.render();
@@ -58,6 +57,7 @@ void setup() {
 
   server.begin();
 
+  widget.setAlign(ALIGN_CENTER | ALIGN_MIDDLE);
   widget.setInverted(false);
   widget.setText("SSID: " + WIFI_SSID + "\n" + WiFi.localIP().toString() + ":" + SERVER_PORT, &Org_01);
   widget.render();
@@ -84,9 +84,7 @@ void loop() {
       widget.setInverted(document["inverted"] | false);
       widget.setSpeed(document["speed"] | 5);
 
-      widget.setHorizontalAlign(document["horizontal_align"] | LEFT);
-      widget.setVerticalAlign(document["vertical_align"] | TOP);
-
+      widget.setAlign(document["align"] | (ALIGN_LEFT | ALIGN_TOP));
       widget.setImage(document["image"] | "", document["image_width"] | 0, document["image_height"] | 0);
       widget.setText(document["text"] | "", &Org_01, document["text_size"] | 1, document["text_wrap"] | true);
 
