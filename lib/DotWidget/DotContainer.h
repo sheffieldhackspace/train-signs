@@ -24,10 +24,9 @@
 
 #pragma once
 
-#pragma once
-
 #include <Adafruit_GFX.h>
 #include <vector>
+
 #include "DotElement.h"
 
 class DotHorizontal : public DotElement {

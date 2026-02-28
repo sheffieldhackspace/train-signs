@@ -25,6 +25,7 @@
 #include "DotWidget.h"
 
 DotWidget::~DotWidget() {
+  delete _container;
   delete _image;
   delete _text;
 }
@@ -85,97 +86,78 @@ void DotWidget::advanceFrame() {
 }
 
 void DotWidget::begin() const {
+  _canvas->setFont(_font);
+  _canvas->setTextSize(_text_size);
+  _canvas->setTextWrap(_text_wrap);
+
   _canvas->setTextColor(1);
-  _canvas->setTextSize(1);
   _canvas->fillScreen(0);
 }
 
+void DotWidget::rebuild() {
+  delete _container;
+  _container = nullptr;
+
+  if (_text_wrap) {
+    auto *container = new DotVertical(_canvas);
+    if (_image) container->add(_image);
+    if (_text) container->add(_text);
+    _container = container;
+  } else if (_image && !_text) {
+    auto *container = new DotHorizontal(_canvas);
+    container->add(_image);
+    _container = container;
+  } else {
+    auto *container = new DotHorizontal(_canvas);
+    if (_image && _horizontal_align != RIGHT) container->add(_image);
+    if (_text) container->add(_text);
+    if (_image && _horizontal_align != LEFT) container->add(_image);
+    _container = container;
+  }
+}
+
 void DotWidget::render() {
+  if (_container == nullptr) rebuild();
+  if (_container == nullptr) return;
+
   int16_t x = 0, y = 0;
 
   _canvas->fillScreen(0);
-
   updateFlash();
 
   if (_text_wrap) {
-    uint16_t widget_height = 0;
-
-    if (_text != nullptr) {
-      widget_height += _text->height();
-    }
-
-    if (_image != nullptr) {
-      widget_height += _image->height() + 2;
-    }
-
-    y += calculateScroll(_canvas->height(), widget_height);
-
-    if (_image != nullptr) {
-      x += calculateAlign(_horizontal_align, _canvas->width(), _image->width());
-      _image->draw(x, y);
-
-      x = 0;
-      y += _image->height() + 2;
-    }
-
-    if (_text != nullptr) {
-      y += calculateAlign(_vertical_align, _canvas->height(), _text->height());
-      _text->draw(x, y);
-    }
+    y += calculateScroll(_canvas->height(), _container->height());
   } else {
-    uint16_t widget_width = 0;
-
-    if (_text != nullptr) {
-      widget_width += _text->width();
-    }
-
-    if (_image != nullptr) {
-      widget_width += _image->width() * (_horizontal_align == CENTER ? 2 : 1);
-    }
-
-    x += calculateScroll(_canvas->width(), widget_width);
-    x += calculateAlign(_horizontal_align, _canvas->width(), widget_width);
-
-    if (_image != nullptr && _horizontal_align != RIGHT) {
-      y = calculateAlign(_vertical_align, _canvas->height(), _image->height());
-      _image->draw(x, y);
-      x += _image->width();
-    }
-
-    if (_text != nullptr) {
-      y = calculateAlign(_vertical_align, _canvas->height(), _text->height());
-      _text->draw(x, y);
-      x += _text->width();
-    }
-
-    if (_image != nullptr && _horizontal_align != LEFT) {
-      y = calculateAlign(_vertical_align, _canvas->height(), _image->height());
-      _image->draw(x, y);
-    }
+    x += calculateScroll(_canvas->width(), _container->width());
   }
+
+  x += calculateAlign(_horizontal_align, _canvas->width(), _container->width());
+  y += calculateAlign(_vertical_align, _canvas->height(), _container->height());
+
+  _container->draw(x, y);
 }
 
 void DotWidget::setFlashing(const bool flashing) {
   _flashing = flashing;
 }
 
-void DotWidget::setFont(const GFXfont *font) {
-  _font = font;
-  _canvas->setFont(font);
-}
-
 void DotWidget::setHorizontalAlign(const HORIZONTAL_ALIGN align) {
   _horizontal_align = align;
+
+  delete _container;
+  _container = nullptr;
 }
 
 void DotWidget::setImage(const String &image, const uint16_t width, const uint16_t height) {
   delete _image;
+  _image = nullptr;
 
-  if (image.isEmpty()) {
-    return;
+  if (!image.isEmpty()) {
+    _image = new DotImage(_canvas, image, width, height);
   }
 
-  _image = new DotImage(_canvas, image, width, height);
+  delete _container;
+  _container = nullptr;
 }
 
 void DotWidget::setInverted(const bool inverted) {
@@ -187,29 +169,32 @@ void DotWidget::setSpeed(const uint8_t speed) {
   _speed = speed;
 }
 
-void DotWidget::setText(const String &text) {
+void DotWidget::setText(const String &text, const GFXfont *font, uint8_t size, bool wrap) {
   delete _text;
+  _text = nullptr;
 
-  if (text.isEmpty()) {
-    return;
+  _font = font;
+  _text_size = size;
+  _text_wrap = wrap;
+
+  _canvas->setFont(_font);
+  _canvas->setTextSize(_text_size);
+  _canvas->setTextWrap(_text_wrap);
+
+  if (!text.isEmpty()) {
+    _text = new DotText(_canvas, text, _horizontal_align);
   }
-
-  _text = new DotText(_canvas, text, _horizontal_align);
 
   _frame = 0;
   _frames = FRAMES_BEFORE + FRAMES_AFTER;
-}
 
-void DotWidget::setTextSize(const uint8_t size) {
-  _text_size = size;
-  _canvas->setTextSize(size);
-}
-
-void DotWidget::setTextWrap(const bool wrap) {
-  _text_wrap = wrap;
-  _canvas->setTextWrap(wrap);
+  delete _container;
+  _container = nullptr;
 }
 
 void DotWidget::setVerticalAlign(const VERTICAL_ALIGN align) {
   _vertical_align = align;
+
+  delete _container;
+  _container = nullptr;
 }

@@ -26,6 +26,7 @@
 
 #include <Adafruit_GFX.h>
 
+#include "DotContainer.h"
 #include "DotImage.h"
 #include "DotText.h"
 
@@ -49,6 +50,7 @@ public:
   explicit DotWidget(Adafruit_GFX *canvas) : _canvas(canvas),
                                              _frame(0),
                                              _frames(FRAMES_BEFORE + FRAMES_AFTER),
+                                             _container(nullptr),
                                              _image(nullptr),
                                              _text(nullptr),
                                              _flashing(false),
@@ -64,17 +66,15 @@ public:
   void advanceFrame();
   // Must be called before render() or any set* methods
   void begin() const;
+  void rebuild();
   void render();
 
   void setFlashing(bool flashing);
-  void setFont(const GFXfont *font);
   void setHorizontalAlign(HORIZONTAL_ALIGN align);
   void setImage(const String &image, uint16_t width, uint16_t height);
   void setInverted(bool inverted);
   void setSpeed(uint8_t speed);
-  void setText(const String &text);
-  void setTextSize(uint8_t size);
-  void setTextWrap(bool wrap);
+  void setText(const String &text, const GFXfont *font = nullptr, uint8_t size = 1, bool wrap = false);
   void setVerticalAlign(VERTICAL_ALIGN align);
 
 private:
@@ -86,6 +86,7 @@ private:
   uint16_t _frame;
   uint16_t _frames;
 
+  DotElement *_container;
   DotImage *_image;
   DotText *_text;
 
