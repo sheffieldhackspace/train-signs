@@ -24,41 +24,36 @@
 
 #include "DotText.h"
 
-DotText::DotText(Adafruit_GFX *canvas, const uint8_t align, const String &text)
-  : _canvas(canvas),
-    _text(text),
-    _align(align),
-    _width(0),
-    _height(0) {
-  _canvas->getTextBounds(text, 0, 0, &_x, &_y, &_width, &_height);
+DotText::Line::Line(Adafruit_GFX *canvas, const std::string &text)
+  : _canvas(canvas), _text(text), _width(0), _height(0) {
+  _canvas->getTextBounds(_text.c_str(), 0, 0, &_x, &_y, &_width, &_height);
+
+  int16_t ref_x, ref_y;
+  uint16_t ref_w, ref_h;
+  _canvas->getTextBounds("Ag", 0, 0, &ref_x, &ref_y, &ref_w, &ref_h);
+
+  if (_height % ref_h != 0) {
+    _height += ref_h - (_height % ref_h);
+  }
 }
 
-void DotText::draw(const int16_t x, const int16_t y) const {
-  int16_t begin = 0, end = 0;
-  int16_t cursor_y = y - _y;
+void DotText::Line::draw(const int16_t x, const int16_t y) const {
+  _canvas->setCursor(x - _x, y - _y);
+  _canvas->print(_text.c_str());
+}
 
-  while (_text[end]) {
-    if (_text[end] == '\n') {
-      _canvas->println();
+DotText::DotText(Adafruit_GFX *canvas, const uint8_t align, const std::string &text)
+  : DotVertical(canvas, align) {
+  std::istringstream stream(text);
+  std::string lt;
 
-      cursor_y = _canvas->getCursorY();
-      begin++;
-    } else if (_text[end + 1] == '\n' || !_text[end + 1]) {
-      int16_t cursor_x = x - _x;
-      String line = _text.substring(begin, end + 1);
-      int16_t tx, ty;
-      uint16_t tw, th;
+  while (std::getline(stream, lt)) {
+    add(new Line(canvas, lt));
+  }
+}
 
-      _canvas->getTextBounds(line, 0, 0, &tx, &ty, &tw, &th);
-      cursor_x += alignOffset(_align & ALIGN_HORIZONTAL, _width, tw);
-
-      _canvas->setCursor(cursor_x, cursor_y);
-      _canvas->print(line);
-
-      cursor_y = _canvas->getCursorY();
-      begin = end + 1;
-    }
-
-    end++;
+DotText::~DotText() {
+  for (const auto *element: _elements) {
+    delete element;
   }
 }

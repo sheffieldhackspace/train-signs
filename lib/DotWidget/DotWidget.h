@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <string>
 #include <Adafruit_GFX.h>
 
 #include "DotContainer.h"

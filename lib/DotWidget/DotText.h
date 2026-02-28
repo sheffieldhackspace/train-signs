@@ -24,26 +24,33 @@
 
 #pragma once
 
+#include <sstream>
+#include <string>
 #include <Adafruit_GFX.h>
 
 #include "DotContainer.h"
 #include "DotElement.h"
 
-class DotText : public DotElement {
+class DotText : public DotVertical {
 public:
-  DotText(Adafruit_GFX *canvas, uint8_t align, const String &text);
-
-  void draw(int16_t x, int16_t y) const override;
-  [[nodiscard]] uint8_t align() const { return _align; }
-  [[nodiscard]] uint16_t width() const override { return _width; }
-  [[nodiscard]] uint16_t height() const override { return _height; }
+  DotText(Adafruit_GFX *canvas, uint8_t align, const std::string &text);
+  ~DotText() override;
 
 private:
-  Adafruit_GFX *_canvas;
-  String _text;
-  uint8_t _align;
-  int16_t _x;
-  int16_t _y;
-  uint16_t _width;
-  uint16_t _height;
+  class Line : public DotElement {
+  public:
+    Line(Adafruit_GFX *canvas, const std::string &text);
+
+    void draw(int16_t x, int16_t y) const override;
+    [[nodiscard]] uint16_t width() const override { return _width; }
+    [[nodiscard]] uint16_t height() const override { return _height; }
+
+  private:
+    Adafruit_GFX *_canvas;
+    std::string _text;
+    int16_t _x;
+    int16_t _y;
+    uint16_t _width;
+    uint16_t _height;
+  };
 };

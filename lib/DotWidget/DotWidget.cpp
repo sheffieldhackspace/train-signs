@@ -151,7 +151,7 @@ void DotWidget::setSpeed(const uint8_t speed) {
   _speed = speed;
 }
 
-void DotWidget::setText(const String &text, const GFXfont *font, uint8_t size, bool wrap) {
+void DotWidget::setText(const String &text, const GFXfont *font, const uint8_t size, const bool wrap) {
   delete _text;
   _text = nullptr;
 
@@ -164,7 +164,7 @@ void DotWidget::setText(const String &text, const GFXfont *font, uint8_t size, b
   _canvas->setTextWrap(_text_wrap);
 
   if (!text.isEmpty()) {
-    _text = new DotText(_canvas, _align, text);
+    _text = new DotText(_canvas, _align, text.c_str());
   }
 
   _frame = 0;

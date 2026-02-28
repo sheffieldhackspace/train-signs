@@ -56,13 +56,14 @@ public:
 
   void add(DotElement *element);
   void draw(int16_t x, int16_t y) const override;
-  [[nodiscard]] uint8_t align() const { return _align; }
   [[nodiscard]] uint16_t width() const override { return _width; }
   [[nodiscard]] uint16_t height() const override { return _height; }
 
+protected:
+  std::vector<DotElement *> _elements;
+
 private:
   Adafruit_GFX *_canvas;
-  std::vector<DotElement *> _elements;
   uint8_t _align;
   uint16_t _width;
   uint16_t _height;
@@ -74,13 +75,14 @@ public:
 
   void add(DotElement *element);
   void draw(int16_t x, int16_t y) const override;
-  [[nodiscard]] uint8_t align() const { return _align; }
   [[nodiscard]] uint16_t width() const override { return _width; }
   [[nodiscard]] uint16_t height() const override { return _height; }
 
+protected:
+  std::vector<DotElement *> _elements;
+
 private:
   Adafruit_GFX *_canvas;
-  std::vector<DotElement *> _elements;
   uint8_t _align;
   uint16_t _width;
   uint16_t _height;
