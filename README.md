@@ -58,8 +58,8 @@ $ curl http://ip_address:port/ --data '{
   "text_wrap": true,
   "flashing": false,
   "inverted": false,
-  "horizontal_align": -1,
-  "vertical_align": -1,
+  "horizontal_align": "left",
+  "vertical_align": "top",
   "image": "ABgAAZmAAf+AGf+YH//4DgAwDv/wfH/+fv+uP/UEP1VU8VF39xV/MVX8PV/8cf++f/8eD/+wDgAwH//4Gf+YAf+AAZmAABgA",
   "image_width": 24,
   "image_height": 24
@@ -69,16 +69,24 @@ $ curl http://ip_address:port/ --data '{
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `text` | string | `""` | The text to display. If too long, the display will scroll it. |
-| `text_size` | integer | `1` | Text size. 1-5. |
+| `text_size` | integer | `1` | Text size multiplier, 1–5. |
 | `text_wrap` | boolean | `true` | If true, overflow scrolls vertically; if false, horizontally. |
 | `flashing` | boolean | `false` | If true, inverts colours every second producing a flashing animation. |
 | `inverted` | boolean | `false` | Invert the colours of the display. |
 | `speed` | integer | `5` | Scroll speed. |
-| `horizontal_align` | integer | `-1` (left) | -1 left, 0 centre, 1 right. |
-| `vertical_align` | integer | `-1` (top) | -1 top, 0 centre, 1 bottom. |
+| `horizontal_align` | string | `"left"` | `"left"`, `"center"`, `"right"`. |
+| `vertical_align` | string | `"top"` | `"top"`, `"middle"`, `"bottom"`. |
 | `image` | string | `""` | Base64-encoded image (output of the image2bytes script). |
 | `image_width` | integer | `0` | Image width in pixels. |
 | `image_height` | integer | `0` | Image height in pixels. |
+
+### Integration tests
+
+A test script is included that sends a series of curl requests and prompts you to verify each result visually:
+
+```bash
+$ chmod +x integration-test.sh && ./integration-test.sh 192.168.1.100
+```
 
 ### Included libraries
 

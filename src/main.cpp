@@ -14,6 +14,17 @@ constexpr const char *RESPONSE_200 = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nCo
 constexpr const char *RESPONSE_400 = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
 constexpr const char *RESPONSE_413 = "HTTP/1.1 413 Payload Too Large\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
 
+inline uint8_t getAlign(std::string_view text) {
+  if (text == "left") return ALIGN_LEFT;
+  if (text == "center") return ALIGN_CENTER;
+  if (text == "right") return ALIGN_RIGHT;
+  if (text == "top") return ALIGN_TOP;
+  if (text == "middle") return ALIGN_MIDDLE;
+  if (text == "bottom") return ALIGN_BOTTOM;
+
+  return 0;
+}
+
 unsigned long last = 0;
 WiFiServer server(SERVER_PORT);
 
@@ -84,7 +95,7 @@ void loop() {
       widget.setInverted(document["inverted"] | false);
       widget.setSpeed(document["speed"] | 5);
 
-      widget.setAlign(document["align"] | (ALIGN_LEFT | ALIGN_TOP));
+      widget.setAlign(getAlign(document["horizontal_align"] | "left") | getAlign(document["vertical_align"] | "top"));
       widget.setImage(document["image"] | "", document["image_width"] | 0, document["image_height"] | 0);
       widget.setText(document["text"] | "", &Org_01, document["text_size"] | 1, document["text_wrap"] | true);
 
