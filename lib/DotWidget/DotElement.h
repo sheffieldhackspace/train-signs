@@ -26,25 +26,10 @@
 
 #include <Adafruit_GFX.h>
 
-#include "DotElement.h"
-
-class DotText : public DotElement {
+class DotElement {
 public:
-  DotText(Adafruit_GFX *canvas, const String &text, int8_t align);
-
-  void draw(int16_t x, int16_t y) const override;
-  [[nodiscard]] uint8_t align() const { return _align; }
-  [[nodiscard]] uint16_t width() const override { return _width; }
-  [[nodiscard]] uint16_t height() const override { return _height; }
-
-private:
-  static int16_t calculateAlign(int8_t a, uint16_t b, uint16_t d);
-
-  Adafruit_GFX *_canvas;
-  String _text;
-  int8_t _align;
-  int16_t _x;
-  int16_t _y;
-  uint16_t _width;
-  uint16_t _height;
+  virtual void draw(int16_t x, int16_t y) const = 0;
+  [[nodiscard]] virtual uint16_t width() const = 0;
+  [[nodiscard]] virtual uint16_t height() const = 0;
+  virtual ~DotElement() = default;
 };

@@ -26,14 +26,16 @@
 
 #include <Adafruit_GFX.h>
 
-class DotImage {
+#include "DotElement.h"
+
+class DotImage : public DotElement {
 public:
   DotImage(Adafruit_GFX *canvas, const String &image, uint16_t width, uint16_t height);
-  ~DotImage();
+  ~DotImage() override;
 
-  void draw(int16_t x, int16_t y) const;
-  uint16_t width() const { return _width; }
-  uint16_t height() const { return _height; }
+  void draw(int16_t x, int16_t y) const override;
+  [[nodiscard]] uint16_t width() const override { return _width; }
+  [[nodiscard]] uint16_t height() const override { return _height; }
 
 private:
   Adafruit_GFX *_canvas;
